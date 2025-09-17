@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Normalization Tutorial</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            text-align: center; 
+            color: #2d3748; 
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+        .normal-form {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            transition: all 0.3s ease;
+        }
+        .normal-form:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+        .nf-title { 
+            font-size: 1.6em; 
+            font-weight: bold; 
+            margin-bottom: 15px; 
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nf-badge {
+            background: linear-gradient(45deg, #4299e1, #2b77c7);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .problem-table, .solution-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .problem-table { border: 3px solid #f56565; }
+        .solution-table { border: 3px solid #48bb78; }
+        .problem-table th { 
+            background: #fed7d7; 
+            color: #c53030;
+            padding: 12px;
+            font-weight: bold;
+        }
+        .solution-table th { 
+            background: #c6f6d5; 
+            color: #276749;
+            padding: 12px;
+            font-weight: bold;
+        }
+        .problem-table td, .solution-table td { 
+            border: 1px solid #cbd5e0; 
+            padding: 10px; 
+            text-align: center;
+        }
+        .problem-table td { background: #fffafa; }
+        .solution-table td { background: #f0fff4; }
+        .anomaly {
+            background: #fed7d7;
+            border-left: 4px solid #e53e3e;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .anomaly-title {
+            font-weight: bold;
+            color: #c53030;
+            margin-bottom: 5px;
+        }
+        .solution {
+            background: #c6f6d5;
+            border-left: 4px solid #38a169;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .solution-title {
+            font-weight: bold;
+            color: #276749;
+            margin-bottom: 5px;
+        }
+        .interactive-section {
+            background: linear-gradient(135deg, #4299e1 0%, #2b77c7 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .interactive-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        button {
+            background: white;
+            color: #4299e1;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 15px;
+        }
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #cbd5e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #4a5568;
+            transition: all 0.3s ease;
+        }
+        .step.active {
+            background: #4299e1;
+            color: white;
+            transform: scale(1.2);
+        }
+        .step.completed {
+            background: #48bb78;
+            color: white;
+        }
+        .table-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .table-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .table-label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .problem-label { background: #fed7d7; color: #c53030; }
+        .solution-label { background: #c6f6d5; color: #276749; }
+        @media (max-width: 768px) {
+            .table-container { grid-template-columns: 1fr; }
+            .container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Database Normalization Tutorial</h1>
+        <div class="subtitle">Eliminating Anomalies Through Proper Table Design</div>
+
+        <!-- First Normal Form -->
+        <div class="normal-form">
+            <div class="nf-title">
+                <span class="nf-badge">1NF</span>
+                First Normal Form - Eliminate Repeating Groups
+            </div>
+            
+            <div class="table-container">
+                <div class="table-section">
+                    <div class="table-label problem-label">PROBLEM: Non-Atomic Values</div>
+                    <table class="problem-table">
+                        <tr>
+                            <th>Customer_ID</th>
+                            <th>Customer_Name</th>
+                            <th>Phone_Numbers</th>
+                        </tr>
+                        <tr>
+                            <td>1001</td>
+                            <td>John Doe</td>
+                            <td>555-1234, 555-5678, 555-9012</td>
+                        </tr>
+                        <tr>
+                            <td>1002</td>
+                            <td>Jane Smith</td>
+                            <td>555-4321, 555-8765</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="table-section">
+                    <div class="table-label solution-label">SOLUTION: Atomic Values</div>
+                    <table class="solution-table">
+                        <tr>
+                            <th>Customer_ID</th>
+                            <th>Customer_Name</th>
+                            <th>Phone_Type</th>
+                            <th>Phone_Number</th>
+                        </tr>
+                        <tr>
+                            <td>1001</td>
+                            <td>John Doe</td>
+                            <td>Home</td>
+                            <td>555-1234</td>
+                        </tr>
+                        <tr>
+                            <td>1001</td>
+                            <td>John Doe</td>
+                            <td>Work</td>
+                            <td>555-5678</td>
+                        </tr>
+                        <tr>
+                            <td>1001</td>
+                            <td>John Doe</td>
+                            <td>Mobile</td>
+                            <td>555-9012</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="anomaly">
+                <div class="anomaly-title">Problems with Non-1NF:</div>
+                • Can't query individual phone numbers easily<br>
+                • No consistent format for multiple values<br>
+                • Difficulty updating specific phone numbers
+            </div>
+        </div>
+
+        <!-- Second Normal Form -->
+        <div class="normal-form">
+            <div class="nf-title">
+                <span class="nf-badge">2NF</span>
+                Second Normal Form - Eliminate Partial Dependencies
+            </div>
+            
+            <div class="table-container">
+                <div class="table-section">
+                    <div class="table-label problem-label">PROBLEM: Partial Dependencies</div>
+                    <table class="problem-table">
+                        <tr>
+                            <th>Student_ID</th>
+                            <th>Course_ID</th>
+                            <th>Student_Name</th>
+                            <th>Course_Name</th>
+                            <th>Grade</th>
+                        </tr>
+                        <tr>
+                            <td>1001</td>
+                            <td>CS101</td>
+                            <td>John Smith</td>
+                            <td>Intro to CS</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>1001</td>
+                            <td>MATH200</td>
+                            <td>John Smith</td>
+                            <td>Calculus</td>
+                            <td>B+</td>
+                        </tr>
+                    </table>
+                    <p><strong>Composite Key:</strong> Student_ID + Course_ID</p>
+                    <p><strong>Problem:</strong> Student_Name only depends on Student_ID</p>
+                </div>
+                
+                <div class="table-section">
+                    <div class="table-label solution-label">SOLUTION: Separate Tables</div>
+                    <table class="solution-table" style="margin-bottom: 15px;">
+                        <caption><strong>Students Table</strong></caption>
+                        <tr>
+                            <th>Student_ID</th>
+                            <th>Student_Name</th>
+                        </tr>
+                        <tr>
+                            <td>1001</td>
+                            <td>John Smith</td>
+                        </tr>
+                    </table>
+                    
+                    <table class="solution-table">
+                        <caption><strong>Enrollment Table</strong></caption>
+                        <tr>
+                            <th>Student_ID</th>
+                            <th>Course_ID</th>
+                            <th>Grade</th>
+                        </tr>
+                        <tr>
+                            <td>1001</td>
+                            <td>CS101</td>
+                            <td>A</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="solution">
+                <div class="solution-title">Benefits of 2NF:</div>
+                • No more duplicate student names<br>
+                • Update student info in one place<br>
+                • Separate business concerns (students vs. enrollments)
+            </div>
+        </div>
+
+        <!-- Third Normal Form -->
+        <div class="normal-form">
+            <div class="nf-title">
+                <span class="nf-badge">3NF</span>
+                Third Normal Form - Eliminate Transitive Dependencies
+            </div>
+            
+            <div class="table-container">
+                <div class="table-section">
+                    <div class="table-label problem-label">PROBLEM: Transitive Dependencies</div>
+                    <table class="problem-table">
+                        <tr>
+                            <th>Employee_ID</th>
+                            <th>Employee_Name</th>
+                            <th>Dept_ID</th>
+                            <th>Dept_Name</th>
+                            <th>Dept_Head</th>
+                        </tr>
+                        <tr>
+                            <td>101</td>
+                            <td>John Smith</td>
+                            <td>D01</td>
+                            <td>IT</td>
+                            <td>Sarah Wilson</td>
+                        </tr>
+                        <tr>
+                            <td>102</td>
+                            <td>Jane Doe</td>
+                            <td>D01</td>
+                            <td>IT</td>
+                            <td>Sarah Wilson</td>
+                        </tr>
+                    </table>
+                    <p><strong>Problem:</strong> Dept_Name depends on Dept_ID, not Employee_ID</p>
+                </div>
+                
+                <div class="table-section">
+                    <div class="table-label solution-label">SOLUTION: Remove Transitive Dependencies</div>
+                    <table class="solution-table" style="margin-bottom: 15px;">
+                        <caption><strong>Employees Table</strong></caption>
+                        <tr>
+                            <th>Employee_ID</th>
+                            <th>Employee_Name</th>
+                            <th>Dept_ID</th>
+                        </tr>
+                        <tr>
+                            <td>101</td>
+                            <td>John Smith</td>
+                            <td>D01</td>
+                        </tr>
+                    </table>
+                    
+                    <table class="solution-table">
+                        <caption><strong>Departments Table</strong></caption>
+                        <tr>
+                            <th>Dept_ID</th>
+                            <th>Dept_Name</th>
+                            <th>Dept_Head</th>
+                        </tr>
+                        <tr>
+                            <td>D01</td>
+                            <td>IT</td>
+                            <td>Sarah Wilson</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Practice -->
+        <div class="interactive-section">
+            <div class="interactive-title">Practice: Identify Normal Form Violations</div>
+            <div class="step-indicator">
+                <div class="step active" id="step1">1</div>
+                <div class="step" id="step2">2</div>
+                <div class="step" id="step3">3</div>
+            </div>
+            
+            <div id="practice-area">
+                <div style="background: white; color: #333; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h3 style="margin-top: 0;">Customer Order Table</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: #f7fafc;">
+                            <th style="border: 1px solid #ccc; padding: 10px; text-align: left;">Order_ID</th>
+                            <th style="border: 1px solid #ccc; padding: 10px; text-align: left;">Customer_Name</th>
+                            <th style="border: 1px solid #ccc; padding: 10px; text-align: left;">Customer_Zip</th>
+                            <th style="border: 1px solid #ccc; padding: 10px; text-align: left;">City</th>
+                            <th style="border: 1px solid #ccc; padding: 10px; text-align: left;">State</th>
+                            <th style="border: 1px solid #ccc; padding: 10px; text-align: left;">Product_IDs</th>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ccc; padding: 10px;">1001</td>
+                            <td style="border: 1px solid #ccc; padding: 10px;">John Doe</td>
+                            <td style="border: 1px solid #ccc; padding: 10px;">34202</td>
+                            <td style="border: 1px solid #ccc; padding: 10px;">Bradenton</td>
+                            <td style="border: 1px solid #ccc; padding: 10px;">FL</td>
+                            <td style="border: 1px solid #ccc; padding: 10px; background: #fed7d7;">P001, P002, P005</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ccc; padding: 10px;">1002</td>
+                            <td style="border: 1px solid #ccc; padding: 10px;">Jane Smith</td>
+                            <td style="border: 1px solid #ccc; padding: 10px;">90210</td>
+                            <td style="border: 1px solid #ccc; padding: 10px;">Beverly Hills</td>
+                            <td style="border: 1px solid #ccc; padding: 10px;">CA</td>
+                            <td style="border: 1px solid #ccc; padding: 10px; background: #fed7d7;">P003, P004</td>
+                        </tr>
+                    </table>
+                    <p><strong>Primary Key:</strong> Order_ID</p>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button onclick="checkNormalForm(1)">Check 1NF Violation</button>
+                    <button onclick="checkNormalForm(2)">Check 2NF Violation</button>
+                    <button onclick="checkNormalForm(3)">Check 3NF Violation</button>
+                    <button onclick="resetPractice()" style="background: #718096; color: white;">Reset Practice</button>
+                </div>
+                
+                <div id="feedback-area" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px; min-height: 40px;">
+                    Click the buttons above to identify normalization violations in the sample table.
+                </div>
+            </div>
+        </div>
+
+        <!-- Memory Aid -->
+        <div style="background: #f0fff4; border: 2px solid #48bb78; border-radius: 12px; padding: 25px; margin: 30px 0;">
+            <h3 style="color: #276749; text-align: center; margin-bottom: 20px;">Remember: "The Key, The Whole Key, and Nothing But The Key"</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🔑</div>
+                    <strong>The Key</strong><br>
+                    <small>1NF: Each value depends on the primary key</small>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🔑🔑</div>
+                    <strong>The Whole Key</strong><br>
+                    <small>2NF: Depends on the entire composite key</small>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🔑✨</div>
+                    <strong>Nothing But The Key</strong><br>
+                    <small>3NF: No dependencies between non-key attributes</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkNormalForm(level) {
+            const feedbackArea = document.getElementById('feedback-area');
+            let feedback = '';
+            
+            switch(level) {
+                case 1:
+                    feedback = `<div style="background: #fed7d7; color: #c53030; padding: 15px; border-radius: 8px; border-left: 4px solid #e53e3e;">
+                        <strong>1NF Violation Found!</strong><br><br>
+                        <strong>Problem:</strong> The Product_IDs column contains multiple values (P001, P002, P005) in a single field. 
+                        This violates the atomic value requirement of First Normal Form.
+                        <br><br>
+                        <strong>Solution:</strong> Split into two tables:<br>
+                        • <strong>Orders:</strong> Order_ID, Customer_Name, Customer_Zip, City, State<br>
+                        • <strong>OrderItems:</strong> Order_ID, Product_ID (one row per product)
+                    </div>`;
+                    updateStepIndicator(1);
+                    break;
+                    
+                case 2:
+                    feedback = `<div style="background: #c6f6d5; color: #276749; padding: 15px; border-radius: 8px; border-left: 4px solid #48bb78;">
+                        <strong>No 2NF Violation</strong><br><br>
+                        <strong>Analysis:</strong> Since Order_ID is a single primary key (not composite), 
+                        all non-key attributes depend on the entire primary key by definition.
+                        <br><br>
+                        <strong>2NF Rule:</strong> Only applies when you have composite keys. 
+                        After fixing 1NF, we'd need to check if OrderItems table has 2NF issues.
+                    </div>`;
+                    updateStepIndicator(2);
+                    break;
+                    
+                case 3:
+                    feedback = `<div style="background: #fed7d7; color: #c53030; padding: 15px; border-radius: 8px; border-left: 4px solid #e53e3e;">
+                        <strong>3NF Violation Found!</strong><br><br>
+                        <strong>Problem:</strong> City and State depend on Customer_Zip, not directly on Order_ID. 
+                        This creates a transitive dependency: Order_ID → Customer_Zip → City, State
+                        <br><br>
+                        <strong>Complete Normalized Solution:</strong><br>
+                        • <strong>Orders:</strong> Order_ID, Customer_Name, Customer_Zip<br>
+                        • <strong>OrderItems:</strong> Order_ID, Product_ID<br>
+                        • <strong>ZipCodes:</strong> Zip, City, State (optional - depends on business needs)
+                        <br><br>
+                        <strong>Note:</strong> Many businesses accept zip code denormalization as "good enough."
+                    </div>`;
+                    updateStepIndicator(3);
+                    break;
+            }
+            
+            feedbackArea.innerHTML = feedback;
+        }
+
+        function updateStepIndicator(step) {
+            // Reset all steps
+            for (let i = 1; i <= 3; i++) {
+                const stepElement = document.getElementById(`step${i}`);
+                stepElement.classList.remove('active', 'completed');
+            }
+            
+            // Mark completed steps
+            for (let i = 1; i <= step; i++) {
+                const stepElement = document.getElementById(`step${i}`);
+                stepElement.classList.add('completed');
+            }
+            
+            // Mark next step as active if not at the end
+            if (step < 3) {
+                const nextStep = document.getElementById(`step${step + 1}`);
+                nextStep.classList.add('active');
+            }
+        }
+
+        function resetPractice() {
+            // Reset step indicators
+            for (let i = 1; i <= 3; i++) {
+                const stepElement = document.getElementById(`step${i}`);
+                stepElement.classList.remove('active', 'completed');
+            }
+            
+            // Set first step as active
+            document.getElementById('step1').classList.add('active');
+            
+            // Reset feedback
+            document.getElementById('feedback-area').innerHTML = 'Click the buttons above to identify normalization violations in the sample table.';
+        }
+    </script>
+</body>
+</html>
