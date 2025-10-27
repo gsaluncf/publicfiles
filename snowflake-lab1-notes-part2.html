@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowflake Lab 1 Part 2: Creating Objects and Running Queries</title>
+</head>
+<body>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab7-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 7</a>
+  <a href="snowflake-lab2-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 2 →</a>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">👤 Select Your Lab User</h3>
+    <label for="userSelect" style="font-weight: bold; color: #1e40af;">Choose your assigned username:</label>
+    <select id="userSelect" style="margin-left: 10px; padding: 5px; border: 1px solid #3b82f6; border-radius: 3px; font-size: 14px;" onchange="updateUserReferences()">
+        <option value="">-- Select User --</option>
+        <option value="BADGER">BADGER</option>
+        <option value="BEETLE">BEETLE</option>
+        <option value="BISON">BISON</option>
+        <option value="BLUEJAY">BLUEJAY</option>
+        <option value="BOA">BOA</option>
+        <option value="BULLFROG">BULLFROG</option>
+        <option value="CAMEL">CAMEL</option>
+        <option value="CAT">CAT</option>
+        <option value="CATFISH">CATFISH</option>
+        <option value="CHEETAH">CHEETAH</option>
+        <option value="CHIPMUNK">CHIPMUNK</option>
+        <option value="COBRA">COBRA</option>
+        <option value="COYOTE">COYOTE</option>
+        <option value="CRICKET">CRICKET</option>
+        <option value="DOG">DOG</option>
+        <option value="DOLPHIN">DOLPHIN</option>
+        <option value="DRAGON">DRAGON</option>
+        <option value="EAGLE">EAGLE</option>
+        <option value="FALCON">FALCON</option>
+        <option value="FERRET">FERRET</option>
+        <option value="FINCH">FINCH</option>
+        <option value="FLAMINGO">FLAMINGO</option>
+        <option value="FOX">FOX</option>
+        <option value="GATOR">GATOR</option>
+        <option value="GECKO">GECKO</option>
+        <option value="GIRAFFE">GIRAFFE</option>
+        <option value="GOPHER">GOPHER</option>
+        <option value="GORILLA">GORILLA</option>
+        <option value="GRIZZLY">GRIZZLY</option>
+        <option value="GROUNDHOG">GROUNDHOG</option>
+        <option value="HEDGEHOG">HEDGEHOG</option>
+        <option value="HIPPO">HIPPO</option>
+        <option value="HORNET">HORNET</option>
+        <option value="HYENA">HYENA</option>
+        <option value="JACKAL">JACKAL</option>
+        <option value="JAGUAR">JAGUAR</option>
+        <option value="JELLYFISH">JELLYFISH</option>
+        <option value="KANGAROO">KANGAROO</option>
+        <option value="KOALA">KOALA</option>
+        <option value="LEMMING">LEMMING</option>
+        <option value="LEMUR">LEMUR</option>
+        <option value="LEOPARD">LEOPARD</option>
+        <option value="LION">LION</option>
+        <option value="LIZARD">LIZARD</option>
+        <option value="LOBSTER">LOBSTER</option>
+        <option value="LYNX">LYNX</option>
+        <option value="MACKEREL">MACKEREL</option>
+        <option value="MAGPIE">MAGPIE</option>
+        <option value="MALLARD">MALLARD</option>
+        <option value="MARMOT">MARMOT</option>
+        <option value="MINNOW">MINNOW</option>
+        <option value="MONGOOSE">MONGOOSE</option>
+        <option value="MONKEY">MONKEY</option>
+        <option value="OPOSSUM">OPOSSUM</option>
+        <option value="OSTRICH">OSTRICH</option>
+        <option value="OTTER">OTTER</option>
+        <option value="PANDA">PANDA</option>
+        <option value="PANTHER">PANTHER</option>
+        <option value="PARROT">PARROT</option>
+        <option value="PEACOCK">PEACOCK</option>
+        <option value="PELICAN">PELICAN</option>
+        <option value="PENGUIN">PENGUIN</option>
+        <option value="PIGEON">PIGEON</option>
+        <option value="PIRANHA">PIRANHA</option>
+        <option value="PLATYPUS">PLATYPUS</option>
+        <option value="PONY">PONY</option>
+        <option value="POODLE">POODLE</option>
+        <option value="PUMA">PUMA</option>
+        <option value="PYTHON">PYTHON</option>
+        <option value="QUAIL">QUAIL</option>
+        <option value="RABBIT">RABBIT</option>
+        <option value="RACCOON">RACCOON</option>
+        <option value="RAT">RAT</option>
+        <option value="RAVEN">RAVEN</option>
+        <option value="RHINO">RHINO</option>
+        <option value="ROOSTER">ROOSTER</option>
+        <option value="SCORPION">SCORPION</option>
+        <option value="SEAL">SEAL</option>
+        <option value="SHARK">SHARK</option>
+        <option value="SKUNK">SKUNK</option>
+        <option value="SLOTH">SLOTH</option>
+        <option value="SNAIL">SNAIL</option>
+        <option value="SNAKE">SNAKE</option>
+        <option value="SPARROW">SPARROW</option>
+        <option value="SPIDER">SPIDER</option>
+        <option value="SQUIRREL">SQUIRREL</option>
+        <option value="STINGRAY">STINGRAY</option>
+        <option value="STORK">STORK</option>
+        <option value="SWAN">SWAN</option>
+        <option value="SWORDFISH">SWORDFISH</option>
+        <option value="TAPIR">TAPIR</option>
+        <option value="TERMITE">TERMITE</option>
+        <option value="TIGER">TIGER</option>
+        <option value="TOUCAN">TOUCAN</option>
+        <option value="TURTLE">TURTLE</option>
+        <option value="VIPER">VIPER</option>
+        <option value="WALRUS">WALRUS</option>
+        <option value="WOMBAT">WOMBAT</option>
+        <option value="WOODCHUCK">WOODCHUCK</option>
+        <option value="ZEBRA">ZEBRA</option>
+    </select>
+    <p style="margin-top: 10px; font-size: 12px; color: #6b7280;">All code examples will automatically update with your selected username.</p>
+</div>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Lab 1 Part 2: Creating Objects and Running Queries</h2>
+    <p><strong style="color: #1e40af;">Continuation:</strong> Now that you've set up your environment, let's explore data and create your own objects.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">4. Exploring Existing Data</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.1 Show Available Tables</h3>
+<p>First, let's see what tables are available in your current context (lab1.sql line 207):</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SHOW TABLES;
+</pre>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">💡 Important Note</h3>
+    <p><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">SHOW</code> commands are <strong style="color: #1e40af;">metadata operations</strong> - they don't use your virtual warehouse. Notice the gray dot next to your warehouse name indicates it's suspended.</p>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.2 Query Snowbear Air Data</h3>
+<p>Let's explore the airline data with these queries (lab1.sql lines 218-241):</p>
+
+<h4>Simple Member Data Query:</h4>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT *
+FROM members
+LIMIT 10;
+</pre>
+
+<h4>Top Customers by Account Balance:</h4>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT TOP 5
+    c.c_lastname,
+    c.c_firstname,
+    c.c_acctbal
+FROM snowbearair_db.promo_catalog_sales.customer c
+ORDER BY c.c_acctbal DESC;
+</pre>
+
+<h4>Customer Orders with JOIN:</h4>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT
+  c_firstname,
+  c_lastname,
+  o_orderkey,
+  o_totalprice
+FROM
+  snowbearair_db.promo_catalog_sales.orders
+JOIN
+  snowbearair_db.promo_catalog_sales.customer
+ON
+  o_custkey = c_custkey
+ORDER BY o_totalprice DESC
+LIMIT 10;
+</pre>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Check your understanding</h3>
+    <ul>
+        <li>Why does the last query use full table paths (database.schema.table)?</li>
+        <li>What happens to your warehouse when you run these queries?</li>
+        <li>What's the difference between <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">LIMIT</code> and <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">TOP</code>?</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">5. Creating Your Own Objects</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.1 Create Your Database</h3>
+<p>Create and use your personal database (lab1.sql lines 258-260):</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE DATABASE WOODCHUCK_db;
+USE DATABASE WOODCHUCK_db;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.2 Create Your Schema</h3>
+<p>Create and use your personal schema (lab1.sql lines 265-267):</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE SCHEMA my_schema;
+USE SCHEMA my_schema;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.3 Set Default Context</h3>
+<p>Configure your user defaults for future sessions (lab1.sql lines 275-279):</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+ALTER USER WOODCHUCK
+SET default_warehouse=WOODCHUCK_wh
+    default_namespace=WOODCHUCK_db.public
+    default_role=training_role;
+</pre>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">⚠️ Important</h3>
+    <p>Make sure you've selected your username from the dropdown above! All code examples will automatically update with your assigned lab username.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">6. Working with Tables</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">6.1 Create a Temporary Table</h3>
+<p>Create a simple table for practice (lab1.sql lines 284-297):</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE TEMPORARY TABLE my_favorite_actors (name VARCHAR);
+
+INSERT INTO my_favorite_actors
+VALUES
+  ('Heath Ledger'),
+  ('Michelle Pfeiffer'),
+  ('Meryl Streep'),
+  ('Anthony Hopkins'),
+  ('Bruce Lee');
+
+SELECT * FROM my_favorite_actors;
+</pre>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">🎯 Challenge</h3>
+    <p>Modify the INSERT statement to include your actual favorite actors instead of the placeholder names!</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">7. Key Takeaways</h2>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">What You've Learned</h3>
+    <ul>
+        <li><strong style="color: #1e40af;">Object Creation:</strong> You can create database objects via Snowsight UI or SQL commands</li>
+        <li><strong style="color: #1e40af;">Object Browser:</strong> Use the worksheet object browser to view and navigate database objects</li>
+        <li><strong style="color: #1e40af;">Context Components:</strong> Role, schema, database, and virtual warehouse define your session context</li>
+        <li><strong style="color: #1e40af;">Context Setting:</strong> Set context via Snowsight UI or SQL statements</li>
+        <li><strong style="color: #1e40af;">Organization:</strong> Create folders to save and organize worksheets</li>
+    </ul>
+</div>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Final Check</h3>
+    <ul>
+        <li>Can you explain what a virtual warehouse does?</li>
+        <li>What's the difference between temporary and permanent tables?</li>
+        <li>How do you know which database and schema you're currently using?</li>
+        <li>What happens when you don't specify a full table path in a query?</li>
+    </ul>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<p><strong>Previous:</strong> <a href="snowflake-lab1-notes.html">Part 1: Getting Started with Snowsight</a></p>
+<p><strong>Next Lab:</strong> Advanced Snowflake Features and Data Loading</p>
+
+<script>
+// Store original content on page load
+let originalContent = {};
+
+function storeOriginalContent() {
+    const elementsToStore = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+    elementsToStore.forEach((element, index) => {
+        originalContent[index] = element.innerHTML;
+    });
+}
+
+function updateUserReferences() {
+    const selectedUser = document.getElementById('userSelect').value;
+
+    if (!selectedUser) {
+        return;
+    }
+
+    // Find all elements that contain user-specific references
+    const elementsToUpdate = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+
+    let updatedCount = 0;
+    elementsToUpdate.forEach((element, index) => {
+        // Get the original content for this element
+        let originalHTML = originalContent[index] || element.innerHTML;
+
+        // Replace all user patterns with selected user
+        let newHTML = originalHTML;
+        newHTML = newHTML.replace(/WOODCHUCK_wh/g, selectedUser + '_wh');
+        newHTML = newHTML.replace(/WOODCHUCK_db/g, selectedUser + '_db');
+        newHTML = newHTML.replace(/WOODCHUCK_WH/g, selectedUser + '_WH');
+        newHTML = newHTML.replace(/WOODCHUCK_DB/g, selectedUser + '_DB');
+        newHTML = newHTML.replace(/WOODCHUCK(?!_)/g, selectedUser);
+
+        if (newHTML !== originalHTML) {
+            element.innerHTML = newHTML;
+            updatedCount++;
+        }
+    });
+
+    // Debug: Show how many elements were updated
+    console.log(`Updated ${updatedCount} elements with ${selectedUser}`);
+
+    // Store selection in localStorage for consistency across pages
+    localStorage.setItem('selectedLabUser', selectedUser);
+
+    // Show confirmation
+    const userSelect = document.getElementById('userSelect');
+    userSelect.style.backgroundColor = '#dcfce7';
+    userSelect.style.borderColor = '#16a34a';
+
+    setTimeout(() => {
+        userSelect.style.backgroundColor = '';
+        userSelect.style.borderColor = '#3b82f6';
+    }, 1000);
+}
+
+// Load saved user selection on page load
+window.addEventListener('load', function() {
+    // Store original content first
+    storeOriginalContent();
+
+    const savedUser = localStorage.getItem('selectedLabUser');
+    if (savedUser) {
+        document.getElementById('userSelect').value = savedUser;
+        updateUserReferences();
+    }
+});
+</script>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab7-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 7</a>
+  <a href="snowflake-lab2-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 2 →</a>
+</div>
+
+</body>
+</html>
