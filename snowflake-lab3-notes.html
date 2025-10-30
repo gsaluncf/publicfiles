@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-wth, initial-scale=1.0">
+    <title>Snowflake Lab 3: Caching and Query Performance</title>
+</head>
+<body>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab2-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 2</a>
+  <a href="snowflake-lab4-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 4 →</a>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">👤 Select Your Lab User</h3>
+    <label for="userSelect" style="font-weight: bold; color: #1e40af;">Choose your assigned username:</label>
+    <select id="userSelect" style="margin-left: 10px; padding: 5px; border: 1px solid #3b82f6; border-radius: 3px; font-size: 14px;" onchange="updateUserReferences();">
+        <option value="">-- Select User --</option>
+        <option value="BADGER">BADGER</option>
+        <option value="BEETLE">BEETLE</option>
+        <option value="BISON">BISON</option>
+        <option value="BLUEJAY">BLUEJAY</option>
+        <option value="BOA">BOA</option>
+        <option value="BULLFROG">BULLFROG</option>
+        <option value="CAMEL">CAMEL</option>
+        <option value="CAT">CAT</option>
+        <option value="CATFISH">CATFISH</option>
+        <option value="CHEETAH">CHEETAH</option>
+        <option value="CHIPMUNK">CHIPMUNK</option>
+        <option value="COBRA">COBRA</option>
+        <option value="COYOTE">COYOTE</option>
+        <option value="CRICKET">CRICKET</option>
+        <option value="DOG">DOG</option>
+        <option value="DOLPHIN">DOLPHIN</option>
+        <option value="DRAGON">DRAGON</option>
+        <option value="EAGLE">EAGLE</option>
+        <option value="FALCON">FALCON</option>
+        <option value="FERRET">FERRET</option>
+        <option value="FINCH">FINCH</option>
+        <option value="FLAMINGO">FLAMINGO</option>
+        <option value="FOX">FOX</option>
+        <option value="GATOR">GATOR</option>
+        <option value="GECKO">GECKO</option>
+        <option value="GIRAFFE">GIRAFFE</option>
+        <option value="GOPHER">GOPHER</option>
+        <option value="GORILLA">GORILLA</option>
+        <option value="GRIZZLY">GRIZZLY</option>
+        <option value="GROUNDHOG">GROUNDHOG</option>
+        <option value="HEDGEHOG">HEDGEHOG</option>
+        <option value="HIPPO">HIPPO</option>
+        <option value="HORNET">HORNET</option>
+        <option value="HYENA">HYENA</option>
+        <option value="JACKAL">JACKAL</option>
+        <option value="JAGUAR">JAGUAR</option>
+        <option value="JELLYFISH">JELLYFISH</option>
+        <option value="KANGAROO">KANGAROO</option>
+        <option value="KOALA">KOALA</option>
+        <option value="LEMMING">LEMMING</option>
+        <option value="LEMUR">LEMUR</option>
+        <option value="LEOPARD">LEOPARD</option>
+        <option value="LION">LION</option>
+        <option value="LIZARD">LIZARD</option>
+        <option value="LOBSTER">LOBSTER</option>
+        <option value="LYNX">LYNX</option>
+        <option value="MACKEREL">MACKEREL</option>
+        <option value="MAGPIE">MAGPIE</option>
+        <option value="MALLARD">MALLARD</option>
+        <option value="MARMOT">MARMOT</option>
+        <option value="MINNOW">MINNOW</option>
+        <option value="MONGOOSE">MONGOOSE</option>
+        <option value="MONKEY">MONKEY</option>
+        <option value="OPOSSUM">OPOSSUM</option>
+        <option value="OSTRICH">OSTRICH</option>
+        <option value="OTTER">OTTER</option>
+        <option value="PANDA">PANDA</option>
+        <option value="PANTHER">PANTHER</option>
+        <option value="PARROT">PARROT</option>
+        <option value="PEACOCK">PEACOCK</option>
+        <option value="PELICAN">PELICAN</option>
+        <option value="PENGUIN">PENGUIN</option>
+        <option value="PIGEON">PIGEON</option>
+        <option value="PIRANHA">PIRANHA</option>
+        <option value="PLATYPUS">PLATYPUS</option>
+        <option value="PONY">PONY</option>
+        <option value="POODLE">POODLE</option>
+        <option value="PUMA">PUMA</option>
+        <option value="PYTHON">PYTHON</option>
+        <option value="QUAIL">QUAIL</option>
+        <option value="RABBIT">RABBIT</option>
+        <option value="RACCOON">RACCOON</option>
+        <option value="RAT">RAT</option>
+        <option value="RAVEN">RAVEN</option>
+        <option value="RHINO">RHINO</option>
+        <option value="ROOSTER">ROOSTER</option>
+        <option value="SCORPION">SCORPION</option>
+        <option value="SEAL">SEAL</option>
+        <option value="SHARK">SHARK</option>
+        <option value="SKUNK">SKUNK</option>
+        <option value="SLOTH">SLOTH</option>
+        <option value="SNAIL">SNAIL</option>
+        <option value="SNAKE">SNAKE</option>
+        <option value="SPARROW">SPARROW</option>
+        <option value="SPIDER">SPIDER</option>
+        <option value="SQUIRREL">SQUIRREL</option>
+        <option value="STINGRAY">STINGRAY</option>
+        <option value="STORK">STORK</option>
+        <option value="SWAN">SWAN</option>
+        <option value="SWORDFISH">SWORDFISH</option>
+        <option value="TAPIR">TAPIR</option>
+        <option value="TERMITE">TERMITE</option>
+        <option value="TIGER">TIGER</option>
+        <option value="TOUCAN">TOUCAN</option>
+        <option value="TURTLE">TURTLE</option>
+        <option value="VIPER">VIPER</option>
+        <option value="WALRUS">WALRUS</option>
+        <option value="WOMBAT">WOMBAT</option>
+        <option value="WOODCHUCK">WOODCHUCK</option>
+        <option value="ZEBRA">ZEBRA</option>
+    </select>
+    <p style="margin-top: 10px; font-size: 12px; color: #6b7280;">All code examples will automatically update with your selected username.</p>
+</div>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Lab 3: Caching and Query Performance</h2>
+    <p><strong style="color: #1e40af;">Objective:</strong> Learn how Snowflake employs caching and how to use the Query Profile to analyze query performance and caching efficiency.</p>
+    <p><strong style="color: #1e40af;">Scenario:</strong> You're a data analyst at Snowbear Air learning to use the Query Profile to analyze queries you think could be running faster by better leveraging Snowflake's caching.</p>
+</div>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">📚 Learning Objectives</h3>
+    <ul>
+        <li>How to access and navigate the Query Profile</li>
+        <li>Understand the differences between metadata cache, query result cache, and data cache</li>
+        <li>How to determine when and why the query result cache is being used or not</li>
+        <li>How to determine if partition pruning is efficient, and if not, how to improve it</li>
+        <li>How to determine if spillage is taking place</li>
+        <li>How to use EXPLAIN to determine how to improve your queries</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">1. Accessing and Navigating the Query Profile</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.1 Create Folder and Worksheet</h3>
+<ol>
+    <li>Create a new folder called <strong>Caching and Query Performance</strong></li>
+    <li>Create a new worksheet inside the folder called <strong>Working with Cache and the Query Profile</strong></li>
+</ol>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.2 Set Context and Clear Cache</h3>
+<p>Set the worksheet context and clear any cached data from previous sessions:</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+USE ROLE TRAINING_ROLE;
+USE WAREHOUSE WOODCHUCK_WH;
+CREATE DATABASE IF NOT EXISTS WOODCHUCK_DB;
+USE SCHEMA WOODCHUCK_DB.PUBLIC;
+
+-- This will clear the data from previous sessions that is cached in the virtual warehouse
+ALTER WAREHOUSE WOODCHUCK_WH SUSPEND;
+ALTER WAREHOUSE WOODCHUCK_WH RESUME;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.3 Create Sample Data</h3>
+<p>Create a table with customer data and suspend the warehouse to ensure subsequent queries don't use cached data:</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE TABLE customer AS
+SELECT
+    c_custkey,
+    c_firstname,
+    c_lastname
+FROM
+    SNOWBEARAIR_DB.PROMO_CATALOG_SALES.customer;
+
+ALTER WAREHOUSE WOODCHUCK_WH SUSPEND;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.4 Execute Query and Access Query Profile</h3>
+<p>Run a simple query to generate results:</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT DISTINCT *
+FROM customer c;
+</pre>
+
+<p>To access the Query Profile:</p>
+<ol>
+    <li>Close the "Result limit exceeded" panel (click the X)</li>
+    <li>Click the ellipsis (⋯) in the Query Details panel</li>
+    <li>Select <strong>View Query Profile</strong></li>
+    <li>The Query Profile opens in a new tab</li>
+</ol>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">💡 Understanding the Query Profile</h3>
+    <p>The Query Profile provides two main views:</p>
+    <ul>
+        <li><strong>Profile Overview:</strong> High-level statistics about the query execution</li>
+        <li><strong>Operator Tree:</strong> Detailed breakdown of each operation in the query</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">2. Understanding Snowflake Caching</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.1 Types of Caching</h3>
+<p>Snowflake employs three types of caching:</p>
+<ul>
+    <li><strong style="color: #1e40af;">Query Result Cache:</strong> Stores complete query results for 24 hours (requires identical query)</li>
+    <li><strong style="color: #1e40af;">Metadata Cache:</strong> Stores table metadata like min/max values, row counts, and structure</li>
+    <li><strong style="color: #1e40af;">Data Cache:</strong> Stores actual data in the warehouse's local SSD storage</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.2 Query Result Cache</h3>
+<p>The query result cache returns results instantly if:</p>
+<ul>
+    <li>The exact same query was run within the last 24 hours</li>
+    <li>The underlying data hasn't changed</li>
+    <li>No changes to table structure or permissions</li>
+</ul>
+
+<p>Test query result caching:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+-- Run this query twice and compare Query Profile results
+SELECT DISTINCT *
+FROM customer c;
+</pre>
+
+<p>On the second run, check the Query Profile - you should see <strong>"Query result reuse"</strong> indicating the result cache was used.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.3 Metadata Cache</h3>
+<p>Metadata cache helps Snowflake quickly determine which micro-partitions to scan without reading actual data.</p>
+
+<p>Example query that benefits from metadata cache:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+-- Aggregation queries often use metadata cache
+SELECT COUNT(*) FROM customer;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.4 Data Cache</h3>
+<p>Data cache stores actual data in the warehouse's SSD. When you suspend and resume a warehouse, the data cache is cleared.</p>
+
+<p>Test data caching:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+-- Clear cache
+ALTER WAREHOUSE WOODCHUCK_WH SUSPEND;
+ALTER WAREHOUSE WOODCHUCK_WH RESUME;
+
+-- Run query (will read from remote storage)
+SELECT * FROM customer LIMIT 1000;
+
+-- Run same query again (will use data cache)
+SELECT * FROM customer LIMIT 1000;
+</pre>
+
+<p>Compare the Query Profiles - the second query should show faster execution with <strong>"Percentage scanned from cache"</strong> closer to 100%.</p>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">3. Partition Pruning</h2>
+
+<p>Partition pruning is when Snowflake skips scanning unnecessary micro-partitions based on filter predicates.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">3.1 Analyzing Partition Pruning Efficiency</h3>
+<p>In the Query Profile, look for:</p>
+<ul>
+    <li><strong>Partitions scanned:</strong> Number of micro-partitions actually read</li>
+    <li><strong>Partitions total:</strong> Total number of micro-partitions in the table</li>
+</ul>
+
+<p>Efficient partition pruning means scanning far fewer partitions than the total.</p>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">⚠️ Pro Tip</h3>
+    <p>Use clustered columns in your WHERE clause to maximize partition pruning efficiency. Filters on clustered columns allow Snowflake to skip more partitions.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">4. Detecting Spillage</h2>
+
+<p>Spillage occurs when query operations exceed available memory and must write intermediate results to disk (local or remote storage).</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.1 Types of Spillage</h3>
+<ul>
+    <li><strong>Local Spillage:</strong> Writing to local SSD (slower than memory)</li>
+    <li><strong>Remote Spillage:</strong> Writing to remote storage (much slower)</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.2 Finding Spillage in Query Profile</h3>
+<p>In the Query Profile Operator Tree, look for:</p>
+<ul>
+    <li><strong>Bytes spilled to local storage</strong></li>
+    <li><strong>Bytes spilled to remote storage</strong></li>
+</ul>
+
+<p>If you see significant spillage, consider:</p>
+<ul>
+    <li>Increasing warehouse size (more memory per node)</li>
+    <li>Optimizing query to reduce memory requirements</li>
+    <li>Breaking complex queries into smaller steps</li>
+</ul>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">5. Using EXPLAIN Plans</h2>
+
+<p>The EXPLAIN command shows the execution plan without actually running the query.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.1 Generate an EXPLAIN Plan</h3>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+EXPLAIN
+SELECT DISTINCT *
+FROM customer c;
+</pre>
+
+<p>The EXPLAIN plan shows:</p>
+<ul>
+    <li>Query compilation steps</li>
+    <li>Estimated costs</li>
+    <li>Operations that will be performed</li>
+    <li>Partition pruning estimates</li>
+</ul>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">6. Key Takeaways</h2>
+
+<div style="background-color: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <ul>
+        <li>Snowflake has three types of caching: query result cache, metadata cache, and data cache</li>
+        <li>The Query Profile is essential for understanding query performance and caching behavior</li>
+        <li>Query result cache provides instant results for identical queries within 24 hours</li>
+        <li>Metadata cache helps with aggregation queries and partition pruning</li>
+        <li>Data cache stores actual data in warehouse SSD for faster subsequent access</li>
+        <li>Partition pruning efficiency depends on using appropriate filter predicates</li>
+        <li>Spillage (especially remote spillage) indicates memory pressure - consider larger warehouse</li>
+        <li>EXPLAIN plans help predict query behavior before execution</li>
+    </ul>
+</div>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Check Your Understanding</h3>
+    <ul>
+        <li>What are the three types of caching in Snowflake?</li>
+        <li>How long does the query result cache persist?</li>
+        <li>What happens to the data cache when you suspend and resume a warehouse?</li>
+        <li>What does partition pruning mean and why is it important?</li>
+        <li>What's the difference between local spillage and remote spillage?</li>
+    </ul>
+</div>
+
+<script>
+// Store original content on page load
+let originalContent = {};
+
+function storeOriginalContent() {
+    const elementsToStore = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+    elementsToStore.forEach((element, index) => {
+        originalContent[index] = element.innerHTML;
+    });
+}
+
+function updateUserReferences() {
+    const selectedUser = document.getElementById('userSelect').value;
+
+    if (!selectedUser) {
+        return;
+    }
+
+    // Find all elements that contain user-specific references
+    const elementsToUpdate = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+
+    let updatedCount = 0;
+    elementsToUpdate.forEach((element, index) => {
+        // Get the original content for this element
+        let originalHTML = originalContent[index] || element.innerHTML;
+
+        // Replace all user patterns with selected user
+        let newHTML = originalHTML;
+        newHTML = newHTML.replace(/WOODCHUCK_wh/g, selectedUser + '_wh');
+        newHTML = newHTML.replace(/WOODCHUCK_db/g, selectedUser + '_db');
+        newHTML = newHTML.replace(/WOODCHUCK_WH/g, selectedUser + '_WH');
+        newHTML = newHTML.replace(/WOODCHUCK_DB/g, selectedUser + '_DB');
+        newHTML = newHTML.replace(/WOODCHUCK(?!_)/g, selectedUser);
+
+        if (newHTML !== originalHTML) {
+            element.innerHTML = newHTML;
+            updatedCount++;
+        }
+    });
+
+    // Store selection in localStorage
+    localStorage.setItem('selectedLabUser', selectedUser);
+
+    // Show confirmation
+    const userSelect = document.getElementById('userSelect');
+    userSelect.style.backgroundColor = '#dcfce7';
+    userSelect.style.borderColor = '#16a34a';
+
+    setTimeout(() => {
+        userSelect.style.backgroundColor = '';
+        userSelect.style.borderColor = '#3b82f6';
+    }, 1000);
+}
+
+// Load saved user selection on page load
+window.addEventListener('load', function() {
+    // Store original content first
+    storeOriginalContent();
+
+    const savedUser = localStorage.getItem('selectedLabUser');
+    if (savedUser) {
+        document.getElementById('userSelect').value = savedUser;
+        updateUserReferences();
+    }
+});
+</script>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab2-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 2</a>
+  <a href="snowflake-lab4-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 4 →</a>
+</div>
+
+</body>
+</html>

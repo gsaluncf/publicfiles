@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowflake Lab 4 Part 3: Data Validation and Error Handling</title>
+</head>
+<body>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab3-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 3</a>
+  <a href="snowflake-lab5-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 5 →</a>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">👤 Select Your Lab User</h3>
+    <label for="userSelect" style="font-weight: bold; color: #1e40af;">Choose your assigned username:</label>
+    <select id="userSelect" style="margin-left: 10px; padding: 5px; border: 1px solid #3b82f6; border-radius: 3px; font-size: 14px;" onchange="updateUserReferences()">
+        <option value="">-- Select User --</option>
+        <option value="BADGER">BADGER</option>
+        <option value="BEETLE">BEETLE</option>
+        <option value="BISON">BISON</option>
+        <option value="BLUEJAY">BLUEJAY</option>
+        <option value="BOA">BOA</option>
+        <option value="BULLFROG">BULLFROG</option>
+        <option value="CAMEL">CAMEL</option>
+        <option value="CAT">CAT</option>
+        <option value="CATFISH">CATFISH</option>
+        <option value="CHEETAH">CHEETAH</option>
+        <option value="CHIPMUNK">CHIPMUNK</option>
+        <option value="COBRA">COBRA</option>
+        <option value="COYOTE">COYOTE</option>
+        <option value="CRICKET">CRICKET</option>
+        <option value="DOG">DOG</option>
+        <option value="DOLPHIN">DOLPHIN</option>
+        <option value="DRAGON">DRAGON</option>
+        <option value="EAGLE">EAGLE</option>
+        <option value="FALCON">FALCON</option>
+        <option value="FERRET">FERRET</option>
+        <option value="FINCH">FINCH</option>
+        <option value="FLAMINGO">FLAMINGO</option>
+        <option value="FOX">FOX</option>
+        <option value="GATOR">GATOR</option>
+        <option value="GECKO">GECKO</option>
+        <option value="GIRAFFE">GIRAFFE</option>
+        <option value="GOPHER">GOPHER</option>
+        <option value="GORILLA">GORILLA</option>
+        <option value="GRIZZLY">GRIZZLY</option>
+        <option value="GROUNDHOG">GROUNDHOG</option>
+        <option value="HEDGEHOG">HEDGEHOG</option>
+        <option value="HIPPO">HIPPO</option>
+        <option value="HORNET">HORNET</option>
+        <option value="HYENA">HYENA</option>
+        <option value="JACKAL">JACKAL</option>
+        <option value="JAGUAR">JAGUAR</option>
+        <option value="JELLYFISH">JELLYFISH</option>
+        <option value="KANGAROO">KANGAROO</option>
+        <option value="KOALA">KOALA</option>
+        <option value="LEMMING">LEMMING</option>
+        <option value="LEMUR">LEMUR</option>
+        <option value="LEOPARD">LEOPARD</option>
+        <option value="LION">LION</option>
+        <option value="LIZARD">LIZARD</option>
+        <option value="LOBSTER">LOBSTER</option>
+        <option value="LYNX">LYNX</option>
+        <option value="MACKEREL">MACKEREL</option>
+        <option value="MAGPIE">MAGPIE</option>
+        <option value="MALLARD">MALLARD</option>
+        <option value="MARMOT">MARMOT</option>
+        <option value="MINNOW">MINNOW</option>
+        <option value="MONGOOSE">MONGOOSE</option>
+        <option value="MONKEY">MONKEY</option>
+        <option value="OPOSSUM">OPOSSUM</option>
+        <option value="OSTRICH">OSTRICH</option>
+        <option value="OTTER">OTTER</option>
+        <option value="PANDA">PANDA</option>
+        <option value="PANTHER">PANTHER</option>
+        <option value="PARROT">PARROT</option>
+        <option value="PEACOCK">PEACOCK</option>
+        <option value="PELICAN">PELICAN</option>
+        <option value="PENGUIN">PENGUIN</option>
+        <option value="PIGEON">PIGEON</option>
+        <option value="PIRANHA">PIRANHA</option>
+        <option value="PLATYPUS">PLATYPUS</option>
+        <option value="PONY">PONY</option>
+        <option value="POODLE">POODLE</option>
+        <option value="PUMA">PUMA</option>
+        <option value="PYTHON">PYTHON</option>
+        <option value="QUAIL">QUAIL</option>
+        <option value="RABBIT">RABBIT</option>
+        <option value="RACCOON">RACCOON</option>
+        <option value="RAT">RAT</option>
+        <option value="RAVEN">RAVEN</option>
+        <option value="RHINO">RHINO</option>
+        <option value="ROOSTER">ROOSTER</option>
+        <option value="SCORPION">SCORPION</option>
+        <option value="SEAL">SEAL</option>
+        <option value="SHARK">SHARK</option>
+        <option value="SKUNK">SKUNK</option>
+        <option value="SLOTH">SLOTH</option>
+        <option value="SNAIL">SNAIL</option>
+        <option value="SNAKE">SNAKE</option>
+        <option value="SPARROW">SPARROW</option>
+        <option value="SPIDER">SPIDER</option>
+        <option value="SQUIRREL">SQUIRREL</option>
+        <option value="STINGRAY">STINGRAY</option>
+        <option value="STORK">STORK</option>
+        <option value="SWAN">SWAN</option>
+        <option value="SWORDFISH">SWORDFISH</option>
+        <option value="TAPIR">TAPIR</option>
+        <option value="TERMITE">TERMITE</option>
+        <option value="TIGER">TIGER</option>
+        <option value="TOUCAN">TOUCAN</option>
+        <option value="TURTLE">TURTLE</option>
+        <option value="VIPER">VIPER</option>
+        <option value="WALRUS">WALRUS</option>
+        <option value="WOMBAT">WOMBAT</option>
+        <option value="WOODCHUCK">WOODCHUCK</option>
+        <option value="ZEBRA">ZEBRA</option>
+    </select>
+    <p style="margin-top: 10px; font-size: 12px; color: #6b7280;">All code examples will automatically update with your selected username.</p>
+</div>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Lab 4 Part 3: Data Validation and Error Handling</h2>
+    <p><strong style="color: #1e40af;">Final Steps:</strong> Learn to validate data before loading and handle various error scenarios during data loading operations.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">5. Data Validation Prior to Load</h2>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">💡 Validation Modes</h3>
+    <p>Use the <code>VALIDATION_MODE</code> parameter to check files before loading:</p>
+    <ul>
+        <li><strong>RETURN_ALL_ERRORS:</strong> Returns all errors found in the file</li>
+        <li><strong>RETURN_ERRORS:</strong> Returns errors (same as RETURN_ALL_ERRORS)</li>
+        <li><strong>RETURN_10_ROWS:</strong> Checks only first 10 rows</li>
+    </ul>
+    <p><strong>Note:</strong> Validation mode prevents actual data loading - it only checks for problems.</p>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.1 Create NATION Table</h3>
+
+<div style="margin: 15px 0;">
+    <button onclick="toggleSQL('sql-nation-table')" style="background-color: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        ▶ Show NATION Table SQL
+    </button>
+</div>
+
+<div id="sql-nation-table" style="display: none; margin-top: 10px;">
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE OR REPLACE TABLE nation (
+                          NATION_KEY INTEGER
+                        , NATION VARCHAR
+                        , REGION_KEY INTEGER
+                        , COMMENTS VARCHAR
+                    );
+    </pre>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.2 Test Validation - No Errors</h3>
+
+<div style="margin: 15px 0;">
+    <button onclick="toggleSQL('sql-validate-good')" style="background-color: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        ▶ Show Validation SQL (Good Data)
+    </button>
+</div>
+
+<div id="sql-validate-good" style="display: none; margin-top: 10px;">
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+COPY INTO NATION
+FROM @training_db.traininglab.ed_stage/load/lab_files/
+FILES = ('nation.tbl')
+FILE_FORMAT = (FORMAT_NAME = MYPIPEFORMAT)
+VALIDATION_MODE = RETURN_ALL_ERRORS;
+    </pre>
+</div>
+
+<p><strong>Expected Result:</strong> "Query produced no results" - meaning no errors found.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.3 Test Validation - With Errors</h3>
+
+<p>Now let's create a table with mismatched column order to generate errors:</p>
+
+<div style="margin: 15px 0;">
+    <button onclick="toggleSQL('sql-nation-bad')" style="background-color: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        ▶ Show Bad Table Structure SQL
+    </button>
+</div>
+
+<div id="sql-nation-bad" style="display: none; margin-top: 10px;">
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE OR REPLACE TABLE nation (
+                          NATION_KEY INTEGER
+                        , REGION_KEY INTEGER    -- Moved to 2nd position (was 3rd)
+                        , NATION VARCHAR        -- Moved to 3rd position (was 2nd)
+                        , COMMENTS VARCHAR
+                    );
+
+COPY INTO NATION
+FROM @training_db.traininglab.ed_stage/load/lab_files/
+FILES = ('nation.tbl')
+FILE_FORMAT = (FORMAT_NAME = MYPIPEFORMAT)
+VALIDATION_MODE = RETURN_ERRORS;
+    </pre>
+</div>
+
+<p><strong>Expected Result:</strong> 25 rows of errors because VARCHAR values can't load into INTEGER column.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.4 Limited Validation</h3>
+
+<div style="margin: 15px 0;">
+    <button onclick="toggleSQL('sql-validate-10')" style="background-color: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        ▶ Show 10-Row Validation SQL
+    </button>
+</div>
+
+<div id="sql-validate-10" style="display: none; margin-top: 10px;">
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+COPY INTO NATION
+FROM @training_db.traininglab.ed_stage/load/lab_files/
+FILES = ('nation.tbl')
+FILE_FORMAT = (FORMAT_NAME = MYPIPEFORMAT)
+VALIDATION_MODE = RETURN_10_ROWS;
+    </pre>
+</div>
+
+<p><strong>Expected Result:</strong> Error message about "numeric value ALGERIA is not recognized".</p>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">6. Error Handling Strategies</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">6.1 Fix Table Structure</h3>
+
+<div style="margin: 15px 0;">
+    <button onclick="toggleSQL('sql-nation-fixed')" style="background-color: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        ▶ Show Fixed Table SQL
+    </button>
+</div>
+
+<div id="sql-nation-fixed" style="display: none; margin-top: 10px;">
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE OR REPLACE TABLE nation (
+                          NATION_KEY INTEGER
+                        , NATION VARCHAR
+                        , REGION_KEY INTEGER
+                        , COMMENTS VARCHAR
+                    );
+    </pre>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">6.2 Test Error Scenarios</h3>
+
+<p>We'll create intentional errors by converting some region keys to text:</p>
+
+<div style="margin: 15px 0;">
+    <button onclick="toggleSQL('sql-error-query')" style="background-color: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        ▶ Show Error Test Query SQL
+    </button>
+</div>
+
+<div id="sql-error-query" style="display: none; margin-top: 10px;">
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT    
+          n.$1 AS N_KEY
+        , n.$2 AS NATION    
+        , CASE 
+            WHEN n.$3 = 1 THEN 'AMERICA'  -- This will cause errors
+            ELSE n.$3
+          END AS R_KEY
+        , n.$4 AS COMMENTS
+FROM @training_db.traininglab.ed_stage/load/lab_files/nation.tbl (file_format => 'MYPIPEFORMAT') n;
+    </pre>
+</div>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">🔧 Error Handling Options</h3>
+    <ul>
+        <li><strong>CONTINUE:</strong> Load good rows, skip bad rows</li>
+        <li><strong>ABORT_STATEMENT:</strong> Stop entire load on first error (default)</li>
+        <li><strong>SKIP_FILE_n:</strong> Skip file if n or more errors occur</li>
+    </ul>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<p><strong>Previous:</strong> <a href="snowflake-lab4-notes-part2.html">Part 2: Data Loading</a></p>
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">7. Error Handling Examples</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">7.1 ON_ERROR = CONTINUE</h3>
+<p>Load good rows, skip bad rows:</p>
+
+<div style="margin: 15px 0;">
+    <button onclick="toggleSQL('sql-continue')" style="background-color: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        ▶ Show CONTINUE Error Handling SQL
+    </button>
+</div>
+
+<div id="sql-continue" style="display: none; margin-top: 10px;">
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+COPY INTO nation
+FROM (
+        SELECT
+              n.$1 AS N_KEY
+            , n.$2 AS NATION
+            , CASE
+                WHEN n.$3 = 1 THEN 'AMERICA'
+                ELSE n.$3
+              END AS R_KEY
+            , n.$4 AS COMMENTS
+
+        FROM @training_db.traininglab.ed_stage/load/lab_files/nation.tbl (file_format => 'MYPIPEFORMAT') n
+    )
+FILE_FORMAT = (FORMAT_NAME = MYPIPEFORMAT)
+ON_ERROR = CONTINUE;
+
+-- Verify partial load
+SELECT * FROM nation;
+
+-- Clean up for next test
+TRUNCATE TABLE nation;
+    </pre>
+</div>
+
+<p><strong>Expected Result:</strong> Status = PARTIALLY_LOADED, 20 out of 25 rows loaded.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">7.2 ON_ERROR = ABORT_STATEMENT</h3>
+<p>Stop entire load on first error (default behavior):</p>
+
+<div style="margin: 15px 0;">
+    <button onclick="toggleSQL('sql-abort')" style="background-color: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        ▶ Show ABORT Error Handling SQL
+    </button>
+</div>
+
+<div id="sql-abort" style="display: none; margin-top: 10px;">
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+COPY INTO nation
+FROM (
+        SELECT
+              n.$1 AS N_KEY
+            , n.$2 AS NATION
+            , CASE
+                WHEN n.$3 = 1 THEN 'AMERICA'
+                ELSE n.$3
+              END AS R_KEY
+            , n.$4 AS COMMENTS
+
+        FROM @training_db.traininglab.ed_stage/load/lab_files/nation.tbl (file_format => 'MYPIPEFORMAT') n
+    )
+FILE_FORMAT = (FORMAT_NAME = MYPIPEFORMAT)
+ON_ERROR = ABORT_STATEMENT; -- Default option
+    </pre>
+</div>
+
+<p><strong>Expected Result:</strong> Error "Numeric value AMERICA is not recognized". No data loaded.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">7.3 ON_ERROR = SKIP_FILE_4</h3>
+<p>Skip file if 4 or more errors occur:</p>
+
+<div style="margin: 15px 0;">
+    <button onclick="toggleSQL('sql-skip4')" style="background-color: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        ▶ Show SKIP_FILE_4 SQL
+    </button>
+</div>
+
+<div id="sql-skip4" style="display: none; margin-top: 10px;">
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+COPY INTO nation
+FROM (
+        SELECT
+              n.$1 AS N_KEY
+            , n.$2 AS NATION
+            , CASE
+                WHEN n.$3 = 1 THEN 'AMERICA'
+                ELSE n.$3
+              END AS R_KEY
+            , n.$4 AS COMMENTS
+
+        FROM @training_db.traininglab.ed_stage/load/lab_files/nation.tbl (file_format => 'MYPIPEFORMAT') n
+    )
+FILE_FORMAT = (FORMAT_NAME = MYPIPEFORMAT)
+ON_ERROR = SKIP_FILE_4;
+
+-- Verify table is empty
+SELECT * FROM nation;
+    </pre>
+</div>
+
+<p><strong>Expected Result:</strong> Status = LOAD_FAILED (5 errors > 4 threshold). No data loaded.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">7.4 ON_ERROR = SKIP_FILE_6</h3>
+<p>Skip file if 6 or more errors occur:</p>
+
+<div style="margin: 15px 0;">
+    <button onclick="toggleSQL('sql-skip6')" style="background-color: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        ▶ Show SKIP_FILE_6 SQL
+    </button>
+</div>
+
+<div id="sql-skip6" style="display: none; margin-top: 10px;">
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+COPY INTO nation
+FROM (
+        SELECT
+              n.$1 AS N_KEY
+            , n.$2 AS NATION
+            , CASE
+                WHEN n.$3 = 1 THEN 'AMERICA'
+                ELSE n.$3
+              END AS R_KEY
+            , n.$4 AS COMMENTS
+
+        FROM @training_db.traininglab.ed_stage/load/lab_files/nation.tbl (file_format => 'MYPIPEFORMAT') n
+    )
+FILE_FORMAT = (FORMAT_NAME = MYPIPEFORMAT)
+ON_ERROR = SKIP_FILE_6;
+    </pre>
+</div>
+
+<p><strong>Expected Result:</strong> Status = PARTIALLY_LOADED (5 errors < 6 threshold). 20 out of 25 rows loaded.</p>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">8. Key Takeaways</h2>
+
+<div style="background-color: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">🎯 What You've Learned</h3>
+    <ul>
+        <li><strong>File Formats:</strong> Create formats for compressed and uncompressed files</li>
+        <li><strong>COPY INTO:</strong> Load data from external stages into tables</li>
+        <li><strong>LIST Command:</strong> View files available in stages</li>
+        <li><strong>Validation:</strong> Check for problems before loading data</li>
+        <li><strong>Error Handling:</strong> Control behavior when errors occur during loading</li>
+        <li><strong>Stage Override:</strong> Use different file formats than stage defaults</li>
+    </ul>
+</div>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">🚀 Best Practices</h3>
+    <ul>
+        <li><strong>Always validate</strong> data before production loads</li>
+        <li><strong>Choose appropriate error handling</strong> based on data quality requirements</li>
+        <li><strong>Use compression</strong> to reduce storage and transfer costs</li>
+        <li><strong>Monitor load results</strong> and investigate partial loads</li>
+        <li><strong>Test file formats</strong> with sample data first</li>
+    </ul>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">📝 Lab Completion</h3>
+    <p><strong>Deliverables:</strong></p>
+    <ul>
+        <li>✅ REGION table created and loaded from both compressed and uncompressed files</li>
+        <li>✅ MYPIPEFORMAT and MYGZIPPIPEFORMAT file formats created</li>
+        <li>✅ Data validation techniques demonstrated</li>
+        <li>✅ Error handling strategies tested (CONTINUE, ABORT, SKIP_FILE)</li>
+        <li>✅ Understanding of stage file listing and format overrides</li>
+    </ul>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<p><strong>Previous:</strong> <a href="snowflake-lab4-notes-part2.html">Part 2: Data Loading</a></p>
+<p><strong>Next Lab:</strong> Advanced Snowflake Features and Performance Optimization</p>
+
+<script>
+// Store original content on page load
+let originalContent = {};
+
+function storeOriginalContent() {
+    const elementsToStore = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+    elementsToStore.forEach((element, index) => {
+        originalContent[index] = element.innerHTML;
+    });
+}
+
+function updateUserReferences() {
+    const selectedUser = document.getElementById('userSelect').value;
+    
+    if (!selectedUser) {
+        return;
+    }
+
+    // Find all elements that contain user-specific references
+    const elementsToUpdate = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+    
+    let updatedCount = 0;
+    elementsToUpdate.forEach((element, index) => {
+        // Get the original content for this element
+        let originalHTML = originalContent[index] || element.innerHTML;
+        
+        // Replace all user patterns with selected user
+        let newHTML = originalHTML;
+        newHTML = newHTML.replace(/WOODCHUCK_wh/g, selectedUser + '_wh');
+        newHTML = newHTML.replace(/WOODCHUCK_db/g, selectedUser + '_db');
+        newHTML = newHTML.replace(/WOODCHUCK_WH/g, selectedUser + '_WH');
+        newHTML = newHTML.replace(/WOODCHUCK_DB/g, selectedUser + '_DB');
+        newHTML = newHTML.replace(/WOODCHUCK(?!_)/g, selectedUser);
+        
+        if (newHTML !== originalHTML) {
+            element.innerHTML = newHTML;
+            updatedCount++;
+        }
+    });
+
+    // Store selection in localStorage for consistency across pages
+    localStorage.setItem('selectedLabUser', selectedUser);
+
+    // Show confirmation
+    const userSelect = document.getElementById('userSelect');
+    userSelect.style.backgroundColor = '#dcfce7';
+    userSelect.style.borderColor = '#16a34a';
+
+    setTimeout(() => {
+        userSelect.style.backgroundColor = '';
+        userSelect.style.borderColor = '#3b82f6';
+    }, 1000);
+}
+
+function toggleSQL(elementId) {
+    const element = document.getElementById(elementId);
+    const button = event.target;
+    
+    if (element.style.display === 'none') {
+        element.style.display = 'block';
+        button.innerHTML = '▼ Hide SQL';
+        button.style.backgroundColor = '#dc2626';
+    } else {
+        element.style.display = 'none';
+        button.innerHTML = '▶ Show SQL';
+        button.style.backgroundColor = '#3b82f6';
+    }
+}
+
+// Load saved user selection on page load
+window.addEventListener('load', function() {
+    // Store original content first
+    storeOriginalContent();
+    
+    const savedUser = localStorage.getItem('selectedLabUser');
+    if (savedUser) {
+        document.getElementById('userSelect').value = savedUser;
+        updateUserReferences();
+    }
+});
+</script>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab3-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 3</a>
+  <a href="snowflake-lab5-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 5 →</a>
+</div>
+
+</body>
+</html>
