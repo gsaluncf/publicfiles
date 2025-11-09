@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Start Guide - Municipal Bond Database Project</title>
+</head>
+<body>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Quick Start Guide</h2>
+    <p><strong>Municipal Bond Database Project</strong></p>
+    <p><strong>Prerequisites:</strong> PostgreSQL installed, basic SQL knowledge</p>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">What This Guide Covers</h3>
+    <p>This guide will help you:</p>
+    <ul>
+        <li>Set up PostgreSQL and create a database</li>
+        <li>Understand the CSV file structure</li>
+        <li>Load data into simple tables (no relationships yet)</li>
+        <li>Explore the data to understand what you're working with</li>
+    </ul>
+    <p><strong>What you'll need to do yourself (Week 9):</strong></p>
+    <ul>
+        <li>Design the proper schema with Primary Keys (PK)</li>
+        <li>Define Foreign Keys (FK) to create relationships between tables</li>
+        <li>Add CHECK constraints for data validation</li>
+        <li>Add UNIQUE constraints where appropriate</li>
+        <li>Create indexes for performance</li>
+        <li>Normalize to 3NF</li>
+    </ul>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Step 1: Download the Project</h2>
+
+<ol>
+    <li>Download or clone the project repository</li>
+    <li>Navigate to the project directory</li>
+    <li>Verify you have all the CSV files in the <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">data/final/</code> folder</li>
+</ol>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #1d4ed8; margin-top: 5px;">You should see these 6 files:</h4>
+    <ul>
+        <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">issuers.csv</code></li>
+        <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">bond_purposes.csv</code></li>
+        <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">bonds.csv</code></li>
+        <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">credit_ratings.csv</code></li>
+        <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">trades.csv</code></li>
+        <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">economic_indicators.csv</code></li>
+    </ul>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Step 2: Create the Database</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Option A: Using Command Line</h3>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;"># Create database
+createdb municipal_bonds
+
+# Connect to it
+psql municipal_bonds</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Option B: Using pgAdmin</h3>
+
+<ol>
+    <li>Open pgAdmin</li>
+    <li>Right-click "Databases" → "Create" → "Database"</li>
+    <li>Name: <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">municipal_bonds</code></li>
+    <li>Click "Save"</li>
+</ol>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Option C: Using DataGrip</h3>
+
+<ol>
+    <li>Open DataGrip</li>
+    <li>Click the "+" icon → "Data Source" → "PostgreSQL"</li>
+    <li>Enter your PostgreSQL connection details:
+        <ul>
+            <li>Host: <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">localhost</code></li>
+            <li>Port: <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">5432</code></li>
+            <li>Database: <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">postgres</code> (default)</li>
+            <li>User: your PostgreSQL username</li>
+            <li>Password: your PostgreSQL password</li>
+        </ul>
+    </li>
+    <li>Click "Test Connection" to verify</li>
+    <li>Click "OK"</li>
+    <li>Right-click the data source → "New" → "Database"</li>
+    <li>Name: <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">municipal_bonds</code></li>
+    <li>Click "OK"</li>
+    <li>Open a query console (right-click database → "New" → "Query Console")</li>
+</ol>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Step 3: Create Simple Tables for Exploration</h2>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <p><strong>Important:</strong> These are basic tables with NO relationships, constraints, or indexes. This is just to load the data so you can explore it.</p>
+    <p><strong>For Week 9, you will design proper tables with:</strong></p>
+    <ul>
+        <li>Primary Keys (PK)</li>
+        <li>Foreign Keys (FK)</li>
+        <li>CHECK constraints</li>
+        <li>UNIQUE constraints</li>
+        <li>Indexes</li>
+        <li>Proper normalization (3NF)</li>
+    </ul>
+</div>
+
+<p>Create basic tables to hold the CSV data:</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">-- Simple table for issuers (no constraints yet)
+CREATE TABLE issuers (
+    issuer_id INTEGER,
+    issuer_name TEXT,
+    state TEXT,
+    issuer_type TEXT,
+    population INTEGER,
+    tax_base_millions NUMERIC
+);
+
+-- Simple table for bond purposes
+CREATE TABLE bond_purposes (
+    purpose_id INTEGER,
+    purpose_category TEXT,
+    purpose_description TEXT
+);
+
+-- Simple table for bonds
+CREATE TABLE bonds (
+    bond_id INTEGER,
+    issuer_id INTEGER,
+    purpose_id INTEGER,
+    cusip TEXT,
+    bond_type TEXT,
+    coupon_rate NUMERIC,
+    issue_date DATE,
+    maturity_date DATE,
+    face_value NUMERIC,
+    duration NUMERIC,
+    tax_status TEXT
+);
+
+-- Simple table for credit ratings
+CREATE TABLE credit_ratings (
+    rating_id INTEGER,
+    bond_id INTEGER,
+    rating_agency TEXT,
+    rating TEXT,
+    rating_date DATE,
+    outlook TEXT
+);
+
+-- Simple table for trades
+CREATE TABLE trades (
+    bond_id INTEGER,
+    trade_date DATE,
+    trade_price NUMERIC,
+    yield NUMERIC,
+    quantity INTEGER,
+    buyer_type TEXT
+);
+
+-- Simple table for economic indicators
+CREATE TABLE economic_indicators (
+    state TEXT,
+    date DATE,
+    unemployment_rate NUMERIC,
+    treasury_10yr NUMERIC,
+    treasury_20yr NUMERIC,
+    vix_index NUMERIC
+);</pre>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Step 4: Load the CSV Data</h2>
+
+<p>Now load the CSV files into these tables:</p>
+
+<p><strong>For Windows:</strong></p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">\COPY issuers FROM 'C:/path/to/data/final/issuers.csv' CSV HEADER;
+\COPY bond_purposes FROM 'C:/path/to/data/final/bond_purposes.csv' CSV HEADER;
+\COPY bonds FROM 'C:/path/to/data/final/bonds.csv' CSV HEADER;
+\COPY credit_ratings FROM 'C:/path/to/data/final/credit_ratings.csv' CSV HEADER;
+\COPY trades FROM 'C:/path/to/data/final/trades.csv' CSV HEADER;
+\COPY economic_indicators FROM 'C:/path/to/data/final/economic_indicators.csv' CSV HEADER;</pre>
+
+<p><strong>For Mac/Linux:</strong></p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">\COPY issuers FROM '/path/to/data/final/issuers.csv' CSV HEADER;
+\COPY bond_purposes FROM '/path/to/data/final/bond_purposes.csv' CSV HEADER;
+\COPY bonds FROM '/path/to/data/final/bonds.csv' CSV HEADER;
+\COPY credit_ratings FROM '/path/to/data/final/credit_ratings.csv' CSV HEADER;
+\COPY trades FROM '/path/to/data/final/trades.csv' CSV HEADER;
+\COPY economic_indicators FROM '/path/to/data/final/economic_indicators.csv' CSV HEADER;</pre>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <p><strong>Tip:</strong> Use absolute paths! Replace <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">/path/to/</code> with the actual path to your project folder.</p>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Using DataGrip</h3>
+
+<ol>
+    <li>In the Database Explorer, expand your <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">municipal_bonds</code> database</li>
+    <li>Right-click on a table → "Import Data from File"</li>
+    <li>Select the corresponding CSV file from <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">data/final/</code></li>
+    <li>In the import dialog:
+        <ul>
+            <li>Check "First row is header"</li>
+            <li>Verify column mappings are correct</li>
+            <li>Click "Import"</li>
+        </ul>
+    </li>
+    <li>Repeat for all 6 tables</li>
+</ol>
+
+<p><strong>Alternative in DataGrip:</strong> You can also paste the <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">\COPY</code> commands into the query console and run them.</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Step 5: Verify the Data</h2>
+
+<p>Run this query to check row counts:</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">SELECT 'issuers' AS table_name, COUNT(*) AS row_count FROM issuers
+UNION ALL
+SELECT 'bond_purposes', COUNT(*) FROM bond_purposes
+UNION ALL
+SELECT 'bonds', COUNT(*) FROM bonds
+UNION ALL
+SELECT 'credit_ratings', COUNT(*) FROM credit_ratings
+UNION ALL
+SELECT 'trades', COUNT(*) FROM trades
+UNION ALL
+SELECT 'economic_indicators', COUNT(*) FROM economic_indicators
+ORDER BY table_name;</pre>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #1d4ed8; margin-top: 5px;">Expected Output:</h4>
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; border-radius: 3px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">table_name           | row_count
+---------------------|----------
+bond_purposes        |         5
+bonds                |      2000
+credit_ratings       |      2139
+economic_indicators  |       300
+issuers              |        51
+trades               |      8002</pre>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Step 6: Explore the Data</h2>
+
+<p>Now that the data is loaded, explore it to understand what you're working with:</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Look at the Data</h3>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">-- See what's in each table
+SELECT * FROM issuers LIMIT 10;
+SELECT * FROM bonds LIMIT 10;
+SELECT * FROM trades LIMIT 10;
+
+-- Count rows
+SELECT COUNT(*) FROM bonds;
+SELECT COUNT(*) FROM trades;</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Understand Relationships</h3>
+
+<p>Look at the data and ask yourself:</p>
+<ul>
+    <li>What connects <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">bonds</code> to <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">issuers</code>? (Hint: look at the columns)</li>
+    <li>What connects <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">trades</code> to <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">bonds</code>?</li>
+    <li>Can one bond have multiple trades? Multiple ratings?</li>
+    <li>What should be the Primary Key for each table?</li>
+    <li>What Foreign Keys do you need?</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Try a Simple JOIN</h3>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">-- Even without foreign keys, you can join on matching columns
+SELECT
+    b.bond_id,
+    b.cusip,
+    i.issuer_name,
+    i.state
+FROM bonds b
+JOIN issuers i ON b.issuer_id = i.issuer_id
+LIMIT 20;</pre>
+
+<p><strong>Notice:</strong> This works even without FK constraints, but constraints would ensure data integrity!</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Step 7: Understand What's Missing</h2>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">These Simple Tables Are Missing:</h3>
+    <ul>
+        <li><strong>Primary Keys:</strong> No unique identifiers enforced</li>
+        <li><strong>Foreign Keys:</strong> No referential integrity between tables</li>
+        <li><strong>CHECK Constraints:</strong> No validation (e.g., coupon_rate > 0)</li>
+        <li><strong>UNIQUE Constraints:</strong> No uniqueness enforcement (e.g., CUSIP should be unique)</li>
+        <li><strong>NOT NULL Constraints:</strong> Critical fields can be null</li>
+        <li><strong>Indexes:</strong> Queries will be slow on large datasets</li>
+        <li><strong>Normalization:</strong> May have redundancy issues</li>
+    </ul>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Check Current Table Structure</h3>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">-- List all tables
+\dt
+
+-- Describe a table (notice: no constraints!)
+\d bonds</pre>
+
+<p>You'll see the columns but NO primary keys, foreign keys, or constraints. That's what you'll add in Week 9!</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Common Issues & Solutions</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Issue 1: "Permission denied" when loading CSV</h3>
+<p><strong>Solution:</strong> Use absolute paths in <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">\COPY</code> commands</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; border-radius: 3px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">-- Windows
+\COPY issuers FROM 'C:/full/path/to/issuers.csv' CSV HEADER;
+
+-- Mac/Linux
+\COPY issuers FROM '/full/path/to/issuers.csv' CSV HEADER;</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Issue 2: "Relation does not exist"</h3>
+<p><strong>Solution:</strong> Make sure you created the tables first (Step 3)</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Issue 3: Date format errors</h3>
+<p><strong>Solution:</strong> Dates should be in YYYY-MM-DD format. The CSV files are already in this format, so this shouldn't be an issue.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Issue 4: Column count mismatch</h3>
+<p><strong>Solution:</strong> Make sure your CREATE TABLE statements match the CSV file structure exactly. Check the CSV headers!</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Quick Reference</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Common SQL Commands</h3>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">-- List tables
+\dt
+
+-- Describe table
+\d table_name
+
+-- View data
+SELECT * FROM table_name LIMIT 10;
+
+-- Count rows
+SELECT COUNT(*) FROM table_name;
+
+-- Exit psql
+\q</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Common Aggregations</h3>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">-- Count
+SELECT COUNT(*) FROM bonds;
+
+-- Average
+SELECT AVG(coupon_rate) FROM bonds;
+
+-- Min/Max
+SELECT MIN(trade_price), MAX(trade_price) FROM trades;
+
+-- Group by
+SELECT state, COUNT(*)
+FROM issuers
+GROUP BY state;</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Common Joins</h3>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">-- Inner join
+SELECT *
+FROM bonds b
+JOIN issuers i ON b.issuer_id = i.issuer_id;
+
+-- Left join
+SELECT *
+FROM bonds b
+LEFT JOIN trades t ON b.bond_id = t.bond_id;
+
+-- Multiple joins
+SELECT *
+FROM bonds b
+JOIN issuers i ON b.issuer_id = i.issuer_id
+JOIN bond_purposes bp ON b.purpose_id = bp.purpose_id;</pre>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Success Checklist</h2>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <ul style="list-style-type: none; padding-left: 0;">
+        <li>☐ Database created</li>
+        <li>☐ Simple tables created (6 tables)</li>
+        <li>☐ All CSV files loaded</li>
+        <li>☐ Row counts verified (2000 bonds, 8002 trades, etc.)</li>
+        <li>☐ Explored the data with SELECT queries</li>
+        <li>☐ Understand what columns connect which tables</li>
+        <li>☐ Identified what constraints are missing</li>
+        <li>☐ Ready to design your own proper schema for Week 9!</li>
+    </ul>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Helpful Resources</h2>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #1d4ed8; margin-top: 5px;">Documentation</h4>
+    <ul>
+        <li><strong>PostgreSQL Docs:</strong> <a href="https://www.postgresql.org/docs/" target="_blank">https://www.postgresql.org/docs/</a></li>
+        <li><strong>Window Functions:</strong> <a href="https://www.postgresql.org/docs/current/tutorial-window.html" target="_blank">Tutorial</a></li>
+        <li><strong>psycopg2 Tutorial:</strong> <a href="https://www.psycopg.org/docs/" target="_blank">https://www.psycopg.org/docs/</a></li>
+    </ul>
+
+    <h4 style="color: #1d4ed8; margin-top: 15px;">Sample Queries</h4>
+    <ul>
+        <li>See Sample Queries documentation for 10 example queries</li>
+        <li>Start with easy queries and work up to advanced</li>
+    </ul>
+
+    <h4 style="color: #1d4ed8; margin-top: 15px;">Getting Help</h4>
+    <ol>
+        <li>Check the documentation</li>
+        <li>Review sample queries</li>
+        <li>Search PostgreSQL documentation</li>
+        <li>Ask instructor or TA</li>
+    </ol>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+    <h2 style="color: #1e40af; margin-top: 10px;">You're All Set to Explore!</h2>
+    <p style="font-size: 16px;"><strong>Next Steps:</strong></p>
+    <ul style="text-align: left; display: inline-block;">
+        <li>Explore the data to understand relationships</li>
+        <li>Think about what Primary Keys each table needs</li>
+        <li>Identify Foreign Key relationships</li>
+        <li>Consider what constraints would ensure data quality</li>
+        <li>Start planning your Week 9 schema design!</li>
+    </ul>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Remember for Week 9:</h3>
+    <p>You will design a <strong>proper normalized schema</strong> with:</p>
+    <ul>
+        <li>Primary Keys on all tables</li>
+        <li>Foreign Keys to enforce relationships</li>
+        <li>CHECK constraints for validation</li>
+        <li>UNIQUE constraints where appropriate</li>
+        <li>NOT NULL constraints for required fields</li>
+        <li>Indexes for performance</li>
+        <li>3NF normalization</li>
+    </ul>
+    <p><strong>Don't just copy these simple tables - design your own!</strong></p>
+</div>
+
+</body>
+</html>
+
