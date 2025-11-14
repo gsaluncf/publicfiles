@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG: Retrieval-Augmented Generation</title>
+</head>
+<body>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Introduction: What is RAG?</h2>
+    <p><strong style="color: #1e40af;">Retrieval-Augmented Generation (RAG)</strong> is a technique that combines the power of large language models (LLMs) with external knowledge retrieval. Instead of relying solely on the LLM's training data, RAG systems retrieve relevant information from a knowledge base and use it to generate more accurate, up-to-date, and grounded responses.</p>
+    <p><strong>In this lesson, you'll learn:</strong></p>
+    <ul>
+        <li>Why RAG is essential for modern AI applications</li>
+        <li>How RAG systems work step-by-step</li>
+        <li>Building a complete RAG pipeline with Qdrant</li>
+        <li>Best practices for chunking, embedding, and retrieval</li>
+        <li>Hands-on implementation with a real textbook</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">1. The Problem RAG Solves</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">LLMs Have Limitations</h3>
+
+<p>Large Language Models like GPT-4, Claude, and Llama are incredibly powerful, but they have significant limitations:</p>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">LLM Limitations</h3>
+    <ul>
+        <li>❌ <strong>Knowledge Cutoff</strong> — Training data is frozen at a specific date</li>
+        <li>❌ <strong>Hallucinations</strong> — May generate plausible but incorrect information</li>
+        <li>❌ <strong>No Private Data</strong> — Can't access your company's internal documents</li>
+        <li>❌ <strong>No Source Attribution</strong> — Can't cite where information came from</li>
+        <li>❌ <strong>Expensive Fine-tuning</strong> — Updating knowledge requires costly retraining</li>
+    </ul>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Example: The Problem</h3>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <p><strong>User:</strong> "What is our company's vacation policy?"</p>
+    <p><strong>LLM (without RAG):</strong> "I don't have access to your company's specific policies. I can provide general information about typical vacation policies..."</p>
+    <p><strong>Problem:</strong> The LLM can't help because it doesn't have access to your company handbook!</p>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">RAG to the Rescue!</h3>
+
+<div style="background-color: #d1fae5; border: 1px solid #10b981; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <p><strong>User:</strong> "What is our company's vacation policy?"</p>
+    <p><strong>RAG System:</strong></p>
+    <ol>
+        <li>Searches company handbook for relevant sections</li>
+        <li>Retrieves: "Employees receive 15 days of paid vacation per year..."</li>
+        <li>Provides this context to the LLM</li>
+    </ol>
+    <p><strong>LLM (with RAG):</strong> "According to your company handbook, employees receive 15 days of paid vacation per year, accrued monthly at 1.25 days per month..."</p>
+    <p><strong>Success!</strong> The LLM provides accurate, company-specific information with source attribution.</p>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">2. How RAG Works</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">The RAG Pipeline</h3>
+
+<p>RAG systems follow a multi-step process to answer questions:</p>
+
+<div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; margin: 20px 0;">
+<pre style="margin: 0; font-family: 'Courier New', monospace; font-size: 14px;">
+┌─────────────────────────────────────────────────────────────┐
+│                    RAG PIPELINE                             │
+└─────────────────────────────────────────────────────────────┘
+
+SETUP PHASE (Done Once):
+1. Load documents (textbooks, manuals, articles, etc.)
+2. Split into chunks (~500-1000 tokens each)
+3. Create embeddings for each chunk
+4. Store embeddings in vector database (Qdrant)
+
+QUERY PHASE (Every User Question):
+5. User asks a question
+6. Convert question to embedding (same model as chunks)
+7. Search vector database for similar chunks
+8. Retrieve top-k most relevant chunks
+9. Combine chunks into context
+10. Build prompt: context + question
+11. Send to LLM
+12. Return LLM's answer to user
+</pre>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Visual Representation</h3>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+    <thead>
+        <tr style="background-color: #1e40af; color: white;">
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Phase</th>
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Input</th>
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Process</th>
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Output</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="background-color: #f8fafc;">
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>1. Document Prep</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Raw textbook</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Split into chunks</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">100 chunks of ~700 tokens</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>2. Embedding</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Text chunks</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Encode with model</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">100 vectors (384-dim)</td>
+        </tr>
+        <tr style="background-color: #f8fafc;">
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>3. Storage</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Vectors + metadata</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Insert into Qdrant</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Searchable collection</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>4. Query</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">User question</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Encode question</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Query vector (384-dim)</td>
+        </tr>
+        <tr style="background-color: #f8fafc;">
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>5. Retrieval</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Query vector</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Vector similarity search</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Top 3 relevant chunks</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>6. Context</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Retrieved chunks</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Format as context</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Context string (~2000 tokens)</td>
+        </tr>
+        <tr style="background-color: #f8fafc;">
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>7. Generation</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Context + question</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">LLM generates answer</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Final answer to user</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">3. Key Concepts in RAG</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Chunking</h3>
+
+<p><strong style="color: #1e40af;">Chunking</strong> is the process of splitting documents into smaller, manageable pieces.</p>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">Why Chunk?</h3>
+    <ul>
+        <li>✅ <strong>LLM Context Limits</strong> — Most LLMs have token limits (4K, 8K, 128K)</li>
+        <li>✅ <strong>Precision</strong> — Smaller chunks = more precise retrieval</li>
+        <li>✅ <strong>Cost</strong> — Sending less context = lower API costs</li>
+        <li>✅ <strong>Relevance</strong> — Each chunk focuses on one topic</li>
+    </ul>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Chunk Size Guidelines</h3>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+    <thead>
+        <tr style="background-color: #3b82f6; color: white;">
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Chunk Size</th>
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Pros</th>
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Cons</th>
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Best For</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="background-color: #f8fafc;">
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>Small (200-400 tokens)</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Very precise, low cost</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">May lack context</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">FAQs, definitions</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>Medium (500-800 tokens)</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Good balance</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Moderate cost</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Most use cases ✅</td>
+        </tr>
+        <tr style="background-color: #f8fafc;">
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>Large (1000-2000 tokens)</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Rich context</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Less precise, higher cost</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Long-form content</td>
+        </tr>
+    </tbody>
+</table>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <p><strong style="color: #1e40af;">💡 Our Choice: 700 Tokens</strong></p>
+    <p>In the companion notebook, we use 700-token chunks because:</p>
+    <ul>
+        <li>Large enough to contain complete concepts (paragraphs, sections)</li>
+        <li>Small enough for precise retrieval</li>
+        <li>Allows 3-4 chunks in typical LLM context windows</li>
+        <li>Good balance of cost and quality</li>
+    </ul>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Embeddings</h3>
+
+<p><strong style="color: #1e40af;">Embeddings</strong> are vector representations of text that capture semantic meaning.</p>
+
+<div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; margin: 20px 0;">
+<pre style="margin: 0; font-family: 'Courier New', monospace; font-size: 14px;">
+Text: "Machine learning is a subset of AI"
+
+Embedding: [0.23, -0.45, 0.67, 0.12, ..., 0.89]
+           ↑
+           384 or 768 or 1536 dimensions
+           
+Similar text → Similar vectors
+"AI and machine learning" → [0.25, -0.43, 0.65, 0.15, ..., 0.87]
+                             ↑ Very close in vector space!
+</pre>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Vector Similarity</h3>
+
+<p>We use <strong style="color: #1e40af;">cosine similarity</strong> to measure how similar two embeddings are:</p>
+
+<ul>
+    <li><strong>1.0</strong> = Identical meaning</li>
+    <li><strong>0.8-1.0</strong> = Very similar (highly relevant)</li>
+    <li><strong>0.6-0.8</strong> = Somewhat similar</li>
+    <li><strong>&lt; 0.6</strong> = Not very similar</li>
+</ul>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Check Your Understanding</h3>
+    <ul>
+        <li>Why do we convert text to embeddings instead of using keyword matching?</li>
+        <li>What does a high cosine similarity score indicate?</li>
+        <li>Why must the question and chunks use the same embedding model?</li>
+    </ul>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">4. RAG vs. Alternatives</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Comparison Table</h3>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+    <thead>
+        <tr style="background-color: #1e40af; color: white;">
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Approach</th>
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Pros</th>
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Cons</th>
+            <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="background-color: #f8fafc;">
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>Base LLM</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Simple, fast</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Outdated, hallucinates, no private data</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Low</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>Fine-tuning</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Specialized knowledge</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Expensive, slow to update, requires expertise</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Very High</td>
+        </tr>
+        <tr style="background-color: #f8fafc;">
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>RAG ✅</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Current data, cites sources, easy to update</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Requires vector DB, slightly slower</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Medium</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;"><strong>Prompt Stuffing</strong></td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Simple implementation</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Doesn't scale, wastes tokens, expensive</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">High</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">5. Real-World RAG Applications</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Customer Support Chatbots</h3>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <p><strong>Use Case:</strong> Answer customer questions using product documentation</p>
+    <p><strong>Knowledge Base:</strong> User manuals, FAQs, troubleshooting guides</p>
+    <p><strong>Benefits:</strong></p>
+    <ul>
+        <li>24/7 availability</li>
+        <li>Consistent, accurate answers</li>
+        <li>Cites specific documentation sections</li>
+        <li>Easy to update when products change</li>
+    </ul>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Educational Q&A Systems</h3>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <p><strong>Use Case:</strong> Help students learn from textbooks (like our example!)</p>
+    <p><strong>Knowledge Base:</strong> Textbooks, lecture notes, research papers</p>
+    <p><strong>Benefits:</strong></p>
+    <ul>
+        <li>Personalized tutoring at scale</li>
+        <li>Always cites source material</li>
+        <li>Helps students find relevant sections</li>
+        <li>Available anytime for studying</li>
+    </ul>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Legal Document Analysis</h3>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <p><strong>Use Case:</strong> Search and analyze legal contracts and case law</p>
+    <p><strong>Knowledge Base:</strong> Contracts, regulations, court decisions</p>
+    <p><strong>Benefits:</strong></p>
+    <ul>
+        <li>Find relevant precedents quickly</li>
+        <li>Identify contract clauses</li>
+        <li>Ensure compliance</li>
+        <li>Reduce research time from hours to minutes</li>
+    </ul>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Internal Knowledge Management</h3>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <p><strong>Use Case:</strong> Help employees find company information</p>
+    <p><strong>Knowledge Base:</strong> Policies, procedures, meeting notes, wikis</p>
+    <p><strong>Benefits:</strong></p>
+    <ul>
+        <li>Onboard new employees faster</li>
+        <li>Reduce repetitive questions to HR/IT</li>
+        <li>Preserve institutional knowledge</li>
+        <li>Find information across silos</li>
+    </ul>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">6. Getting Started</h2>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">🎯 Next Steps</h3>
+    <p><strong>Ready to build your own RAG system?</strong></p>
+    <ol>
+        <li>Open the companion Jupyter notebook: <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">rag-textbook-example.ipynb</code></li>
+        <li>Follow along with the step-by-step implementation</li>
+        <li>Run each cell and observe how RAG works</li>
+        <li>Complete the exercises to practice</li>
+        <li>Try with your own documents!</li>
+    </ol>
+</div>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">What You'll Build</h3>
+    <p>In the notebook, you'll create a complete RAG system that:</p>
+    <ul>
+        <li>✅ Loads a textbook from Azure Blob Storage</li>
+        <li>✅ Chunks it into 700-token pieces</li>
+        <li>✅ Creates embeddings with Sentence Transformers</li>
+        <li>✅ Stores everything in Qdrant</li>
+        <li>✅ Answers questions by retrieving relevant context</li>
+        <li>✅ Shows exactly how each step works</li>
+    </ul>
+</div>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Prerequisites</h3>
+    <ul>
+        <li>Basic Python knowledge</li>
+        <li>Understanding of embeddings (see Part 1-3 notebooks)</li>
+        <li>Google Colab account (free)</li>
+        <li>Azure credentials (provided in class)</li>
+    </ul>
+</div>
+
+</body>
+</html>
+
