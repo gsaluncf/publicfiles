@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggregation Metrics: From 10,000 Paths to Decisions</title>
+</head>
+<body>
+
+<nav style="background-color: #1e40af; padding: 12px 20px; margin: -8px -8px 20px -8px; border-radius: 0 0 8px 8px;">
+    <span style="color: white; font-weight: bold; margin-right: 30px;">RMD Seminar</span>
+    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Framework</a>
+    <a href="01_opening_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">1-Opening</a>
+    <a href="02_definitions_glossary.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Glossary</a>
+    <a href="03_data_model_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Data Model</a>
+    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Stats Methods</a>
+    <a href="05_monte_carlo_aggregation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Why Simulate</a>
+    <a href="06_aggregation_metrics.html" style="color: #93c5fd; text-decoration: none; font-weight: bold;">[Metrics]</a>
+</nav>
+
+<h1>Aggregation Metrics: From 10,000 Paths to Decisions</h1>
+<p style="color: #64748b; font-style: italic;">The SQL queries that turn simulation output into actionable insights</p>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">The Aggregation Problem</h2>
+<p>You have run 10,000 simulations. Each path has a different market trajectory and death age. Each produces a terminal wealth value for each strategy. Now what?</p>
+<p>This page covers the statistical techniques for extracting decision-relevant insights from simulation output.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Metric 1: Expected Value</h2>
+
+<p>The simplest aggregation: what is the average terminal wealth across all paths?</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT 
+    strategy,
+    AVG(terminal_wealth) AS expected_wealth,
+    COUNT(*) AS n_paths
+FROM simulation_results
+GROUP BY strategy;
+</pre>
+
+<p><strong>Interpretation:</strong> If you could run this retirement 10,000 times, this is the average outcome you'd expect.</p>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">Limitation of Expected Value</h3>
+<p>Expected value ignores risk. A strategy with E[W] = $2M but 20% chance of $0 may be worse than E[W] = $1.5M with guaranteed minimum of $500K. We need additional metrics.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Metric 2: Value at Risk (VaR)</h2>
+
+<p><strong>Value at Risk at confidence level α</strong> = the value below which only (1-α)% of outcomes fall.</p>
+<p>VaR(95%) answers: "What is the worst outcome I should expect 95% of the time?"</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT 
+    strategy,
+    PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY terminal_wealth) AS var_95,
+    PERCENTILE_CONT(0.01) WITHIN GROUP (ORDER BY terminal_wealth) AS var_99
+FROM simulation_results
+GROUP BY strategy;
+</pre>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Metric</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Interpretation</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">When to Use</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">VaR(95%)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">5th percentile of outcomes</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Standard risk assessment</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">VaR(99%)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">1st percentile of outcomes</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Stress testing, tail risk</td>
+</tr>
+</table>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Metric 3: Tax Alpha</h2>
+
+<p>The core metric for this seminar: how much additional wealth does the optimized strategy generate compared to baseline?</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+WITH strategy_stats AS (
+    SELECT 
+        strategy,
+        AVG(terminal_wealth) AS avg_wealth
+    FROM simulation_results
+    GROUP BY strategy
+),
+baseline AS (
+    SELECT avg_wealth FROM strategy_stats WHERE strategy = 'hold_to_death'
+)
+SELECT 
+    s.strategy,
+    s.avg_wealth,
+    s.avg_wealth - b.avg_wealth AS tax_alpha_dollars,
+    (s.avg_wealth - b.avg_wealth) / b.avg_wealth * 100 AS tax_alpha_pct
+FROM strategy_stats s
+CROSS JOIN baseline b;
+</pre>
+
+<p><strong>Interpretation:</strong> Tax Alpha of +$50,000 means the optimized strategy generates $50,000 more terminal wealth on average than the baseline.</p>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Metric 4: Win Rate</h2>
+
+<p>In what percentage of simulations does Strategy A beat Strategy B? This is a head-to-head comparison using the same market path and death age.</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+WITH paired AS (
+    SELECT 
+        a.path_id,
+        a.terminal_wealth AS wealth_hold,
+        b.terminal_wealth AS wealth_convert
+    FROM simulation_results a
+    JOIN simulation_results b ON a.path_id = b.path_id
+    WHERE a.strategy = 'hold_to_death' 
+      AND b.strategy = 'aggressive_conversion'
+)
+SELECT 
+    COUNT(*) AS total_paths,
+    SUM(CASE WHEN wealth_hold > wealth_convert THEN 1 ELSE 0 END) AS hold_wins,
+    SUM(CASE WHEN wealth_hold > wealth_convert THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS hold_win_rate
+FROM paired;
+</pre>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">Why Win Rate Matters</h3>
+<p>A strategy can have higher expected value but lower win rate. This happens when it wins big in some scenarios but loses in most. Win rate tells you how <em>reliable</em> the advantage is.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Metric 5: Results by Lifespan</h2>
+
+<p>Does the optimal strategy depend on how long you live? Segment results by death age to find out.</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT 
+    CASE 
+        WHEN death_age < 75 THEN 'Early Death (< 75)'
+        WHEN death_age < 85 THEN 'Mid Lifespan (75-84)'
+        ELSE 'Long Life (85+)'
+    END AS lifespan_group,
+    strategy,
+    COUNT(*) AS n,
+    AVG(terminal_wealth) AS avg_wealth,
+    AVG(step_up_benefit) AS avg_step_up
+FROM simulation_results
+GROUP BY 1, 2
+ORDER BY 1, 2;
+</pre>
+
+<p><strong>Key Insight:</strong> The step-up in basis benefit is larger for early deaths (less time for RMDs to erode the IRA). This is why hold-to-death often wins for shorter lifespans.</p>
+
+</body>
+</html>
+

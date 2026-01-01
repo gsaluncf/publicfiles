@@ -187,3 +187,139 @@ def store_results_duckdb(results: List[Dict], db_path: str = 'simulation.duckdb'
     print(f"Stored {len(results):,} results in {db_path}")
     conn.close()
 
+
+def analyze_results(db_path: str = 'simulation.duckdb'):
+    """Run analysis queries on simulation results."""
+    if not HAS_DUCKDB:
+        print("DuckDB not available.")
+        return
+
+    conn = duckdb.connect(db_path)
+
+    print("\n" + "="*60)
+    print("SIMULATION RESULTS ANALYSIS")
+    print("="*60)
+
+    # Strategy comparison
+    print("\n1. STRATEGY COMPARISON")
+    print("-"*40)
+    result = conn.execute("""
+        SELECT
+            strategy,
+            COUNT(*) as n_paths,
+            AVG(terminal_wealth) as avg_wealth,
+            STDDEV(terminal_wealth) as std_wealth,
+            PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY terminal_wealth) as var_95,
+            PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY terminal_wealth) as median,
+            AVG(total_taxes_paid) as avg_taxes,
+            AVG(step_up_benefit) as avg_step_up
+        FROM simulation_results
+        GROUP BY strategy
+    """).fetchall()
+
+    for row in result:
+        print(f"\nStrategy: {row[0]}")
+        print(f"  Paths: {row[1]:,}")
+        print(f"  Avg Terminal Wealth: ${row[2]:,.0f}")
+        print(f"  Std Dev: ${row[3]:,.0f}")
+        print(f"  VaR (5%): ${row[4]:,.0f}")
+        print(f"  Median: ${row[5]:,.0f}")
+        print(f"  Avg Taxes Paid: ${row[6]:,.0f}")
+        print(f"  Avg Step-Up Benefit: ${row[7]:,.0f}")
+
+    # Tax Alpha calculation
+    print("\n2. TAX ALPHA")
+    print("-"*40)
+    result = conn.execute("""
+        WITH strategy_avgs AS (
+            SELECT strategy, AVG(terminal_wealth) as avg_wealth
+            FROM simulation_results
+            GROUP BY strategy
+        )
+        SELECT
+            a.strategy,
+            a.avg_wealth,
+            a.avg_wealth - b.avg_wealth as tax_alpha
+        FROM strategy_avgs a
+        CROSS JOIN (SELECT avg_wealth FROM strategy_avgs WHERE strategy = 'hold_to_death') b
+    """).fetchall()
+
+    for row in result:
+        print(f"{row[0]}: ${row[1]:,.0f} (Alpha: ${row[2]:+,.0f})")
+
+    # Win rate
+    print("\n3. WIN RATE (Head-to-Head)")
+    print("-"*40)
+    result = conn.execute("""
+        WITH paired AS (
+            SELECT
+                a.path_id,
+                a.terminal_wealth as hold_wealth,
+                b.terminal_wealth as convert_wealth
+            FROM simulation_results a
+            JOIN simulation_results b ON a.path_id = b.path_id
+            WHERE a.strategy = 'hold_to_death'
+              AND b.strategy = 'aggressive_conversion'
+        )
+        SELECT
+            COUNT(*) as total,
+            SUM(CASE WHEN hold_wealth > convert_wealth THEN 1 ELSE 0 END) as hold_wins,
+            SUM(CASE WHEN convert_wealth > hold_wealth THEN 1 ELSE 0 END) as convert_wins
+        FROM paired
+    """).fetchone()
+
+    total, hold_wins, convert_wins = result
+    print(f"Total comparisons: {total:,}")
+    print(f"Hold-to-Death wins: {hold_wins:,} ({100*hold_wins/total:.1f}%)")
+    print(f"Aggressive Conversion wins: {convert_wins:,} ({100*convert_wins/total:.1f}%)")
+
+    # By lifespan
+    print("\n4. RESULTS BY LIFESPAN")
+    print("-"*40)
+    result = conn.execute("""
+        SELECT
+            CASE
+                WHEN death_age < 75 THEN 'Early (< 75)'
+                WHEN death_age < 85 THEN 'Mid (75-84)'
+                ELSE 'Late (85+)'
+            END as lifespan_group,
+            strategy,
+            COUNT(*) as n,
+            AVG(terminal_wealth) as avg_wealth
+        FROM simulation_results
+        GROUP BY 1, 2
+        ORDER BY 1, 2
+    """).fetchall()
+
+    for row in result:
+        print(f"{row[0]} | {row[1]}: ${row[3]:,.0f} (n={row[2]})")
+
+    conn.close()
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Run RMD Tax Optimization Simulation')
+    parser.add_argument('--n_paths', type=int, default=1000, help='Number of simulation paths')
+    parser.add_argument('--seed', type=int, default=42, help='Random seed')
+    parser.add_argument('--mu', type=float, default=0.07, help='Expected return')
+    parser.add_argument('--sigma', type=float, default=0.16, help='Volatility')
+    parser.add_argument('--db', type=str, default='simulation.duckdb', help='Database path')
+    parser.add_argument('--analyze-only', action='store_true', help='Only run analysis')
+
+    args = parser.parse_args()
+
+    if not args.analyze_only:
+        config = SimulationConfig(
+            mu=args.mu,
+            sigma=args.sigma,
+        )
+
+        results = run_monte_carlo(config, n_paths=args.n_paths, seed=args.seed)
+        store_results_duckdb(results, args.db)
+
+    analyze_results(args.db)
+
+
+if __name__ == '__main__':
+    main()
+
