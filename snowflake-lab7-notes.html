@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowflake Lab 7: Introduction to Monitoring Usage and Billing</title>
+</head>
+<body>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab6-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 6</a>
+  <a href="snowflake-lab1-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 1 →</a>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">👤 Select Your Lab User</h3>
+    <label for="userSelect" style="font-weight: bold; color: #1e40af;">Choose your assigned username:</label>
+    <select id="userSelect" style="margin-left: 10px; padding: 5px; border: 1px solid #3b82f6; border-radius: 3px; font-size: 14px;" onchange="updateUserReferences();">
+        <option value="">-- Select User --</option>
+        <option value="BADGER">BADGER</option>
+        <option value="BEETLE">BEETLE</option>
+        <option value="BISON">BISON</option>
+        <option value="BLUEJAY">BLUEJAY</option>
+        <option value="BOA">BOA</option>
+        <option value="BULLFROG">BULLFROG</option>
+        <option value="CAMEL">CAMEL</option>
+        <option value="CAT">CAT</option>
+        <option value="CATFISH">CATFISH</option>
+        <option value="CHEETAH">CHEETAH</option>
+        <option value="CHIPMUNK">CHIPMUNK</option>
+        <option value="COBRA">COBRA</option>
+        <option value="COYOTE">COYOTE</option>
+        <option value="CRICKET">CRICKET</option>
+        <option value="DOG">DOG</option>
+        <option value="DOLPHIN">DOLPHIN</option>
+        <option value="DRAGON">DRAGON</option>
+        <option value="EAGLE">EAGLE</option>
+        <option value="FALCON">FALCON</option>
+        <option value="FERRET">FERRET</option>
+        <option value="FINCH">FINCH</option>
+        <option value="FLAMINGO">FLAMINGO</option>
+        <option value="FOX">FOX</option>
+        <option value="GATOR">GATOR</option>
+        <option value="GECKO">GECKO</option>
+        <option value="GIRAFFE">GIRAFFE</option>
+        <option value="GOPHER">GOPHER</option>
+        <option value="GORILLA">GORILLA</option>
+        <option value="GRIZZLY">GRIZZLY</option>
+        <option value="GROUNDHOG">GROUNDHOG</option>
+        <option value="HEDGEHOG">HEDGEHOG</option>
+        <option value="HIPPO">HIPPO</option>
+        <option value="HORNET">HORNET</option>
+        <option value="HYENA">HYENA</option>
+        <option value="JACKAL">JACKAL</option>
+        <option value="JAGUAR">JAGUAR</option>
+        <option value="JELLYFISH">JELLYFISH</option>
+        <option value="KANGAROO">KANGAROO</option>
+        <option value="KOALA">KOALA</option>
+        <option value="LEMMING">LEMMING</option>
+        <option value="LEMUR">LEMUR</option>
+        <option value="LEOPARD">LEOPARD</option>
+        <option value="LION">LION</option>
+        <option value="LIZARD">LIZARD</option>
+        <option value="LOBSTER">LOBSTER</option>
+        <option value="LYNX">LYNX</option>
+        <option value="MACKEREL">MACKEREL</option>
+        <option value="MAGPIE">MAGPIE</option>
+        <option value="MALLARD">MALLARD</option>
+        <option value="MARMOT">MARMOT</option>
+        <option value="MINNOW">MINNOW</option>
+        <option value="MONGOOSE">MONGOOSE</option>
+        <option value="MONKEY">MONKEY</option>
+        <option value="OPOSSUM">OPOSSUM</option>
+        <option value="OSTRICH">OSTRICH</option>
+        <option value="OTTER">OTTER</option>
+        <option value="PANDA">PANDA</option>
+        <option value="PANTHER">PANTHER</option>
+        <option value="PARROT">PARROT</option>
+        <option value="PEACOCK">PEACOCK</option>
+        <option value="PELICAN">PELICAN</option>
+        <option value="PENGUIN">PENGUIN</option>
+        <option value="PIGEON">PIGEON</option>
+        <option value="PIRANHA">PIRANHA</option>
+        <option value="PLATYPUS">PLATYPUS</option>
+        <option value="PONY">PONY</option>
+        <option value="POODLE">POODLE</option>
+        <option value="PUMA">PUMA</option>
+        <option value="PYTHON">PYTHON</option>
+        <option value="QUAIL">QUAIL</option>
+        <option value="RABBIT">RABBIT</option>
+        <option value="RACCOON">RACCOON</option>
+        <option value="RAT">RAT</option>
+        <option value="RAVEN">RAVEN</option>
+        <option value="RHINO">RHINO</option>
+        <option value="ROOSTER">ROOSTER</option>
+        <option value="SCORPION">SCORPION</option>
+        <option value="SEAL">SEAL</option>
+        <option value="SHARK">SHARK</option>
+        <option value="SKUNK">SKUNK</option>
+        <option value="SLOTH">SLOTH</option>
+        <option value="SNAIL">SNAIL</option>
+        <option value="SNAKE">SNAKE</option>
+        <option value="SPARROW">SPARROW</option>
+        <option value="SPIDER">SPIDER</option>
+        <option value="SQUIRREL">SQUIRREL</option>
+        <option value="STINGRAY">STINGRAY</option>
+        <option value="STORK">STORK</option>
+        <option value="SWAN">SWAN</option>
+        <option value="SWORDFISH">SWORDFISH</option>
+        <option value="TAPIR">TAPIR</option>
+        <option value="TERMITE">TERMITE</option>
+        <option value="TIGER">TIGER</option>
+        <option value="TOUCAN">TOUCAN</option>
+        <option value="TURTLE">TURTLE</option>
+        <option value="VIPER">VIPER</option>
+        <option value="WALRUS">WALRUS</option>
+        <option value="WOMBAT">WOMBAT</option>
+        <option value="WOODCHUCK">WOODCHUCK</option>
+        <option value="ZEBRA">ZEBRA</option>
+    </select>
+    <p style="margin-top: 10px; font-size: 12px; color: #6b7280;">All code examples will automatically update with your selected username.</p>
+</div>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Lab 7: Introduction to Monitoring Usage and Billing</h2>
+    <p><strong style="color: #1e40af;">Objective:</strong> Learn to use the SNOWFLAKE database and ACCOUNT_USAGE schema to monitor object usage, track billing metrics, and optimize credit consumption.</p>
+    <p><strong style="color: #1e40af;">Scenario:</strong> As a Snowflake administrator, you need to understand how credits are being consumed and identify opportunities to optimize costs.</p>
+</div>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">📚 Learning Objectives</h3>
+    <ul>
+        <li>Monitor usage and billing with the ACCOUNT_USAGE schema</li>
+        <li>Determine which warehouses do not have resource monitors activated</li>
+        <li>Identify the most expensive queries from the last 30 days</li>
+        <li>Find the top 10 queries with the most spillage to remote storage</li>
+        <li>Understand billing metrics and credit consumption patterns</li>
+    </ul>
+</div>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">💡 About the SNOWFLAKE Database</h3>
+    <p>Snowflake provides a system-defined, read-only shared database named <strong>SNOWFLAKE</strong> that contains metadata and historical usage data about objects in your organization and account.</p>
+    <p><strong>ACCOUNT_USAGE</strong> schema contains secure views for:</p>
+    <ul>
+        <li>Object usage history</li>
+        <li>Grants to roles and users</li>
+        <li>Data loading history</li>
+        <li>Metering and billing history</li>
+        <li>Storage history</li>
+        <li>Query history</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">1. Setup and Context</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.1 Set Context</h3>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+USE ROLE TRAINING_ROLE;
+CREATE WAREHOUSE IF NOT EXISTS WOODCHUCK_WH INITIALLY_SUSPENDED=TRUE;
+USE WAREHOUSE WOODCHUCK_WH;
+USE SCHEMA SNOWFLAKE.ACCOUNT_USAGE;
+</pre>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">⚠️ Important Note</h3>
+    <p>By default, only users with the <strong>ACCOUNTADMIN</strong> role can access the SNOWFLAKE database and ACCOUNT_USAGE schema. For this lab, access has been granted to TRAINING_ROLE for learning purposes.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">2. Monitoring Credit Usage</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.1 Examine Credit Usage by Warehouse (All Time)</h3>
+<p>View total credit consumption for each warehouse over the past year:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+-- Credits used (all time = past year)
+SELECT 
+    WAREHOUSE_NAME,
+    SUM(CREDITS_USED_COMPUTE) AS CREDITS_USED_COMPUTE_SUM
+FROM 
+    ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+GROUP BY 1
+ORDER BY 2 DESC;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.2 Credits Used in Past N Days</h3>
+<p>Analyze credit consumption for a specific time period:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+-- Credits used (past 7 days)
+SELECT 
+    WAREHOUSE_NAME,
+    SUM(CREDITS_USED_COMPUTE) AS CREDITS_USED_COMPUTE_SUM
+FROM 
+    ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+WHERE 
+    START_TIME >= DATEADD(DAY, -7, CURRENT_TIMESTAMP())
+GROUP BY 1
+ORDER BY 2 DESC;
+</pre>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">💡 Pro Tip: Column Position</h3>
+    <p>Notice <code>GROUP BY 1</code> and <code>ORDER BY 2</code> - you can group or order by column position instead of repeating long column names!</p>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.3 Analyzing Credit Consumption</h3>
+<p>Use these queries to:</p>
+<ul>
+    <li>Identify warehouses consuming more credits than expected</li>
+    <li>Spot trends in credit usage over time</li>
+    <li>Investigate why specific warehouses have high consumption</li>
+</ul>
+
+<p>If a warehouse is consuming too many credits, consider:</p>
+<ul>
+    <li>Modifying the auto-suspend policy</li>
+    <li>Adjusting the scaling policy</li>
+    <li>Reviewing data loading efficiency</li>
+    <li>Analyzing query performance and optimization</li>
+    <li>Adding a resource monitor</li>
+</ul>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">3. Resource Monitors</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">3.1 Find Warehouses Without Resource Monitors</h3>
+<p>Resource monitors limit credit consumption during a specific time interval or date range:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SHOW WAREHOUSES;
+
+SELECT 
+    "name" AS WAREHOUSE_NAME,
+    "size" AS WAREHOUSE_SIZE
+FROM 
+    TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+WHERE 
+    "resource_monitor" = 'null';
+</pre>
+
+<p>This identifies warehouses that don't have resource monitors, which could lead to unexpected credit consumption.</p>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">📖 About RESULT_SCAN</h3>
+    <p>The <code>RESULT_SCAN()</code> function allows you to query the results of a previous statement (like SHOW WAREHOUSES) as if it were a table.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">4. Billing Metrics</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.1 Most Expensive Queries (Last 30 Days)</h3>
+<p>Identify queries that consumed the most credits:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT
+    query_id,
+    query_text,
+    user_name,
+    warehouse_name,
+    warehouse_size,
+    (execution_time / 1000) AS execution_time_seconds,
+    credits_used_cloud_services
+FROM
+    ACCOUNT_USAGE.QUERY_HISTORY
+WHERE
+    start_time >= DATEADD(DAY, -30, CURRENT_TIMESTAMP())
+    AND execution_status = 'SUCCESS'
+    AND warehouse_size IS NOT NULL
+ORDER BY
+    credits_used_cloud_services DESC
+LIMIT 20;
+</pre>
+
+<p>This helps identify:</p>
+<ul>
+    <li>Long-running queries that consume many credits</li>
+    <li>Queries that might benefit from optimization</li>
+    <li>Users or warehouses generating high costs</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.2 Queries with Most Spillage to Remote Storage</h3>
+<p>Spillage to remote storage is expensive and slow. Find the top offenders:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT
+    query_id,
+    user_name,
+    warehouse_name,
+    warehouse_size,
+    bytes_spilled_to_remote_storage,
+    bytes_spilled_to_local_storage,
+    (execution_time / 1000) AS execution_time_seconds,
+    query_text
+FROM
+    ACCOUNT_USAGE.QUERY_HISTORY
+WHERE
+    start_time >= DATEADD(DAY, -30, CURRENT_TIMESTAMP())
+    AND bytes_spilled_to_remote_storage > 0
+ORDER BY
+    bytes_spilled_to_remote_storage DESC
+LIMIT 10;
+</pre>
+
+<p>For queries with significant remote spillage, consider:</p>
+<ul>
+    <li>Increasing warehouse size (provides more memory)</li>
+    <li>Rewriting the query to be more memory-efficient</li>
+    <li>Breaking complex operations into multiple steps</li>
+    <li>Using materialized views or intermediate tables</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.3 Storage Costs</h3>
+<p>Monitor your storage consumption:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT
+    usage_date,
+    storage_bytes / (1024*1024*1024) AS storage_gb,
+    stage_bytes / (1024*1024*1024) AS stage_gb,
+    failsafe_bytes / (1024*1024*1024) AS failsafe_gb
+FROM
+    ACCOUNT_USAGE.STORAGE_USAGE
+ORDER BY
+    usage_date DESC
+LIMIT 30;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.4 Daily Credit Consumption Trend</h3>
+<p>Track credit consumption over time to identify patterns:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT
+    DATE(start_time) AS usage_date,
+    warehouse_name,
+    SUM(credits_used_compute) AS total_credits
+FROM
+    ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+WHERE
+    start_time >= DATEADD(DAY, -30, CURRENT_TIMESTAMP())
+GROUP BY 1, 2
+ORDER BY 1 DESC, 3 DESC;
+</pre>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">5. Advanced Analysis</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.1 User Activity Analysis</h3>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+-- Top users by query count
+SELECT
+    user_name,
+    COUNT(*) AS query_count,
+    SUM(execution_time) / 1000 AS total_execution_seconds
+FROM
+    ACCOUNT_USAGE.QUERY_HISTORY
+WHERE
+    start_time >= DATEADD(DAY, -7, CURRENT_TIMESTAMP())
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 10;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.2 Failed Queries Analysis</h3>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+-- Recent failed queries
+SELECT
+    query_id,
+    user_name,
+    error_code,
+    error_message,
+    query_text
+FROM
+    ACCOUNT_USAGE.QUERY_HISTORY
+WHERE
+    start_time >= DATEADD(DAY, -7, CURRENT_TIMESTAMP())
+    AND execution_status = 'FAIL'
+ORDER BY
+    start_time DESC
+LIMIT 20;
+</pre>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">6. Key Takeaways</h2>
+
+<div style="background-color: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <ul>
+        <li>The SNOWFLAKE database contains metadata and usage information for your entire account</li>
+        <li>ACCOUNT_USAGE schema provides secure views for monitoring usage and billing</li>
+        <li>Use WAREHOUSE_METERING_HISTORY to track credit consumption by warehouse</li>
+        <li>Resource monitors help control credit consumption and prevent unexpected costs</li>
+        <li>QUERY_HISTORY view provides detailed information about all executed queries</li>
+        <li>Monitor spillage to remote storage - it's slow and expensive</li>
+        <li>Use GROUP BY and ORDER BY with column positions (1, 2, 3) for cleaner queries</li>
+        <li>Regular monitoring helps identify optimization opportunities and cost savings</li>
+        <li>DATEADD() function is useful for filtering data by time periods</li>
+        <li>RESULT_SCAN() allows querying results from SHOW commands</li>
+    </ul>
+</div>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Check Your Understanding</h3>
+    <ul>
+        <li>What is the purpose of the SNOWFLAKE database?</li>
+        <li>Which role typically has access to ACCOUNT_USAGE schema?</li>
+        <li>What are resource monitors and why are they important?</li>
+        <li>Why is spillage to remote storage a concern?</li>
+        <li>How can you identify the most expensive queries in your account?</li>
+        <li>What views would you query to find storage costs over time?</li>
+    </ul>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">📌 Best Practices</h3>
+    <ul>
+        <li>Set up resource monitors on all production warehouses</li>
+        <li>Regularly review credit consumption patterns</li>
+        <li>Investigate warehouses with unexpected credit spikes</li>
+        <li>Optimize queries with high spillage or long execution times</li>
+        <li>Use appropriate warehouse sizes for different workloads</li>
+        <li>Configure auto-suspend to minimize idle warehouse costs</li>
+        <li>Monitor failed queries to identify systemic issues</li>
+    </ul>
+</div>
+
+<script>
+// Store original content on page load
+let originalContent = {};
+
+function storeOriginalContent() {
+    const elementsToStore = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+    elementsToStore.forEach((element, index) => {
+        originalContent[index] = element.innerHTML;
+    });
+}
+
+function updateUserReferences() {
+    const selectedUser = document.getElementById('userSelect').value;
+
+    if (!selectedUser) {
+        return;
+    }
+
+    // Find all elements that contain user-specific references
+    const elementsToUpdate = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+
+    let updatedCount = 0;
+    elementsToUpdate.forEach((element, index) => {
+        // Get the original content for this element
+        let originalHTML = originalContent[index] || element.innerHTML;
+
+        // Replace all user patterns with selected user
+        let newHTML = originalHTML;
+        newHTML = newHTML.replace(/WOODCHUCK_wh/g, selectedUser + '_wh');
+        newHTML = newHTML.replace(/WOODCHUCK_db/g, selectedUser + '_db');
+        newHTML = newHTML.replace(/WOODCHUCK_WH/g, selectedUser + '_WH');
+        newHTML = newHTML.replace(/WOODCHUCK_DB/g, selectedUser + '_DB');
+        newHTML = newHTML.replace(/WOODCHUCK(?!_)/g, selectedUser);
+
+        if (newHTML !== originalHTML) {
+            element.innerHTML = newHTML;
+            updatedCount++;
+        }
+    });
+
+    // Store selection in localStorage
+    localStorage.setItem('selectedLabUser', selectedUser);
+
+    // Show confirmation
+    const userSelect = document.getElementById('userSelect');
+    userSelect.style.backgroundColor = '#dcfce7';
+    userSelect.style.borderColor = '#16a34a';
+
+    setTimeout(() => {
+        userSelect.style.backgroundColor = '';
+        userSelect.style.borderColor = '#3b82f6';
+    }, 1000);
+}
+
+// Load saved user selection on page load
+window.addEventListener('load', function() {
+    // Store original content first
+    storeOriginalContent();
+
+    const savedUser = localStorage.getItem('selectedLabUser');
+    if (savedUser) {
+        document.getElementById('userSelect').value = savedUser;
+        updateUserReferences();
+    }
+});
+</script>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab6-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 6</a>
+  <a href="snowflake-lab1-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 1 →</a>
+</div>
+
+</body>
+</html>

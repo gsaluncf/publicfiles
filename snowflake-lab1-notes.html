@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowflake Lab 1: Introduction to Snowflake and Snowsight</title>
+</head>
+<body>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab7-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 7</a>
+  <a href="snowflake-lab2-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 2 →</a>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">👤 Select Your Lab User</h3>
+    <label for="userSelect" style="font-weight: bold; color: #1e40af;">Choose your assigned username:</label>
+    <select id="userSelect" style="margin-left: 10px; padding: 5px; border: 1px solid #3b82f6; border-radius: 3px; font-size: 14px;" onchange="console.log('Dropdown changed!'); updateUserReferences();">
+        <option value="">-- Select User --</option>
+        <option value="BADGER">BADGER</option>
+        <option value="BEETLE">BEETLE</option>
+        <option value="BISON">BISON</option>
+        <option value="BLUEJAY">BLUEJAY</option>
+        <option value="BOA">BOA</option>
+        <option value="BULLFROG">BULLFROG</option>
+        <option value="CAMEL">CAMEL</option>
+        <option value="CAT">CAT</option>
+        <option value="CATFISH">CATFISH</option>
+        <option value="CHEETAH">CHEETAH</option>
+        <option value="CHIPMUNK">CHIPMUNK</option>
+        <option value="COBRA">COBRA</option>
+        <option value="COYOTE">COYOTE</option>
+        <option value="CRICKET">CRICKET</option>
+        <option value="DOG">DOG</option>
+        <option value="DOLPHIN">DOLPHIN</option>
+        <option value="DRAGON">DRAGON</option>
+        <option value="EAGLE">EAGLE</option>
+        <option value="FALCON">FALCON</option>
+        <option value="FERRET">FERRET</option>
+        <option value="FINCH">FINCH</option>
+        <option value="FLAMINGO">FLAMINGO</option>
+        <option value="FOX">FOX</option>
+        <option value="GATOR">GATOR</option>
+        <option value="GECKO">GECKO</option>
+        <option value="GIRAFFE">GIRAFFE</option>
+        <option value="GOPHER">GOPHER</option>
+        <option value="GORILLA">GORILLA</option>
+        <option value="GRIZZLY">GRIZZLY</option>
+        <option value="GROUNDHOG">GROUNDHOG</option>
+        <option value="HEDGEHOG">HEDGEHOG</option>
+        <option value="HIPPO">HIPPO</option>
+        <option value="HORNET">HORNET</option>
+        <option value="HYENA">HYENA</option>
+        <option value="JACKAL">JACKAL</option>
+        <option value="JAGUAR">JAGUAR</option>
+        <option value="JELLYFISH">JELLYFISH</option>
+        <option value="KANGAROO">KANGAROO</option>
+        <option value="KOALA">KOALA</option>
+        <option value="LEMMING">LEMMING</option>
+        <option value="LEMUR">LEMUR</option>
+        <option value="LEOPARD">LEOPARD</option>
+        <option value="LION">LION</option>
+        <option value="LIZARD">LIZARD</option>
+        <option value="LOBSTER">LOBSTER</option>
+        <option value="LYNX">LYNX</option>
+        <option value="MACKEREL">MACKEREL</option>
+        <option value="MAGPIE">MAGPIE</option>
+        <option value="MALLARD">MALLARD</option>
+        <option value="MARMOT">MARMOT</option>
+        <option value="MINNOW">MINNOW</option>
+        <option value="MONGOOSE">MONGOOSE</option>
+        <option value="MONKEY">MONKEY</option>
+        <option value="OPOSSUM">OPOSSUM</option>
+        <option value="OSTRICH">OSTRICH</option>
+        <option value="OTTER">OTTER</option>
+        <option value="PANDA">PANDA</option>
+        <option value="PANTHER">PANTHER</option>
+        <option value="PARROT">PARROT</option>
+        <option value="PEACOCK">PEACOCK</option>
+        <option value="PELICAN">PELICAN</option>
+        <option value="PENGUIN">PENGUIN</option>
+        <option value="PIGEON">PIGEON</option>
+        <option value="PIRANHA">PIRANHA</option>
+        <option value="PLATYPUS">PLATYPUS</option>
+        <option value="PONY">PONY</option>
+        <option value="POODLE">POODLE</option>
+        <option value="PUMA">PUMA</option>
+        <option value="PYTHON">PYTHON</option>
+        <option value="QUAIL">QUAIL</option>
+        <option value="RABBIT">RABBIT</option>
+        <option value="RACCOON">RACCOON</option>
+        <option value="RAT">RAT</option>
+        <option value="RAVEN">RAVEN</option>
+        <option value="RHINO">RHINO</option>
+        <option value="ROOSTER">ROOSTER</option>
+        <option value="SCORPION">SCORPION</option>
+        <option value="SEAL">SEAL</option>
+        <option value="SHARK">SHARK</option>
+        <option value="SKUNK">SKUNK</option>
+        <option value="SLOTH">SLOTH</option>
+        <option value="SNAIL">SNAIL</option>
+        <option value="SNAKE">SNAKE</option>
+        <option value="SPARROW">SPARROW</option>
+        <option value="SPIDER">SPIDER</option>
+        <option value="SQUIRREL">SQUIRREL</option>
+        <option value="STINGRAY">STINGRAY</option>
+        <option value="STORK">STORK</option>
+        <option value="SWAN">SWAN</option>
+        <option value="SWORDFISH">SWORDFISH</option>
+        <option value="TAPIR">TAPIR</option>
+        <option value="TERMITE">TERMITE</option>
+        <option value="TIGER">TIGER</option>
+        <option value="TOUCAN">TOUCAN</option>
+        <option value="TURTLE">TURTLE</option>
+        <option value="VIPER">VIPER</option>
+        <option value="WALRUS">WALRUS</option>
+        <option value="WOMBAT">WOMBAT</option>
+        <option value="WOODCHUCK">WOODCHUCK</option>
+        <option value="ZEBRA">ZEBRA</option>
+    </select>
+    <p style="margin-top: 10px; font-size: 12px; color: #6b7280;">All code examples will automatically update with your selected username.</p>
+</div>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Lab 1: Introduction to Snowflake and Snowsight</h2>
+    <p><strong style="color: #1e40af;">Objective:</strong> Learn to navigate Snowsight, create Snowflake objects, and run basic queries for Snowbear Air airline data analysis.</p>
+    <p><strong style="color: #1e40af;">Scenario:</strong> You're working for Snowbear Air, an airline that flies to fun destinations worldwide. You'll create development environment objects to test SQL statements.</p>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">🔑 Login Credentials</h3>
+    <p><strong>URL:</strong> <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">https://sfedu02-vfb48312.snowflakecomputing.com</code></p>
+    <p><strong>Username:</strong> Your assigned lab name (BADGER, BEETLE, BISON, BLUEJAY, etc.)</p>
+    <p><strong>Temporary Password:</strong> <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">fDn@572b5</code></p>
+    <p><strong>⚠️ Important:</strong> You will be prompted to change your password on first login.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">1. Getting Started</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.1 Login Process</h3>
+<ol>
+    <li>Navigate to the provided URL</li>
+    <li>Enter your assigned username (lab animal name)</li>
+    <li>Enter the temporary password</li>
+    <li>Create a new password when prompted</li>
+</ol>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.2 Explore the Home Screen</h3>
+<p>Familiarize yourself with these key components:</p>
+<ul>
+    <li><strong style="color: #1e40af;">User Menu:</strong> Upper left corner (username and current role)</li>
+    <li><strong style="color: #1e40af;">Navigation Bar:</strong> Left side panel for accessing different areas</li>
+    <li><strong style="color: #1e40af;">Account Selector:</strong> Bottom left for switching accounts</li>
+    <li><strong style="color: #1e40af;">Active Panel:</strong> Main content area on the right</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.3 Set Up Your Profile</h3>
+<ol>
+    <li>Click the down arrow next to your username → Select <strong>Profile</strong></li>
+    <li>Enter your name (display name, not login username)</li>
+    <li>Optionally add email address</li>
+    <li>Set Default Experience to <strong>Snowsight</strong></li>
+    <li>Click <strong>Save</strong></li>
+</ol>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Check your understanding</h3>
+    <ul>
+        <li>What are the four main components of the Snowsight home screen?</li>
+        <li>Why should you set Snowsight as your default experience?</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">2. Working with Worksheets</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.1 Create Folders and Worksheets</h3>
+<ol>
+    <li>From home screen, select <strong>Worksheets</strong> from left navigation</li>
+    <li>Click ellipsis (⋯) next to "+ Worksheet" button</li>
+    <li>Select <strong>New Folder</strong> → Name it "Working with Snowsight"</li>
+    <li>Click down arrow next to folder name → <strong>Create Worksheet from SQL File</strong></li>
+    <li>Load your user-specific lab1.sql file</li>
+</ol>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.2 Understanding Worksheet Components</h3>
+<p>Each worksheet is a <strong style="color: #1e40af;">session</strong> connected to Snowflake with its own <strong style="color: #1e40af;">context</strong>:</p>
+<ul>
+    <li><strong>Role:</strong> Determines permissions and object visibility</li>
+    <li><strong>Virtual Warehouse:</strong> Compute resource for running commands</li>
+    <li><strong>Database & Schema:</strong> Default location for object operations</li>
+</ul>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">💡 Context Example</h3>
+    <p>If your context is set to <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">WOODCHUCK_DB.MY_SCHEMA</code>, then:</p>
+    <ul>
+        <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">SELECT * FROM members</code> looks in your current schema</li>
+        <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">SELECT * FROM other_db.other_schema.table</code> specifies full path</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">3. Setting Up Your Environment</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">3.1 Set Initial Context</h3>
+<p>Set your database and schema context to the existing Snowbear Air data:</p>
+<ul>
+    <li><strong>Database:</strong> SNOWBEARAIR_DB</li>
+    <li><strong>Schema:</strong> MODELED</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">3.2 Create Your Virtual Warehouse</h3>
+<p>Run this SQL to create and use your warehouse (see lab1.sql lines 195-199):</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE WAREHOUSE WOODCHUCK_wh WITH
+  WAREHOUSE_SIZE = XSmall
+  INITIALLY_SUSPENDED = true;
+
+USE WAREHOUSE WOODCHUCK_wh;
+</pre>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Check your understanding</h3>
+    <ul>
+        <li>What does "INITIALLY_SUSPENDED = true" mean?</li>
+        <li>How can you tell if your warehouse is running or suspended?</li>
+    </ul>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<p><strong>Continue to Part 2:</strong> <a href="snowflake-lab1-notes-part2.html">Creating Objects and Running Queries</a></p>
+
+<script>
+// Store original content on page load
+let originalContent = {};
+
+function storeOriginalContent() {
+    const elementsToStore = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+    elementsToStore.forEach((element, index) => {
+        originalContent[index] = element.innerHTML;
+    });
+}
+
+function updateUserReferences() {
+    const selectedUser = document.getElementById('userSelect').value;
+
+    if (!selectedUser) {
+        return;
+    }
+
+    // Find all elements that contain user-specific references
+    const elementsToUpdate = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+
+    let updatedCount = 0;
+    elementsToUpdate.forEach((element, index) => {
+        // Get the original content for this element
+        let originalHTML = originalContent[index] || element.innerHTML;
+
+        // Replace all user patterns with selected user
+        let newHTML = originalHTML;
+        newHTML = newHTML.replace(/WOODCHUCK_wh/g, selectedUser + '_wh');
+        newHTML = newHTML.replace(/WOODCHUCK_db/g, selectedUser + '_db');
+        newHTML = newHTML.replace(/WOODCHUCK_WH/g, selectedUser + '_WH');
+        newHTML = newHTML.replace(/WOODCHUCK_DB/g, selectedUser + '_DB');
+        newHTML = newHTML.replace(/WOODCHUCK(?!_)/g, selectedUser);
+
+        if (newHTML !== originalHTML) {
+            element.innerHTML = newHTML;
+            updatedCount++;
+        }
+    });
+
+    // Debug: Show how many elements were updated
+    console.log(`Updated ${updatedCount} elements with ${selectedUser}`);
+
+    // Store selection in localStorage for part 2
+    localStorage.setItem('selectedLabUser', selectedUser);
+
+    // Show confirmation
+    const userSelect = document.getElementById('userSelect');
+    userSelect.style.backgroundColor = '#dcfce7';
+    userSelect.style.borderColor = '#16a34a';
+
+    setTimeout(() => {
+        userSelect.style.backgroundColor = '';
+        userSelect.style.borderColor = '#3b82f6';
+    }, 1000);
+}
+
+// Load saved user selection on page load
+window.addEventListener('load', function() {
+    // Store original content first
+    storeOriginalContent();
+
+    const savedUser = localStorage.getItem('selectedLabUser');
+    if (savedUser) {
+        document.getElementById('userSelect').value = savedUser;
+        updateUserReferences();
+    }
+});
+</script>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab7-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 7</a>
+  <a href="snowflake-lab2-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 2 →</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student FAQ - Municipal Bond Database Project</title>
+</head>
+<body>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Student FAQ</h2>
+    <p><strong>Municipal Bond Database Project - Frequently Asked Questions</strong></p>
+    <p><strong>Last Updated:</strong> 2025-10-03</p>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">General Questions</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Do I need to know about finance or bonds to do this project?</h3>
+<p><strong>A:</strong> No! This is a <strong>database course</strong>, not a finance course. We provide:</p>
+<ul>
+    <li>Financial Analysis Guide - explains all bond concepts</li>
+    <li>Background reading links (Investopedia)</li>
+    <li>SQL examples for each financial metric</li>
+</ul>
+<p>Focus on the <strong>SQL and database skills</strong>. The finance is just the domain context.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Is this project too hard? It looks overwhelming!</h3>
+<p><strong>A:</strong> It's designed to be challenging but achievable. Here's why it's manageable:</p>
+<ul>
+    <li><strong>7 weeks</strong> - plenty of time if you follow the weekly guide</li>
+    <li><strong>Progressive difficulty</strong> - starts easy (proposal, schema) and builds up</li>
+    <li><strong>Weekly milestones</strong> - prevents last-minute cramming</li>
+    <li><strong>Sample queries provided</strong> - shows you how</li>
+    <li><strong>Average workload:</strong> ~12 hours/week (reasonable for a 3-credit course)</li>
+</ul>
+<p><strong>Pro tip:</strong> Follow the Weekly Guide - it breaks down each week into daily tasks!</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Can I work with a partner?</h3>
+<p><strong>A:</strong> You can work <strong>individually or in groups of 2-3 students</strong>. If working in a group, clearly define roles and responsibilities in your Week 8 proposal.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What if I fall behind?</h3>
+<p><strong>A:</strong></p>
+<ol>
+    <li><strong>Don't panic</strong> - talk to the instructor ASAP</li>
+    <li><strong>Prioritize</strong> - focus on the current week's deliverable</li>
+    <li><strong>Use office hours</strong> - get help early, not the night before</li>
+    <li><strong>Ask for extension</strong> - if you have a valid reason, ask early</li>
+</ol>
+<p><strong>Important:</strong> Each week builds on the previous, so catching up gets harder. Stay on schedule!</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Data & Schema Questions</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Where do I get the data files?</h3>
+<p><strong>A:</strong> Download all 6 CSV files from Canvas:</p>
+<ul>
+    <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">issuers.csv</code> (51 rows)</li>
+    <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">bond_purposes.csv</code> (5 rows)</li>
+    <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">bonds.csv</code> (2,000 rows)</li>
+    <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">credit_ratings.csv</code> (2,139 rows)</li>
+    <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">trades.csv</code> (8,002 rows)</li>
+    <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">economic_indicators.csv</code> (300 rows)</li>
+</ul>
+<p><strong>Total:</strong> ~555 KB - small enough to work with locally.</p>
+
+<p>These are the <strong>minimum required</strong>. You can add more tables if you have a good reason (e.g., separating rating agencies), but don't over-complicate it.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What if my schema is different from the reference?</h3>
+<p><strong>A:</strong> That's OK! As long as your schema:</p>
+<ul>
+    <li>Is in <strong>3NF</strong> (properly normalized)</li>
+    <li>Has all <strong>required constraints</strong> (PK, FK, CHECK, UNIQUE)</li>
+    <li>Supports the <strong>required queries</strong></li>
+    <li>Is <strong>well-documented</strong></li>
+</ul>
+<p>There's no single "correct" schema. Good database design involves trade-offs.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: How do I know if my schema is in 3NF?</h3>
+<p><strong>A:</strong> Check these rules:</p>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #1d4ed8; margin-top: 5px;">1NF (First Normal Form):</h4>
+    <ul>
+        <li>All values are atomic (no lists or arrays in a single cell)</li>
+        <li>No repeating groups (e.g., rating1, rating2, rating3 columns)</li>
+    </ul>
+    
+    <h4 style="color: #1d4ed8; margin-top: 15px;">2NF (Second Normal Form):</h4>
+    <ul>
+        <li>Must be in 1NF</li>
+        <li>No partial dependencies (all non-key columns depend on the ENTIRE primary key)</li>
+    </ul>
+    
+    <h4 style="color: #1d4ed8; margin-top: 15px;">3NF (Third Normal Form):</h4>
+    <ul>
+        <li>Must be in 2NF</li>
+        <li>No transitive dependencies (non-key columns don't depend on other non-key columns)</li>
+    </ul>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #1d4ed8; margin-top: 5px;">Example of 3NF violation:</h4>
+    <p>If you have <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">issuer_name</code> and <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">issuer_state</code> in the <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">bonds</code> table, that's a transitive dependency (bond → issuer_id → issuer_name).</p>
+    <p><strong>Solution:</strong> Move issuer info to separate <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">issuers</code> table.</p>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Why are there 2,139 ratings but only 2,000 bonds?</h3>
+<p><strong>A:</strong> Some bonds have <strong>multiple ratings over time</strong> (rating changes). This is realistic:</p>
+<ul>
+    <li>139 bonds (7%) have rating changes (upgrades or downgrades)</li>
+    <li>1,861 bonds (93%) have only their initial rating</li>
+</ul>
+<p>This is a key analytical opportunity - you can analyze rating migration!</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Why do only 1,671 bonds have trades? What about the other 329?</h3>
+<p><strong>A:</strong> This is <strong>realistic</strong>! Not all bonds trade actively:</p>
+<ul>
+    <li><strong>1,671 bonds (84%)</strong> have at least one trade</li>
+    <li><strong>329 bonds (16%)</strong> have zero trades (illiquid)</li>
+</ul>
+<p>This is a discovery opportunity - you can analyze liquidity patterns!</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: The trades only go from 2020-2024, but bonds were issued from 2010-2024. Why?</h3>
+<p><strong>A:</strong> We're simulating a <strong>5-year trading window</strong> (2020-2024). This is realistic:</p>
+<ul>
+    <li>Older bonds (issued 2010-2019) may have traded before 2020</li>
+    <li>We only have trade data for the recent 5-year period</li>
+    <li>This is common in financial datasets (historical data is expensive)</li>
+</ul>
+<p><strong>For your queries:</strong> Focus on the 2020-2024 period where you have trade data.</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Technical Questions</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What version of PostgreSQL should I use?</h3>
+<p><strong>A:</strong> PostgreSQL <strong>12 or higher</strong>. The project uses standard SQL features available in all modern versions.</p>
+<p><strong>Download:</strong> <a href="https://www.postgresql.org/download/" target="_blank">https://www.postgresql.org/download/</a></p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Do I need to install Python?</h3>
+<p><strong>A:</strong> Yes, for Week 10 (data loading script). You'll need:</p>
+<ul>
+    <li><strong>Python 3.8+</strong></li>
+    <li><strong>psycopg2</strong> (PostgreSQL adapter)</li>
+    <li><strong>pandas</strong> (data manipulation)</li>
+</ul>
+
+<div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; margin: 20px 0;">
+<pre style="margin: 0; font-family: 'Courier New', monospace; font-size: 14px;">pip install psycopg2-binary pandas</pre>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Can I use SQLAlchemy instead of psycopg2?</h3>
+<p><strong>A:</strong> Yes! Both are acceptable. Use whichever you're more comfortable with.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What if I can't get PostgreSQL to work on my computer?</h3>
+<p><strong>A:</strong> Options:</p>
+<ol>
+    <li><strong>Use Docker</strong> - run PostgreSQL in a container</li>
+    <li><strong>Use cloud PostgreSQL</strong> - ElephantSQL (free tier), AWS RDS (free tier)</li>
+    <li><strong>Use lab computers</strong> - if your school has a database lab</li>
+    <li><strong>Ask for help</strong> - office hours or discussion board</li>
+</ol>
+<p><strong>Don't wait until Week 10 to figure this out!</strong> Set up PostgreSQL during Week 8-9.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: How do I connect Python to PostgreSQL?</h3>
+<p><strong>A:</strong> Basic example:</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+import psycopg2
+
+conn = psycopg2.connect(
+    dbname="municipal_bonds",
+    user="your_username",
+    password="your_password",
+    host="localhost",
+    port="5432"
+)
+
+cursor = conn.cursor()
+cursor.execute("SELECT COUNT(*) FROM bonds")
+print(cursor.fetchone())
+conn.close()
+</pre>
+
+<p>See the Quick Start Guide for more details.</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Query Questions</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Can I use the sample queries from the documentation?</h3>
+<p><strong>A:</strong> You can <strong>reference</strong> them for learning, but:</p>
+<ul>
+    <li>❌ Don't copy them verbatim</li>
+    <li>✅ Understand how they work</li>
+    <li>✅ Adapt them to your own analytical questions</li>
+    <li>✅ Write your own queries that answer different questions</li>
+</ul>
+<p><strong>Copying sample queries = academic dishonesty</strong></p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What's the difference between a correlated and non-correlated subquery?</h3>
+<p><strong>A:</strong></p>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #1d4ed8; margin-top: 5px;">Non-correlated subquery (runs once):</h4>
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; border-radius: 3px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">SELECT * FROM bonds
+WHERE coupon_rate > (SELECT AVG(coupon_rate) FROM bonds);</pre>
+
+    <h4 style="color: #1d4ed8; margin-top: 15px;">Correlated subquery (runs for each row):</h4>
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; border-radius: 3px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">SELECT * FROM bonds b1
+WHERE coupon_rate > (
+    SELECT AVG(coupon_rate)
+    FROM bonds b2
+    WHERE b2.issuer_id = b1.issuer_id  -- References outer query
+);</pre>
+</div>
+
+<p>Either type is acceptable for Query 3 (Week 11).</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What's a window function and why do I need it?</h3>
+<p><strong>A:</strong> Window functions perform calculations <strong>across rows</strong> related to the current row, without collapsing them (like GROUP BY does).</p>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #1d4ed8; margin-top: 5px;">Example - Moving Average:</h4>
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; border-radius: 3px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">SELECT
+    bond_id,
+    trade_date,
+    trade_price,
+    AVG(trade_price) OVER (
+        PARTITION BY bond_id
+        ORDER BY trade_date
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) AS moving_avg_3day
+FROM trades;</pre>
+    <p>This calculates a 3-day moving average for each bond <strong>without</strong> grouping the data.</p>
+</div>
+
+<p><strong>Resources:</strong></p>
+<ul>
+    <li>PostgreSQL tutorial: <a href="https://www.postgresql.org/docs/current/tutorial-window.html" target="_blank">Window Functions</a></li>
+    <li>Sample Queries - Queries 3, 4, 8, 10</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What's a CTE (Common Table Expression)?</h3>
+<p><strong>A:</strong> A CTE is a <strong>temporary named result set</strong> that you can reference within a query. Think of it as a "query variable."</p>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #1d4ed8; margin-top: 5px;">Example:</h4>
+    <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; border-radius: 3px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">WITH high_yield_bonds AS (
+    SELECT bond_id, yield
+    FROM trades
+    WHERE yield > 4.0
+)
+SELECT b.bond_id, b.cusip, hyb.yield
+FROM bonds b
+JOIN high_yield_bonds hyb ON b.bond_id = hyb.bond_id;</pre>
+</div>
+
+<p><strong>Why use CTEs?</strong></p>
+<ul>
+    <li>Makes complex queries more readable</li>
+    <li>Can reference the same subquery multiple times</li>
+    <li>Can chain multiple CTEs together</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: How do I join trades with economic indicators? They don't have a direct relationship.</h3>
+<p><strong>A:</strong> Join through <strong>state and date</strong>:</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">SELECT t.*, ei.unemployment_rate, ei.treasury_10yr
+FROM trades t
+JOIN bonds b ON t.bond_id = b.bond_id
+JOIN issuers i ON b.issuer_id = i.issuer_id
+JOIN economic_indicators ei ON
+    i.state = ei.state AND
+    DATE_TRUNC('month', t.trade_date) = ei.date;</pre>
+
+<p><strong>Key:</strong> Economic indicators are monthly, so use <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">DATE_TRUNC('month', ...)</code> to match.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What if my query returns too many rows?</h3>
+<p><strong>A:</strong> Use <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">LIMIT</code>:</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; border-radius: 3px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">SELECT * FROM trades LIMIT 20;</pre>
+
+<p>For your submission, show the <strong>first 20 rows</strong> of results.</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Visualization Questions</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What tool should I use for visualizations?</h3>
+<p><strong>A:</strong> Choose based on your comfort level:</p>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #1d4ed8; margin-top: 5px;">Easiest: Google Sheets or Excel</h4>
+    <ul>
+        <li>Import CSV query results</li>
+        <li>Create charts with built-in tools</li>
+        <li>Good for simple visualizations</li>
+    </ul>
+
+    <h4 style="color: #1d4ed8; margin-top: 15px;">Intermediate: Python (Plotly, Matplotlib, Seaborn) or R (ggplot2, plotly)</h4>
+    <ul>
+        <li>More control over appearance</li>
+        <li>Can create interactive charts</li>
+        <li>Requires programming knowledge</li>
+    </ul>
+
+    <h4 style="color: #1d4ed8; margin-top: 15px;">Advanced: Tableau Public or Power BI</h4>
+    <ul>
+        <li>Professional-looking dashboards</li>
+        <li>Interactive and shareable</li>
+        <li>Steeper learning curve</li>
+    </ul>
+
+    <h4 style="color: #1d4ed8; margin-top: 15px;">Web-based: Streamlit or Dash</h4>
+    <ul>
+        <li>Create web apps</li>
+        <li>Requires Python + web framework knowledge</li>
+        <li>Impressive but time-consuming</li>
+    </ul>
+</div>
+
+<p><strong>Recommendation:</strong> Start with what you know. A simple, clear chart is better than a fancy, confusing one.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: How do I create a yield curve?</h3>
+<p><strong>A:</strong></p>
+<p><strong>1. Query:</strong> Get yield vs. time to maturity</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">SELECT
+    EXTRACT(YEAR FROM (maturity_date - CURRENT_DATE)) AS years_to_maturity,
+    AVG(yield) AS avg_yield,
+    rating
+FROM bonds b
+JOIN trades t ON b.bond_id = t.bond_id
+JOIN credit_ratings cr ON b.bond_id = cr.bond_id
+GROUP BY years_to_maturity, rating;</pre>
+
+<p><strong>2. Visualize:</strong> Line chart with:</p>
+<ul>
+    <li>X-axis: Years to maturity</li>
+    <li>Y-axis: Average yield</li>
+    <li>Color: Credit rating</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What does "overlay economic indicators" mean?</h3>
+<p><strong>A:</strong> Create a chart with <strong>two Y-axes</strong>:</p>
+<ul>
+    <li><strong>Left Y-axis:</strong> Bond yields or prices</li>
+    <li><strong>Right Y-axis:</strong> Economic indicator (unemployment, Treasury yield)</li>
+    <li><strong>X-axis:</strong> Time (date)</li>
+</ul>
+<p>This shows how bond metrics move with economic conditions.</p>
+<p><strong>Tools:</strong> Plotly (Python), Excel (secondary axis), Tableau</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Grading & Submission Questions</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What if I can't finish all 10 queries?</h3>
+<p><strong>A:</strong> Submit what you have! Partial credit is better than zero.</p>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #1d4ed8; margin-top: 5px;">Priority order:</h4>
+    <ol>
+        <li>Week 11 queries (20 points) - do these first</li>
+        <li>Week 12 queries (25 points) - higher value</li>
+        <li>pgvector bonus (10 points) - only if you have time</li>
+    </ol>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Do I need to do the pgvector bonus?</h3>
+<p><strong>A:</strong> <strong>No, it's optional.</strong> The bonus is for students who:</p>
+<ul>
+    <li>Finish early</li>
+    <li>Want extra challenge</li>
+    <li>Are interested in semantic search / embeddings</li>
+</ul>
+<p>You can get 100/100 without it. The +10 bonus brings you to 110/100.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: How do I submit all the files?</h3>
+<p><strong>A:</strong> Create a <strong>ZIP file</strong> containing:</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; border-radius: 3px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">project_submission.zip
+├── final_report.pdf
+├── schema.sql
+├── load_data.py
+├── queries_week11.sql
+├── queries_week12.sql
+├── visualizations.pdf
+└── README.md</pre>
+
+<p><strong>Upload the ZIP to Canvas by Dec 10.</strong></p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #1d4ed8; margin-top: 5px;">Allowed:</h4>
+    <ul>
+        <li>✅ Discussing concepts with classmates</li>
+        <li>✅ Using PostgreSQL documentation</li>
+        <li>✅ Searching Stack Overflow for syntax help</li>
+        <li>✅ Asking instructor/TA for help</li>
+        <li>✅ Learning from sample queries (but write your own)</li>
+    </ul>
+</div>
+
+<p><strong>When in doubt, ask!</strong></p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Can I use AI tools like ChatGPT?</h3>
+<p><strong>A:</strong> Check with your instructor/LLM. Generally:</p>
+<ul>
+    <li>✅ OK for learning concepts ("Explain window functions")</li>
+    <li>✅ OK for debugging syntax errors</li>
+    <li>❌ NOT OK for writing your queries</li>
+    <li>❌ NOT OK for writing your report</li>
+</ul>
+<p><strong>This is a learning project.</strong> Using AI to do the work defeats the purpose.</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Additional Resources</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Where can I learn more about SQL?</h3>
+<ul>
+    <li><strong>PostgreSQL Tutorial:</strong> <a href="https://www.postgresqltutorial.com/" target="_blank">https://www.postgresqltutorial.com/</a></li>
+    <li><strong>Mode Analytics SQL Tutorial:</strong> <a href="https://mode.com/sql-tutorial/" target="_blank">https://mode.com/sql-tutorial/</a></li>
+    <li><strong>W3Schools SQL:</strong> <a href="https://www.w3schools.com/sql/" target="_blank">https://www.w3schools.com/sql/</a></li>
+    <li><strong>SQLZoo:</strong> <a href="https://sqlzoo.net/" target="_blank">https://sqlzoo.net/</a> (interactive exercises)</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: Where can I learn about municipal bonds?</h3>
+<ul>
+    <li><strong>Investopedia:</strong> <a href="https://www.investopedia.com/terms/m/municipalbond.asp" target="_blank">Municipal Bonds Overview</a></li>
+    <li><strong>MSRB Education:</strong> <a href="https://www.msrb.org/Education-Center" target="_blank">https://www.msrb.org/Education-Center</a></li>
+    <li><strong>Our guide:</strong> Financial Analysis Guide</li>
+</ul>
+
+<p><strong>Remember:</strong> You don't need to be a bond expert! Focus on the database skills.</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Final Tips</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Q: What's the #1 mistake students make?</h3>
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <p><strong>Starting too late!</strong></p>
+    <p>The project is <strong>7 weeks</strong> for a reason. Each week builds on the previous. If you wait until Week 13 to start, you'll be overwhelmed.</p>
+    <p><strong>Follow the weekly guide and you'll be fine!</strong></p>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+
+</body>
+</html>
+

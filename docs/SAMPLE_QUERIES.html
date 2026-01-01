@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample SQL Queries - Municipal Bond Database</title>
+</head>
+<body>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Sample SQL Queries</h2>
+    <p><strong>Municipal Bond Database - Advanced Analytics</strong></p>
+    <p>This document provides 10 example queries demonstrating key SQL concepts for the project.</p>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Query 1: Simple JOIN - Bonds with Issuer Information</h2>
+
+<p><strong>Concept:</strong> Basic INNER JOIN<br>
+<strong>Difficulty:</strong> Easy</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">-- Get bond details with issuer information
+SELECT 
+    b.bond_id,
+    b.cusip,
+    i.issuer_name,
+    i.state,
+    i.issuer_type,
+    b.coupon_rate,
+    b.issue_date,
+    b.maturity_date
+FROM bonds b
+INNER JOIN issuers i ON b.issuer_id = i.issuer_id
+WHERE i.state = 'CA'
+ORDER BY b.issue_date DESC
+LIMIT 20;</pre>
+
+<p><strong>Learning Objective:</strong> Basic table joins and filtering</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Query 2: GROUP BY with Aggregation - Bonds by State and Rating</h2>
+
+<p><strong>Concept:</strong> GROUP BY, COUNT, AVG<br>
+<strong>Difficulty:</strong> Medium</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">-- Average coupon rate and bond count by state and current rating
+SELECT 
+    i.state,
+    cr.rating,
+    COUNT(DISTINCT b.bond_id) AS bond_count,
+    ROUND(AVG(b.coupon_rate), 2) AS avg_coupon_rate,
+    ROUND(AVG(b.duration), 2) AS avg_duration
+FROM bonds b
+INNER JOIN issuers i ON b.issuer_id = i.issuer_id
+INNER JOIN credit_ratings cr ON b.bond_id = cr.bond_id
+WHERE cr.rating_date = (
+    SELECT MAX(rating_date) 
+    FROM credit_ratings 
+    WHERE bond_id = b.bond_id
+)
+GROUP BY i.state, cr.rating
+ORDER BY i.state, cr.rating;</pre>
+
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Query 3: Window Function - Moving Average of Trade Prices</h2>
+
+<p><strong>Concept:</strong> WINDOW FUNCTIONS (OVER, PARTITION BY, ORDER BY)<br>
+<strong>Difficulty:</strong> Advanced</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">-- Calculate 30-day moving average of trade prices for each bond
+SELECT 
+    bond_id,
+    trade_date,
+    trade_price,
+    ROUND(AVG(trade_price) OVER (
+        PARTITION BY bond_id 
+        ORDER BY trade_date 
+        ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
+    ), 2) AS moving_avg_30day,
+    ROUND(trade_price - AVG(trade_price) OVER (
+        PARTITION BY bond_id 
+        ORDER BY trade_date 
+        ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
+    ), 2) AS price_deviation
+FROM trades
+WHERE bond_id IN (
+    SELECT bond_id 
+    FROM trades 
+    GROUP BY bond_id 
+    HAVING COUNT(*) >= 5
+)
+ORDER BY bond_id, trade_date;</pre>
+
+<p><strong>Learning Objective:</strong> Window functions for time-series analysis</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    </tbody>
+</table>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Important Notes</h3>
+    <ul>
+        <li><strong>Don't copy these queries verbatim</strong> - Use them as learning examples</li>
+        <li><strong>Understand the concepts</strong> - Know why each query works</li>
+        <li><strong>Adapt to your questions</strong> - Modify these to answer your own analytical questions</li>
+        <li><strong>Test incrementally</strong> - Start with simple queries and build complexity</li>
+        <li><strong>Comment your code</strong> - Explain what each part does</li>
+    </ul>
+</div>
+
+</body>
+</html>
+

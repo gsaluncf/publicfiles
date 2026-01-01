@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowflake Lab 6: Exploring Semi-Structured JSON Data</title>
+</head>
+<body>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab5-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 5</a>
+  <a href="snowflake-lab7-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 7 →</a>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">👤 Select Your Lab User</h3>
+    <label for="userSelect" style="font-weight: bold; color: #1e40af;">Choose your assigned username:</label>
+    <select id="userSelect" style="margin-left: 10px; padding: 5px; border: 1px solid #3b82f6; border-radius: 3px; font-size: 14px;" onchange="updateUserReferences();">
+        <option value="">-- Select User --</option>
+        <option value="BADGER">BADGER</option>
+        <option value="BEETLE">BEETLE</option>
+        <option value="BISON">BISON</option>
+        <option value="BLUEJAY">BLUEJAY</option>
+        <option value="BOA">BOA</option>
+        <option value="BULLFROG">BULLFROG</option>
+        <option value="CAMEL">CAMEL</option>
+        <option value="CAT">CAT</option>
+        <option value="CATFISH">CATFISH</option>
+        <option value="CHEETAH">CHEETAH</option>
+        <option value="CHIPMUNK">CHIPMUNK</option>
+        <option value="COBRA">COBRA</option>
+        <option value="COYOTE">COYOTE</option>
+        <option value="CRICKET">CRICKET</option>
+        <option value="DOG">DOG</option>
+        <option value="DOLPHIN">DOLPHIN</option>
+        <option value="DRAGON">DRAGON</option>
+        <option value="EAGLE">EAGLE</option>
+        <option value="FALCON">FALCON</option>
+        <option value="FERRET">FERRET</option>
+        <option value="FINCH">FINCH</option>
+        <option value="FLAMINGO">FLAMINGO</option>
+        <option value="FOX">FOX</option>
+        <option value="GATOR">GATOR</option>
+        <option value="GECKO">GECKO</option>
+        <option value="GIRAFFE">GIRAFFE</option>
+        <option value="GOPHER">GOPHER</option>
+        <option value="GORILLA">GORILLA</option>
+        <option value="GRIZZLY">GRIZZLY</option>
+        <option value="GROUNDHOG">GROUNDHOG</option>
+        <option value="HEDGEHOG">HEDGEHOG</option>
+        <option value="HIPPO">HIPPO</option>
+        <option value="HORNET">HORNET</option>
+        <option value="HYENA">HYENA</option>
+        <option value="JACKAL">JACKAL</option>
+        <option value="JAGUAR">JAGUAR</option>
+        <option value="JELLYFISH">JELLYFISH</option>
+        <option value="KANGAROO">KANGAROO</option>
+        <option value="KOALA">KOALA</option>
+        <option value="LEMMING">LEMMING</option>
+        <option value="LEMUR">LEMUR</option>
+        <option value="LEOPARD">LEOPARD</option>
+        <option value="LION">LION</option>
+        <option value="LIZARD">LIZARD</option>
+        <option value="LOBSTER">LOBSTER</option>
+        <option value="LYNX">LYNX</option>
+        <option value="MACKEREL">MACKEREL</option>
+        <option value="MAGPIE">MAGPIE</option>
+        <option value="MALLARD">MALLARD</option>
+        <option value="MARMOT">MARMOT</option>
+        <option value="MINNOW">MINNOW</option>
+        <option value="MONGOOSE">MONGOOSE</option>
+        <option value="MONKEY">MONKEY</option>
+        <option value="OPOSSUM">OPOSSUM</option>
+        <option value="OSTRICH">OSTRICH</option>
+        <option value="OTTER">OTTER</option>
+        <option value="PANDA">PANDA</option>
+        <option value="PANTHER">PANTHER</option>
+        <option value="PARROT">PARROT</option>
+        <option value="PEACOCK">PEACOCK</option>
+        <option value="PELICAN">PELICAN</option>
+        <option value="PENGUIN">PENGUIN</option>
+        <option value="PIGEON">PIGEON</option>
+        <option value="PIRANHA">PIRANHA</option>
+        <option value="PLATYPUS">PLATYPUS</option>
+        <option value="PONY">PONY</option>
+        <option value="POODLE">POODLE</option>
+        <option value="PUMA">PUMA</option>
+        <option value="PYTHON">PYTHON</option>
+        <option value="QUAIL">QUAIL</option>
+        <option value="RABBIT">RABBIT</option>
+        <option value="RACCOON">RACCOON</option>
+        <option value="RAT">RAT</option>
+        <option value="RAVEN">RAVEN</option>
+        <option value="RHINO">RHINO</option>
+        <option value="ROOSTER">ROOSTER</option>
+        <option value="SCORPION">SCORPION</option>
+        <option value="SEAL">SEAL</option>
+        <option value="SHARK">SHARK</option>
+        <option value="SKUNK">SKUNK</option>
+        <option value="SLOTH">SLOTH</option>
+        <option value="SNAIL">SNAIL</option>
+        <option value="SNAKE">SNAKE</option>
+        <option value="SPARROW">SPARROW</option>
+        <option value="SPIDER">SPIDER</option>
+        <option value="SQUIRREL">SQUIRREL</option>
+        <option value="STINGRAY">STINGRAY</option>
+        <option value="STORK">STORK</option>
+        <option value="SWAN">SWAN</option>
+        <option value="SWORDFISH">SWORDFISH</option>
+        <option value="TAPIR">TAPIR</option>
+        <option value="TERMITE">TERMITE</option>
+        <option value="TIGER">TIGER</option>
+        <option value="TOUCAN">TOUCAN</option>
+        <option value="TURTLE">TURTLE</option>
+        <option value="VIPER">VIPER</option>
+        <option value="WALRUS">WALRUS</option>
+        <option value="WOMBAT">WOMBAT</option>
+        <option value="WOODCHUCK">WOODCHUCK</option>
+        <option value="ZEBRA">ZEBRA</option>
+    </select>
+    <p style="margin-top: 10px; font-size: 12px; color: #6b7280;">All code examples will automatically update with your selected username.</p>
+</div>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Lab 6: Exploring Semi-Structured JSON Data</h2>
+    <p><strong style="color: #1e40af;">Objective:</strong> Learn to create and query tables with JSON data using dot notation syntax and the FLATTEN function.</p>
+    <p><strong style="color: #1e40af;">Scenario:</strong> Snowbear Air is collecting JSON data. You're tasked with learning about semi-structured data and teaching other analysts how to work with it.</p>
+</div>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">📚 Learning Objectives</h3>
+    <ul>
+        <li>Create a simple table with JSON data stored in VARIANT columns</li>
+        <li>Query JSON data using dot notation syntax</li>
+        <li>Query nested JSON data with dot notation</li>
+        <li>Use the FLATTEN function to query complex JSON structures</li>
+        <li>Determine and cast data types in query results</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">1. Setup and Simple JSON</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.1 Set Context</h3>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+USE ROLE training_role;
+CREATE WAREHOUSE IF NOT EXISTS WOODCHUCK_WH;
+ALTER WAREHOUSE WOODCHUCK_WH SET WAREHOUSE_SIZE=XSmall;
+USE WAREHOUSE WOODCHUCK_WH;
+CREATE DATABASE IF NOT EXISTS WOODCHUCK_DB;
+USE DATABASE WOODCHUCK_DB;
+CREATE SCHEMA IF NOT EXISTS WOODCHUCK_SCHEMA;
+USE SCHEMA WOODCHUCK_SCHEMA;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.2 Create Simple JSON Table</h3>
+<p>Create a table with customer data where the info column contains JSON:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE OR REPLACE TABLE customers AS
+SELECT
+    $1 AS id,
+    parse_json($2) AS info
+FROM
+    VALUES
+    (12712555, '{"name": {"first": "John", "last":"Smith"}}'),
+    (98127771, '{"name": {"first": "Jane", "last":"Doe"}}');
+</pre>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">💡 Understanding VARIANT</h3>
+    <p>The <strong>VARIANT</strong> data type can store semi-structured data like JSON, Avro, ORC, Parquet, or XML. The <code>parse_json()</code> function converts a string to a VARIANT containing JSON.</p>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.3 View the Table Structure</h3>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT * FROM customers;
+</pre>
+<p>Click on a row in the <strong>info</strong> column to display its JSON structure. You'll see the top-level key "name" contains an object with "first" and "last" keys.</p>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">2. Dot Notation Syntax</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.1 Extract JSON Data with Dot Notation</h3>
+<p>Use dot notation to extract values from JSON:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT
+    id,
+    info:name.first AS first_name,
+    info:name.last AS last_name
+FROM
+    customers;
+</pre>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">📖 Dot Notation Syntax</h3>
+    <p><code>&lt;column&gt;:&lt;level1_element&gt;.&lt;level2_element&gt;.&lt;level3_element&gt;</code></p>
+    <ul>
+        <li>Use a colon <strong>:</strong> after the column name</li>
+        <li>Use dots <strong>.</strong> to navigate through nested levels</li>
+        <li>Example: <code>info:name.first</code> navigates to column → name object → first property</li>
+    </ul>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.2 Check Data Types</h3>
+<p>Notice the extracted values are in double quotes - they're still VARIANT type:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+DESCRIBE RESULT last_query_id();
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.3 Cast to VARCHAR</h3>
+<p>Cast VARIANT to standard SQL types for better performance:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT
+    id,
+    info:name.first::VARCHAR AS first_name,
+    info:name.last::VARCHAR AS last_name
+FROM
+    customers;
+
+-- Verify the data types
+DESCRIBE RESULT last_query_id();
+</pre>
+
+<p>Now the columns are VARCHAR. Use <strong>::VARCHAR</strong> (or other types) to cast VARIANT data for:</p>
+<ul>
+    <li>Better query performance</li>
+    <li>String functions and sorting</li>
+    <li>Comparisons and aggregations</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.4 Create Structured Table</h3>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE OR REPLACE TABLE customers_structured AS
+SELECT
+    id,
+    info:name.first::VARCHAR AS first_name,
+    info:name.last::VARCHAR AS last_name
+FROM
+    customers;
+
+SELECT * FROM customers_structured;
+</pre>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">3. Nested JSON Data</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">3.1 Create More Complex JSON</h3>
+<p>Work with deeper nested structures and arrays:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE OR REPLACE TABLE customers_nested AS
+SELECT
+    $1 AS id,
+    parse_json($2) AS info
+FROM
+    VALUES
+    (12712555, '{
+        "name": {"first": "John", "last":"Smith"},
+        "contact": {
+            "address": {"street": "123 Main St", "city": "Seattle", "state": "WA"},
+            "phones": ["206-555-1234", "206-555-5678"]
+        }
+    }'),
+    (98127771, '{
+        "name": {"first": "Jane", "last":"Doe"},
+        "contact": {
+            "address": {"street": "456 Pine Ave", "city": "Boston", "state": "MA"},
+            "phones": ["617-555-9999"]
+        }
+    }');
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">3.2 Query Nested Objects</h3>
+<p>Navigate through multiple levels:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT
+    id,
+    info:name.first::VARCHAR AS first_name,
+    info:contact.address.city::VARCHAR AS city,
+    info:contact.address.state::VARCHAR AS state
+FROM
+    customers_nested;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">3.3 Query Array Elements</h3>
+<p>Access specific array elements using bracket notation:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT
+    id,
+    info:name.first::VARCHAR AS first_name,
+    info:contact.phones[0]::VARCHAR AS phone1,
+    info:contact.phones[1]::VARCHAR AS phone2
+FROM
+    customers_nested;
+</pre>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">⚠️ Array Index</h3>
+    <p>Arrays are zero-indexed: <code>[0]</code> is the first element, <code>[1]</code> is the second, etc. If an index doesn't exist, the result is NULL.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">4. FLATTEN Function</h2>
+
+<p>When you don't know how many array elements exist, or need to process all elements, use <strong>FLATTEN</strong>.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.1 Basic FLATTEN Usage</h3>
+<p>FLATTEN explodes an array into multiple rows:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT
+    id,
+    info:name.first::VARCHAR AS first_name,
+    f.value::VARCHAR AS phone
+FROM
+    customers_nested,
+    LATERAL FLATTEN(input => info:contact.phones) f;
+</pre>
+
+<p>This produces one row per phone number. Customer 12712555 has 2 phones → 2 rows. Customer 98127771 has 1 phone → 1 row.</p>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">💡 FLATTEN Output Columns</h3>
+    <ul>
+        <li><strong>VALUE:</strong> The element from the array</li>
+        <li><strong>INDEX:</strong> Position in the array (0, 1, 2...)</li>
+        <li><strong>KEY:</strong> For objects, the key name</li>
+        <li><strong>PATH:</strong> Full path to the element</li>
+    </ul>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.2 FLATTEN with Object Arrays</h3>
+<p>If your array contains objects (not just strings), FLATTEN can help extract fields:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+-- Example: orders array with objects
+CREATE OR REPLACE TABLE customers_orders AS
+SELECT
+    $1 AS id,
+    parse_json($2) AS info
+FROM
+    VALUES
+    (12712555, '{
+        "name": "John Smith",
+        "orders": [
+            {"order_id": 101, "amount": 250.00},
+            {"order_id": 102, "amount": 175.50}
+        ]
+    }');
+
+-- Flatten the orders array
+SELECT
+    id,
+    info:name::VARCHAR AS customer_name,
+    f.value:order_id::INT AS order_id,
+    f.value:amount::NUMBER(10,2) AS amount
+FROM
+    customers_orders,
+    LATERAL FLATTEN(input => info:orders) f;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.3 Recursive FLATTEN</h3>
+<p>For deeply nested arrays, use <code>recursive => TRUE</code>:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+-- This flattens all nested levels
+SELECT
+    f.value
+FROM
+    customers_nested,
+    LATERAL FLATTEN(input => info, recursive => TRUE) f;
+</pre>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">5. Practical Example</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.1 Complete Scenario</h3>
+<p>Extract all customer contact information including all phone numbers:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT
+    id,
+    info:name.first::VARCHAR || ' ' || info:name.last::VARCHAR AS full_name,
+    info:contact.address.street::VARCHAR AS street,
+    info:contact.address.city::VARCHAR AS city,
+    info:contact.address.state::VARCHAR AS state,
+    f.value::VARCHAR AS phone_number,
+    f.index AS phone_index
+FROM
+    customers_nested,
+    LATERAL FLATTEN(input => info:contact.phones) f
+ORDER BY id, phone_index;
+</pre>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">6. Key Takeaways</h2>
+
+<div style="background-color: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <ul>
+        <li>VARIANT columns can store JSON and other semi-structured data</li>
+        <li>Use <code>parse_json()</code> to convert strings to JSON VARIANT</li>
+        <li>Dot notation syntax: <code>column:level1.level2.level3</code></li>
+        <li>Array elements accessed with brackets: <code>column:array[0]</code></li>
+        <li>Cast VARIANT to SQL types (::VARCHAR, ::INT, etc.) for better performance</li>
+        <li>FLATTEN explodes arrays into multiple rows for processing</li>
+        <li>LATERAL FLATTEN allows you to join flattened results with original table</li>
+        <li>Use <code>recursive => TRUE</code> for deeply nested structures</li>
+        <li>Check data types with <code>DESCRIBE RESULT last_query_id()</code></li>
+    </ul>
+</div>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Check Your Understanding</h3>
+    <ul>
+        <li>What's the difference between a colon and a dot in dot notation?</li>
+        <li>Why should you cast VARIANT values to specific SQL types?</li>
+        <li>What does FLATTEN do to an array?</li>
+        <li>How do you access the third element of an array in JSON?</li>
+        <li>What is the purpose of the LATERAL keyword?</li>
+    </ul>
+</div>
+
+<script>
+// Store original content on page load
+let originalContent = {};
+
+function storeOriginalContent() {
+    const elementsToStore = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+    elementsToStore.forEach((element, index) => {
+        originalContent[index] = element.innerHTML;
+    });
+}
+
+function updateUserReferences() {
+    const selectedUser = document.getElementById('userSelect').value;
+
+    if (!selectedUser) {
+        return;
+    }
+
+    // Find all elements that contain user-specific references
+    const elementsToUpdate = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+
+    let updatedCount = 0;
+    elementsToUpdate.forEach((element, index) => {
+        // Get the original content for this element
+        let originalHTML = originalContent[index] || element.innerHTML;
+
+        // Replace all user patterns with selected user
+        let newHTML = originalHTML;
+        newHTML = newHTML.replace(/WOODCHUCK_wh/g, selectedUser + '_wh');
+        newHTML = newHTML.replace(/WOODCHUCK_db/g, selectedUser + '_db');
+        newHTML = newHTML.replace(/WOODCHUCK_WH/g, selectedUser + '_WH');
+        newHTML = newHTML.replace(/WOODCHUCK_DB/g, selectedUser + '_DB');
+        newHTML = newHTML.replace(/WOODCHUCK_SCHEMA/g, selectedUser + '_SCHEMA');
+        newHTML = newHTML.replace(/WOODCHUCK(?!_)/g, selectedUser);
+
+        if (newHTML !== originalHTML) {
+            element.innerHTML = newHTML;
+            updatedCount++;
+        }
+    });
+
+    // Store selection in localStorage
+    localStorage.setItem('selectedLabUser', selectedUser);
+
+    // Show confirmation
+    const userSelect = document.getElementById('userSelect');
+    userSelect.style.backgroundColor = '#dcfce7';
+    userSelect.style.borderColor = '#16a34a';
+
+    setTimeout(() => {
+        userSelect.style.backgroundColor = '';
+        userSelect.style.borderColor = '#3b82f6';
+    }, 1000);
+}
+
+// Load saved user selection on page load
+window.addEventListener('load', function() {
+    // Store original content first
+    storeOriginalContent();
+
+    const savedUser = localStorage.getItem('selectedLabUser');
+    if (savedUser) {
+        document.getElementById('userSelect').value = savedUser;
+        updateUserReferences();
+    }
+});
+</script>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab5-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 5</a>
+  <a href="snowflake-lab7-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 7 →</a>
+</div>
+
+</body>
+</html>

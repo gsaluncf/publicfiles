@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entity Design Guide: Strong vs Weak Entities</title>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            text-align: center; 
+            color: #2d3748; 
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .entity-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        .entity-card {
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .strong-entity {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+        }
+        .weak-entity {
+            background: linear-gradient(135deg, #718096, #4a5568);
+            color: white;
+        }
+        .entity-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .entity-icon {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .characteristics {
+            list-style: none;
+            padding: 0;
+        }
+        .characteristics li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+        .characteristics li:before {
+            content: "✓ ";
+            font-weight: bold;
+        }
+        .naming-section {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .naming-title {
+            font-size: 1.6em;
+            color: #2d3748;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .naming-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .naming-example {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4299e1;
+        }
+        .example-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        .table-example {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .decision-tree {
+            background: #e6fffa;
+            border: 2px solid #38b2ac;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .decision-title {
+            font-size: 1.4em;
+            color: #2c7a7b;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .decision-step {
+            background: white;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #38b2ac;
+        }
+        .step-number {
+            background: #38b2ac;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .interactive-practice {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .practice-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .scenario {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .scenario-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        button {
+            background: white;
+            color: #805ad5;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+            .entity-comparison { grid-template-columns: 1fr; }
+            .naming-examples { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Entity Design Guide</h1>
+
+        <div class="entity-comparison">
+            <div class="entity-card strong-entity">
+                <div class="entity-icon">🏛️</div>
+                <div class="entity-title">Strong Entities</div>
+                <ul class="characteristics">
+                    <li>Have their own unique identifying key</li>
+                    <li>Can exist independently</li>
+                    <li>Represent real-world "things" or objects</li>
+                    <li>Examples: Customer, Product, Employee</li>
+                    <li>Business-level tangible items</li>
+                    <li>Single column primary key (usually)</li>
+                </ul>
+            </div>
+
+            <div class="entity-card weak-entity">
+                <div class="entity-icon">🔗</div>
+                <div class="entity-title">Weak Entities</div>
+                <ul class="characteristics">
+                    <li>Depend on another entity for existence</li>
+                    <li>Have composite keys linking other tables</li>
+                    <li>Exist primarily for database structure</li>
+                    <li>Examples: OrderItem, FilmCategory, Enrollment</li>
+                    <li>Hidden entities discovered during modeling</li>
+                    <li>Used for JOIN operations</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="naming-section">
+            <div class="naming-title">🏷️ Naming Conventions for Junction Tables</div>
+            <p style="text-align: center; color: #718096; margin-bottom: 25px;">
+                Good naming conventions help identify table purposes and relationships
+            </p>
+            
+            <div class="naming-examples">
+                <div class="naming-example">
+                    <div class="example-title">Pattern: Entity1_Entity2</div>
+                    <div class="table-example">
+                        film_category<br>
+                        student_course<br>
+                        author_book<br>
+                        employee_project
+                    </div>
+                    <p><strong>Purpose:</strong> Immediately identifies the two entities being joined</p>
+                </div>
+
+                <div class="naming-example">
+                    <div class="example-title">Pattern: BusinessProcess</div>
+                    <div class="table-example">
+                        enrollment (student + course)<br>
+                        order_item (order + product)<br>
+                        booking (passenger + flight)<br>
+                        assignment (employee + task)
+                    </div>
+                    <p><strong>Purpose:</strong> Describes the business relationship/process</p>
+                </div>
+
+                <div class="naming-example">
+                    <div class="example-title">Pattern: EntityAction</div>
+                    <div class="table-example">
+                        student_enrollment<br>
+                        customer_purchase<br>
+                        employee_assignment<br>
+                        user_login
+                    </div>
+                    <p><strong>Purpose:</strong> Emphasizes the action or event being tracked</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="decision-tree">
+            <div class="decision-title">🤔 Decision Process: Strong vs Weak Entity</div>
+            
+            <div class="decision-step">
+                <span class="step-number">1</span>
+                <strong>Does this entity have its own unique, meaningful identifier?</strong><br>
+                If YES → Likely a <strong>Strong Entity</strong><br>
+                If NO → Continue to step 2
+            </div>
+
+            <div class="decision-step">
+                <span class="step-number">2</span>
+                <strong>Can this entity exist without referencing other entities?</strong><br>
+                If YES → Likely a <strong>Strong Entity</strong><br>
+                If NO → Continue to step 3
+            </div>
+
+            <div class="decision-step">
+                <span class="step-number">3</span>
+                <strong>Does this entity primarily exist to connect other entities?</strong><br>
+                If YES → Likely a <strong>Weak Entity</strong> (Junction Table)<br>
+                If NO → Continue to step 4
+            </div>
+
+            <div class="decision-step">
+                <span class="step-number">4</span>
+                <strong>Does this entity represent a real-world "thing" vs. a relationship?</strong><br>
+                Real-world thing → <strong>Strong Entity</strong><br>
+                Relationship/Process → <strong>Weak Entity</strong>
+            </div>
+        </div>
+
+        <div class="interactive-practice">
+            <div class="practice-title">🎯 Practice: Identify Entity Types</div>
+            
+            <div class="scenario" id="scenario1">
+                <strong>Scenario 1:</strong> A library system needs to track which books are written by which authors. Some books have multiple authors, and some authors have written multiple books.
+                
+                <div class="scenario-buttons">
+                    <button onclick="checkAnswer(1, 'book-author', 'weak')">Create: book_author (Weak)</button>
+                    <button onclick="checkAnswer(1, 'authorship', 'weak')">Create: authorship (Weak)</button>
+                    <button onclick="checkAnswer(1, 'book-strong', 'strong')">Just use Book table (Strong)</button>
+                </div>
+                <div class="feedback" id="feedback1"></div>
+            </div>
+
+            <div class="scenario" id="scenario2">
+                <strong>Scenario 2:</strong> An e-commerce system needs to track individual products in customer orders, including quantity and price at time of purchase.
+                
+                <div class="scenario-buttons">
+                    <button onclick="checkAnswer(2, 'order-item-weak', 'weak')">Create: order_item (Weak)</button>
+                    <button onclick="checkAnswer(2, 'product-order', 'strong')">Combine Product+Order (Strong)</button>
+                    <button onclick="checkAnswer(2, 'purchase-weak', 'weak')">Create: purchase (Weak)</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+            </div>
+
+            <div class="scenario" id="scenario3">
+                <strong>Scenario 3:</strong> A movie database needs to track which actors appeared in which films, including their role/character name.
+                
+                <div class="scenario-buttons">
+                    <button onclick="checkAnswer(3, 'film-actor-weak', 'weak')">Create: film_actor (Weak)</button>
+                    <button onclick="checkAnswer(3, 'casting-weak', 'weak')">Create: casting (Weak)</button>
+                    <button onclick="checkAnswer(3, 'actor-strong', 'strong')">Just use Actor table (Strong)</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = {
+            1: {
+                correct: ['book-author', 'authorship'],
+                explanation: "This is a many-to-many relationship requiring a junction table (weak entity). Both 'book_author' and 'authorship' are valid naming conventions. The junction table would contain book_id, author_id, and possibly additional attributes like author_order."
+            },
+            2: {
+                correct: ['order-item-weak', 'purchase-weak'],
+                explanation: "This requires a weak entity to handle the many-to-many relationship between orders and products. 'order_item' follows the entity_entity naming pattern, while 'purchase' uses business process naming. Both are weak entities that would contain order_id, product_id, quantity, and price."
+            },
+            3: {
+                correct: ['film-actor-weak', 'casting-weak'],
+                explanation: "Another many-to-many relationship needing a junction table. 'film_actor' uses entity_entity naming, 'casting' uses business process naming. The weak entity would store film_id, actor_id, character_name, and other role-specific data."
+            }
+        };
+
+        function checkAnswer(scenarioNum, choice, type) {
+            const scenario = scenarios[scenarioNum];
+            const isCorrect = scenario.correct.includes(choice);
+            const feedbackDiv = document.getElementById(`feedback${scenarioNum}`);
+            
+            let message = '';
+            if (isCorrect) {
+                message = `<div style="background: rgba(72, 187, 120, 0.2); border-left: 4px solid #48bb78; padding: 15px; border-radius: 0 8px 8px 0;">
+                    <strong style="color: #276749;">✅ Correct!</strong><br>
+                    ${scenario.explanation}
+                </div>`;
+            } else {
+                message = `<div style="background: rgba(245, 101, 101, 0.2); border-left: 4px solid #f56565; padding: 15px; border-radius: 0 8px 8px 0;">
+                    <strong style="color: #c53030;">❌ Not the best approach</strong><br>
+                    ${scenario.explanation}
+                </div>`;
+            }
+            
+            feedbackDiv.innerHTML = message;
+        }
+    </script>
+</body>
+</html>

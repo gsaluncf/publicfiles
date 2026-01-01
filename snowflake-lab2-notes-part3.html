@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowflake Lab 2 Part 3: Adding Tiles and Sharing</title>
+</head>
+<body>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab1-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 1</a>
+  <a href="snowflake-lab3-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 3 →</a>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">👤 Select Your Lab User</h3>
+    <label for="userSelect" style="font-weight: bold; color: #1e40af;">Choose your assigned username:</label>
+    <select id="userSelect" style="margin-left: 10px; padding: 5px; border: 1px solid #3b82f6; border-radius: 3px; font-size: 14px;" onchange="updateUserReferences()">
+        <option value="">-- Select User --</option>
+        <option value="BADGER">BADGER</option>
+        <option value="BEETLE">BEETLE</option>
+        <option value="BISON">BISON</option>
+        <option value="BLUEJAY">BLUEJAY</option>
+        <option value="BOA">BOA</option>
+        <option value="BULLFROG">BULLFROG</option>
+        <option value="CAMEL">CAMEL</option>
+        <option value="CAT">CAT</option>
+        <option value="CATFISH">CATFISH</option>
+        <option value="CHEETAH">CHEETAH</option>
+        <option value="CHIPMUNK">CHIPMUNK</option>
+        <option value="COBRA">COBRA</option>
+        <option value="COYOTE">COYOTE</option>
+        <option value="CRICKET">CRICKET</option>
+        <option value="DOG">DOG</option>
+        <option value="DOLPHIN">DOLPHIN</option>
+        <option value="DRAGON">DRAGON</option>
+        <option value="EAGLE">EAGLE</option>
+        <option value="FALCON">FALCON</option>
+        <option value="FERRET">FERRET</option>
+        <option value="FINCH">FINCH</option>
+        <option value="FLAMINGO">FLAMINGO</option>
+        <option value="FOX">FOX</option>
+        <option value="GATOR">GATOR</option>
+        <option value="GECKO">GECKO</option>
+        <option value="GIRAFFE">GIRAFFE</option>
+        <option value="GOPHER">GOPHER</option>
+        <option value="GORILLA">GORILLA</option>
+        <option value="GRIZZLY">GRIZZLY</option>
+        <option value="GROUNDHOG">GROUNDHOG</option>
+        <option value="HEDGEHOG">HEDGEHOG</option>
+        <option value="HIPPO">HIPPO</option>
+        <option value="HORNET">HORNET</option>
+        <option value="HYENA">HYENA</option>
+        <option value="JACKAL">JACKAL</option>
+        <option value="JAGUAR">JAGUAR</option>
+        <option value="JELLYFISH">JELLYFISH</option>
+        <option value="KANGAROO">KANGAROO</option>
+        <option value="KOALA">KOALA</option>
+        <option value="LEMMING">LEMMING</option>
+        <option value="LEMUR">LEMUR</option>
+        <option value="LEOPARD">LEOPARD</option>
+        <option value="LION">LION</option>
+        <option value="LIZARD">LIZARD</option>
+        <option value="LOBSTER">LOBSTER</option>
+        <option value="LYNX">LYNX</option>
+        <option value="MACKEREL">MACKEREL</option>
+        <option value="MAGPIE">MAGPIE</option>
+        <option value="MALLARD">MALLARD</option>
+        <option value="MARMOT">MARMOT</option>
+        <option value="MINNOW">MINNOW</option>
+        <option value="MONGOOSE">MONGOOSE</option>
+        <option value="MONKEY">MONKEY</option>
+        <option value="OPOSSUM">OPOSSUM</option>
+        <option value="OSTRICH">OSTRICH</option>
+        <option value="OTTER">OTTER</option>
+        <option value="PANDA">PANDA</option>
+        <option value="PANTHER">PANTHER</option>
+        <option value="PARROT">PARROT</option>
+        <option value="PEACOCK">PEACOCK</option>
+        <option value="PELICAN">PELICAN</option>
+        <option value="PENGUIN">PENGUIN</option>
+        <option value="PIGEON">PIGEON</option>
+        <option value="PIRANHA">PIRANHA</option>
+        <option value="PLATYPUS">PLATYPUS</option>
+        <option value="PONY">PONY</option>
+        <option value="POODLE">POODLE</option>
+        <option value="PUMA">PUMA</option>
+        <option value="PYTHON">PYTHON</option>
+        <option value="QUAIL">QUAIL</option>
+        <option value="RABBIT">RABBIT</option>
+        <option value="RACCOON">RACCOON</option>
+        <option value="RAT">RAT</option>
+        <option value="RAVEN">RAVEN</option>
+        <option value="RHINO">RHINO</option>
+        <option value="ROOSTER">ROOSTER</option>
+        <option value="SCORPION">SCORPION</option>
+        <option value="SEAL">SEAL</option>
+        <option value="SHARK">SHARK</option>
+        <option value="SKUNK">SKUNK</option>
+        <option value="SLOTH">SLOTH</option>
+        <option value="SNAIL">SNAIL</option>
+        <option value="SNAKE">SNAKE</option>
+        <option value="SPARROW">SPARROW</option>
+        <option value="SPIDER">SPIDER</option>
+        <option value="SQUIRREL">SQUIRREL</option>
+        <option value="STINGRAY">STINGRAY</option>
+        <option value="STORK">STORK</option>
+        <option value="SWAN">SWAN</option>
+        <option value="SWORDFISH">SWORDFISH</option>
+        <option value="TAPIR">TAPIR</option>
+        <option value="TERMITE">TERMITE</option>
+        <option value="TIGER">TIGER</option>
+        <option value="TOUCAN">TOUCAN</option>
+        <option value="TURTLE">TURTLE</option>
+        <option value="VIPER">VIPER</option>
+        <option value="WALRUS">WALRUS</option>
+        <option value="WOMBAT">WOMBAT</option>
+        <option value="WOODCHUCK">WOODCHUCK</option>
+        <option value="ZEBRA">ZEBRA</option>
+    </select>
+    <p style="margin-top: 10px; font-size: 12px; color: #6b7280;">All code examples will automatically update with your selected username.</p>
+</div>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Lab 2 Part 3: Adding Tiles and Sharing</h2>
+    <p><strong style="color: #1e40af;">Final Steps:</strong> Add visualization tiles to your dashboard and share it with colleagues.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">4. Add Tiles to Dashboard</h2>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">💡 Dashboard Tiles</h3>
+    <p>There are several ways to add tiles to a dashboard:</p>
+    <ul>
+        <li><strong>Create new:</strong> Build a tile from scratch</li>
+        <li><strong>Duplicate:</strong> Copy an existing tile and modify its query</li>
+        <li><strong>Add chart:</strong> Convert numeric data to a graph visualization</li>
+    </ul>
+    <p>We'll use the third method to create a chart from our existing data.</p>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.1 Create Chart Tile</h3>
+<ol>
+    <li><strong>Edit existing tile:</strong> Click the <strong>ellipsis (⋯)</strong> in the upper right corner of your data tile</li>
+    <li>Select <strong>"Edit Query"</strong></li>
+    <li>You'll return to the original query with results displayed</li>
+    <li><strong>Create chart:</strong> Click the <strong>"Chart"</strong> button below the SQL and above the query results</li>
+    <li>A line graph will be displayed by default</li>
+    <li><strong>Return to dashboard:</strong> Click "Return to <code>WOODCHUCK Gross Sales</code>" in the upper left</li>
+</ol>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.2 Arrange Dashboard Layout</h3>
+<ol>
+    <li><strong>Reposition tiles:</strong> Click, hold, and drag the graph tile</li>
+    <li><strong>Position above data:</strong> When you see a blue cursor above the data tile, release the mouse</li>
+    <li>Your dashboard should now show the graph above the data table</li>
+</ol>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Check your understanding</h3>
+    <ul>
+        <li>What are the benefits of having both chart and table views of the same data?</li>
+        <li>How does the visual representation help identify trends?</li>
+        <li>What other chart types might be useful for this data?</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">5. Share Your Dashboard</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">5.1 Configure Sharing</h3>
+<ol>
+    <li><strong>Open sharing dialog:</strong> Click the <strong>"Share"</strong> button in the upper-right corner</li>
+    <li>The dialog allows you to search for users and invite them to view/use the dashboard</li>
+    <li><strong>Add user:</strong> Enter <strong>"Instructor1"</strong> as the user to share with</li>
+    <li><strong>Set permissions:</strong> Click the down arrow next to the username</li>
+    <li>Select <strong>"View + run"</strong> permissions</li>
+    <li><strong>Complete sharing:</strong> Click <strong>"Done"</strong></li>
+</ol>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">🔐 Permission Levels</h3>
+    <ul>
+        <li><strong>View:</strong> Can see the dashboard but not interact with it</li>
+        <li><strong>View + run:</strong> Can view and execute queries in the dashboard</li>
+        <li><strong>Edit:</strong> Can modify the dashboard structure and queries</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">6. Key Takeaways</h2>
+
+<div style="background-color: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">🎯 What You've Learned</h3>
+    <ul>
+        <li><strong>Ad-hoc Analysis:</strong> Use contextual statistics filters to gain quick insights into data</li>
+        <li><strong>Dashboard Creation:</strong> Convert existing worksheets into interactive dashboards</li>
+        <li><strong>Visualization:</strong> Create charts from numeric data to identify trends</li>
+        <li><strong>Collaboration:</strong> Share dashboards with colleagues using appropriate permissions</li>
+        <li><strong>Data Presentation:</strong> Combine tables and charts for comprehensive data views</li>
+    </ul>
+</div>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">🚀 Next Steps</h3>
+    <p>Consider exploring:</p>
+    <ul>
+        <li>Different chart types (bar, pie, scatter plots)</li>
+        <li>Advanced filtering and drill-down capabilities</li>
+        <li>Scheduled dashboard refreshes</li>
+        <li>Dashboard embedding in external applications</li>
+        <li>Custom dashboard themes and branding</li>
+    </ul>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">📝 Lab Completion</h3>
+    <p><strong>Deliverables:</strong></p>
+    <ul>
+        <li>✅ Dashboard named "<code>WOODCHUCK Gross Sales</code>" with your username</li>
+        <li>✅ Data tile showing year-by-year gross sales</li>
+        <li>✅ Chart tile visualizing the sales trend</li>
+        <li>✅ Dashboard shared with Instructor1 (View + run permissions)</li>
+    </ul>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<p><strong>Previous:</strong> <a href="snowflake-lab2-notes-part2.html">Part 2: Data Analysis and Dashboard Creation</a></p>
+<p><strong>Next Lab:</strong> <a href="snowflake-lab3-notes.html">Lab 3: Caching and Query Performance</a></p>
+
+<script>
+// Store original content on page load
+let originalContent = {};
+
+function storeOriginalContent() {
+    const elementsToStore = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+    elementsToStore.forEach((element, index) => {
+        originalContent[index] = element.innerHTML;
+    });
+}
+
+function updateUserReferences() {
+    const selectedUser = document.getElementById('userSelect').value;
+    
+    if (!selectedUser) {
+        return;
+    }
+
+    // Find all elements that contain user-specific references
+    const elementsToUpdate = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+    
+    let updatedCount = 0;
+    elementsToUpdate.forEach((element, index) => {
+        // Get the original content for this element
+        let originalHTML = originalContent[index] || element.innerHTML;
+        
+        // Replace all user patterns with selected user
+        let newHTML = originalHTML;
+        newHTML = newHTML.replace(/WOODCHUCK_wh/g, selectedUser + '_wh');
+        newHTML = newHTML.replace(/WOODCHUCK_db/g, selectedUser + '_db');
+        newHTML = newHTML.replace(/WOODCHUCK_WH/g, selectedUser + '_WH');
+        newHTML = newHTML.replace(/WOODCHUCK_DB/g, selectedUser + '_DB');
+        newHTML = newHTML.replace(/WOODCHUCK(?!_)/g, selectedUser);
+        
+        if (newHTML !== originalHTML) {
+            element.innerHTML = newHTML;
+            updatedCount++;
+        }
+    });
+
+    // Store selection in localStorage for consistency across pages
+    localStorage.setItem('selectedLabUser', selectedUser);
+
+    // Show confirmation
+    const userSelect = document.getElementById('userSelect');
+    userSelect.style.backgroundColor = '#dcfce7';
+    userSelect.style.borderColor = '#16a34a';
+
+    setTimeout(() => {
+        userSelect.style.backgroundColor = '';
+        userSelect.style.borderColor = '#3b82f6';
+    }, 1000);
+}
+
+// Load saved user selection on page load
+window.addEventListener('load', function() {
+    // Store original content first
+    storeOriginalContent();
+    
+    const savedUser = localStorage.getItem('selectedLabUser');
+    if (savedUser) {
+        document.getElementById('userSelect').value = savedUser;
+        updateUserReferences();
+    }
+});
+</script>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab1-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 1</a>
+  <a href="snowflake-lab3-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 3 →</a>
+</div>
+
+</body>
+</html>

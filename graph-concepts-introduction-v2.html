@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Databases and Knowledge Graphs - Connecting the Dots</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f7fafc;
+        }
+        h1 {
+            color: #1a365d;
+            border-bottom: 4px solid #3182ce;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2c5282;
+            margin-top: 30px;
+            border-left: 4px solid #3182ce;
+            padding-left: 15px;
+        }
+        h3 {
+            color: #2d3748;
+            margin-top: 20px;
+        }
+        .concept-box {
+            background-color: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .example-box {
+            background-color: #f0fff4;
+            border-left: 4px solid #38a169;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #fffaf0;
+            border-left: 4px solid #ed8936;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .key-term {
+            font-weight: bold;
+            color: #2c5282;
+        }
+        code {
+            background-color: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #c7254e;
+        }
+        pre {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+        }
+        th, td {
+            border: 1px solid #cbd5e0;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3182ce;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Graph Databases and Knowledge Graphs</h1>
+    <p><strong>Connecting the Dots in Your Data</strong></p>
+
+
+    <h2>The Detective Board Analogy</h2>
+    
+    <p>Imagine a detective board covered with photographs, news articles, and notes, all connected by thumbtacks and yarn. At a glance, you can see the power of connecting the dots and understanding relationships. Now imagine applying a mathematical engine that can query these relationships, traverse paths, and discover patterns. That is exactly what a graph database does.</p>
+
+    <p>Graph databases take the visual intuition of a detective board and make it queryable, scalable, and powerful for data analysis.</p>
+
+    <img src="board.jpg" height="500" width="750"/>
+    <h2>What is a Graph Database?</h2>
+
+    <p>A <span class="key-term">graph database</span> is a database designed specifically to store and query relationships between data. Unlike traditional databases that focus on individual records, graph databases excel at answering questions about connections, paths, and patterns across your data.</p>
+
+    <div class="concept-box">
+        <h3>Core Components</h3>
+        <p>Every graph database consists of three fundamental elements:</p>
+        <ul>
+            <li><strong>Nodes:</strong> Entities or records (people, concepts, products, places)</li>
+            <li><strong>Edges:</strong> Relationships between nodes (connections, interactions, dependencies)</li>
+            <li><strong>Properties:</strong> Attributes attached to nodes and edges (metadata, weights, timestamps)</li>
+        </ul>
+    </div>
+
+    <h3>Nodes</h3>
+    <p>Nodes represent the entities in your data. In a social network, nodes might be people or pages. In a knowledge graph of database concepts, nodes represent individual topics like Primary Key, Normalization, or SQL Joins.</p>
+
+    <p>Each node can store rich data. For a database concept node, this might include difficulty level, chapter number, or whether examples are available.</p>
+
+    <h3>Edges and Relationships</h3>
+
+    <img src="mermaid-ai-diagram-2025-11-18-193730.png" height="226" width="587"/>
+    <p>Edges represent the relationships between nodes. These relationships can have direction and type. For example, in a knowledge graph of database concepts:</p>
+    
+    <ul>
+        <li>Primary Key <strong>prerequisite_for</strong> Foreign Key</li>
+        <li>Normalization <strong>related_to</strong> Functional Dependencies</li>
+        <li>SQL <strong>part_of</strong> Database Management</li>
+    </ul>
+
+    <p>Edges can also have properties. You might store the strength of a relationship, the year it was established, or the number of times two entities interact.</p>
+
+    <h2>Graph Databases vs Relational Databases</h2>
+
+    <p>Relational databases excel at processing transactions and building deterministic analytics. Their strict constraints make them ideal for structured data and ACID compliance. However, these same constraints make it complex to answer questions about distant relationships.</p>
+
+    <div class="example-box">
+        <h3>Example: Finding Distant Connections</h3>
+        <p>Imagine you have all university professor and student data ever gathered. You want to know the relationship between a group of 10 students from completely different universities.</p>
+        
+        <p>At first glance, since the students did not attend the same universities, they appear unconnected. But if you examine their professors, who themselves attended universities as students, you might discover they all shared a common professor generations back.</p>
+        
+        <p>In a relational database, this query requires multiple complex joins across many tables. In a graph database, you simply traverse the relationships.</p>
+    </div>
+
+    <table>
+        <tr>
+            <th>Aspect</th>
+            <th>Relational Database</th>
+            <th>Graph Database</th>
+        </tr>
+        <tr>
+            <td><strong>Structure</strong></td>
+            <td>Tables with rows and columns</td>
+            <td>Nodes connected by edges</td>
+        </tr>
+        <tr>
+            <td><strong>Relationships</strong></td>
+            <td>Foreign keys and joins</td>
+            <td>Direct edges with properties</td>
+        </tr>
+        <tr>
+            <td><strong>Best For</strong></td>
+            <td>Transactions, structured data</td>
+            <td>Connected data, pattern discovery</td>
+        </tr>
+        <tr>
+            <td><strong>Query Complexity</strong></td>
+            <td>Simple for direct queries, complex for deep relationships</td>
+            <td>Simple for relationship traversal</td>
+        </tr>
+        <tr>
+            <td><strong>Schema</strong></td>
+            <td>Fixed, predefined</td>
+            <td>Flexible, evolving</td>
+        </tr>
+    </table>
+
+    <h2>What is a Knowledge Graph?</h2>
+
+    <p>A <span class="key-term">knowledge graph</span> is a specific type of graph database that organizes information to highlight connections and interactions. Think of it as a map of data where you can easily see how everything is connected and perform mathematical operations across different parts of the map.</p>
+
+    <p>Knowledge graphs make it possible to uncover insights and discover patterns that are not immediately obvious in traditional databases or spreadsheets.</p>
+
+    <div class="example-box">
+        <h3>Real-World Example: Social Media Recommendations</h3>
+        <p>Social media platforms use knowledge graphs to map your connections and interests. If your friend loves a particular restaurant, the platform might recommend that same restaurant to you based on:</p>
+        <ul>
+            <li>The strength of your connection to your friend</li>
+            <li>Your food preferences</li>
+            <li>Places you like to visit</li>
+            <li>Patterns in similar user behavior</li>
+        </ul>
+        <p>The knowledge graph reveals these multi-hop connections that would be difficult to query in a traditional database.</p>
+
+        <img src="socialmedia.png"   width="800"/></div>
+
+    <div class="example-box">
+        <h3>Real-World Example: Drug Discovery</h3>
+        <p>In pharmaceutical research, knowledge graphs help scientists manage and analyze vast amounts of biological data. They can predict how a new drug might interact with proteins in the body by:</p>
+        <ul>
+            <li>Identifying disease targets for drugs</li>
+            <li>Predicting potential side effects</li>
+            <li>Finding similar compounds with known effects</li>
+            <li>Tracking protein interactions in biological cells</li>
+        </ul>
+        <p>This potentially saves significant time and resources in the research process.</p>
+        <img src="drugs-kg.png" width="800"/>
+    </div>
+
+    <h2>Mathematical Operations on Graphs</h2>
+
+    <p>Once you have built a knowledge graph, you can perform powerful mathematical operations to extract insights:</p>
+
+    <div class="concept-box">
+        <h3>Shortest Path Analysis</h3>
+        <p>Find the shortest path between two nodes. In a knowledge graph of database concepts, this answers: "What is the fastest learning path from SQL basics to advanced normalization?"</p>
+    </div>
+
+    <div class="concept-box">
+        <h3>Centrality Measures</h3>
+        <p>Identify the most important or influential nodes. Which database concepts are most central to understanding the entire subject? Which concepts connect the most other concepts?</p>
+    </div>
+
+    <div class="concept-box">
+        <h3>Community Detection</h3>
+        <p>Discover clusters of related nodes. Which database concepts naturally group together? What are the major topic areas in your course?</p>
+    </div>
+
+    <div class="concept-box">
+        <h3>Similarity and Prediction</h3>
+        <p>Calculate similarities between nodes and predict new connections. If you understand certain concepts, what should you learn next? What concepts are similar to ones you already know?</p>
+    </div>
+
+    <h2>Building Your Own Knowledge Graph</h2>
+
+    <p>In the upcoming lab, you will build a knowledge graph of database concepts using the 20 terms you identified in your homework. This graph will:</p>
+
+    <ol>
+        <li><strong>Map relationships</strong> between concepts (prerequisites, related topics, hierarchies)</li>
+        <li><strong>Store rich metadata</strong> about each concept (difficulty, chapter, examples)</li>
+        <li><strong>Enable intelligent queries</strong> about learning paths and connections</li>
+        <li><strong>Create a personalized study tool</strong> that understands your course material</li>
+    </ol>
+
+    <p>You will use AI to automatically extract relationships from your textbook, creating a graph-database-backed RAG system that serves as your personal back-of-the-book index.</p>
+
+    <h2>Query Languages and Standardization</h2>
+
+    <p>One challenge in the graph database ecosystem is that vendors often have their own query languages. Unlike SQL, which is standardized across relational databases, graph databases lack a universal query language. This is something the industry continues to work on.</p>
+
+    <p>Common graph query languages include:</p>
+    <ul>
+        <li><strong>Cypher</strong> (Neo4j)</li>
+        <li><strong>Gremlin</strong> (Apache TinkerPop)</li>
+        <li><strong>SPARQL</strong> (RDF graphs)</li>
+    </ul>
+
+    <div class="example-box">
+        <h3>Example: Cypher Query</h3>
+        <p>Here is a simple Cypher query that finds all concepts you need to learn before understanding BCNF (up to 4 steps away):</p>
+        <pre>MATCH (a:Concept {name:"Primary Key"})-[:PREREQ_FOR*1..4]->(b:Concept)
+RETURN b.name</pre>
+        <p>This query instantly shows the power of graph traversal. The <code>*1..4</code> syntax means "follow the PREREQ_FOR relationship 1 to 4 times," discovering multi-hop learning paths in a single line.</p>
+    </div>
+
+    <p>In our lab, we will use a different approach: representing graph relationships as metadata in a vector database. Qdrant (and most vector databases now) support explicit parent-child links and payload filtering so we get true graph traversal on top of semantic search without learning yet another query language. This allows us to use standard filtering operations while maintaining the power of graph traversal.</p>
+
+    <h2>When to Use Graph Databases</h2>
+
+    <div class="concept-box">
+        <h3>Graph Databases Excel At:</h3>
+        <ul>
+            <li>Discovering patterns and connections in data</li>
+            <li>Answering questions about relationships and paths</li>
+            <li>Flexible schema evolution as data grows</li>
+            <li>Fast traversal of complex relationship networks</li>
+            <li>Asking open-ended questions and exploring hypotheses</li>
+        </ul>
+    </div>
+
+    <div class="warning-box">
+        <h3>Important Considerations</h3>
+        <p>Graph databases are powerful tools for exploration and pattern discovery, but they come with considerations:</p>
+        <ul>
+            <li><strong>Inference vs Causation:</strong> Just because nodes are connected does not mean the relationship is meaningful. Graph databases help start questions, not necessarily answer them definitively.</li>
+            <li><strong>Garbage In, Gospel Out:</strong> When using AI to automatically extract relationships from text, be aware that the LLM can hallucinate edges. This can create very convincing but incorrect connections in your knowledge graph. Always validate critical relationships.</li>
+            <li><strong>Query Complexity:</strong> It can be difficult to conceptualize query plans, which may lead to slow-running queries if not carefully designed.</li>
+            <li><strong>Transaction Processing:</strong> Relational databases remain superior for high-volume transaction processing.</li>
+        </ul>
+    </div>
+
+    <h2>Graph Databases in the Data Ecosystem</h2>
+
+    <p>Graph databases are not replacements for relational databases. Instead, they are complementary tools in a larger data management landscape. Data science teams often use graph databases to test inferences and discover relationships. When these relationships prove relevant, they are integrated into the data warehouse, closing the loop between exploratory data science and structured data integration.</p>
+
+    <h2>Adding New Relationships</h2>
+
+    <p>One powerful feature of knowledge graphs is the ability to easily add new types of relationships among the data. As you learn more about your domain, you can extend the graph with new edge types, new properties, and new nodes without restructuring the entire database.</p>
+
+    <p>You can also extrapolate from existing data to infer and validate new predictions, making knowledge graphs valuable for both understanding current knowledge and discovering new insights.</p>
+
+    <h2>Your Learning Path</h2>
+
+    <p>In the next lab session, you will:</p>
+
+    <ol>
+        <li>Take your list of 20 database concepts (the nodes)</li>
+        <li>Use AI to analyze your textbook and identify relationships (the edges)</li>
+        <li>Build a knowledge graph stored in a vector database</li>
+        <li>Query the graph to find learning paths, related concepts, and prerequisites</li>
+        <li>Create a personalized RAG system that understands concept relationships</li>
+    </ol>
+
+    <p>This combines the power of graph databases (relationship traversal) with vector databases (semantic search) to create a tool that is greater than the sum of its parts.</p>
+
+    <h2>Key Takeaways</h2>
+
+    <table>
+        <tr>
+            <th>Concept</th>
+            <th>Definition</th>
+        </tr>
+        <tr>
+            <td><strong>Graph Database</strong></td>
+            <td>A database designed to store and query relationships between data</td>
+        </tr>
+        <tr>
+            <td><strong>Node</strong></td>
+            <td>An entity or record in the graph (person, concept, product)</td>
+        </tr>
+        <tr>
+            <td><strong>Edge</strong></td>
+            <td>A relationship between nodes with optional direction and properties</td>
+        </tr>
+        <tr>
+            <td><strong>Knowledge Graph</strong></td>
+            <td>A graph that organizes information to highlight connections and enable insights</td>
+        </tr>
+        <tr>
+            <td><strong>Traversal</strong></td>
+            <td>Walking through the graph by following edges to discover paths and patterns</td>
+        </tr>
+    </table>
+
+    <h2>Next Steps</h2>
+
+    <p>You are now ready to build your own knowledge graph. In the lab notebook, you will use Python libraries to create, visualize, and query graphs, gaining hands-on experience with the concepts introduced here.</p>
+
+    <p>Remember: graph databases are about connecting the dots. Your 20 database concepts are the dots. The relationships between them are the connections. Together, they form a map of everything you have learned this semester.</p>
+
+</body>
+</html>
+

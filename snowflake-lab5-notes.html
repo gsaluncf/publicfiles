@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowflake Lab 5: Data Transformation During Data Loading</title>
+</head>
+<body>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab4-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 4</a>
+  <a href="snowflake-lab6-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 6 →</a>
+</div>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">👤 Select Your Lab User</h3>
+    <label for="userSelect" style="font-weight: bold; color: #1e40af;">Choose your assigned username:</label>
+    <select id="userSelect" style="margin-left: 10px; padding: 5px; border: 1px solid #3b82f6; border-radius: 3px; font-size: 14px;" onchange="updateUserReferences();">
+        <option value="">-- Select User --</option>
+        <option value="BADGER">BADGER</option>
+        <option value="BEETLE">BEETLE</option>
+        <option value="BISON">BISON</option>
+        <option value="BLUEJAY">BLUEJAY</option>
+        <option value="BOA">BOA</option>
+        <option value="BULLFROG">BULLFROG</option>
+        <option value="CAMEL">CAMEL</option>
+        <option value="CAT">CAT</option>
+        <option value="CATFISH">CATFISH</option>
+        <option value="CHEETAH">CHEETAH</option>
+        <option value="CHIPMUNK">CHIPMUNK</option>
+        <option value="COBRA">COBRA</option>
+        <option value="COYOTE">COYOTE</option>
+        <option value="CRICKET">CRICKET</option>
+        <option value="DOG">DOG</option>
+        <option value="DOLPHIN">DOLPHIN</option>
+        <option value="DRAGON">DRAGON</option>
+        <option value="EAGLE">EAGLE</option>
+        <option value="FALCON">FALCON</option>
+        <option value="FERRET">FERRET</option>
+        <option value="FINCH">FINCH</option>
+        <option value="FLAMINGO">FLAMINGO</option>
+        <option value="FOX">FOX</option>
+        <option value="GATOR">GATOR</option>
+        <option value="GECKO">GECKO</option>
+        <option value="GIRAFFE">GIRAFFE</option>
+        <option value="GOPHER">GOPHER</option>
+        <option value="GORILLA">GORILLA</option>
+        <option value="GRIZZLY">GRIZZLY</option>
+        <option value="GROUNDHOG">GROUNDHOG</option>
+        <option value="HEDGEHOG">HEDGEHOG</option>
+        <option value="HIPPO">HIPPO</option>
+        <option value="HORNET">HORNET</option>
+        <option value="HYENA">HYENA</option>
+        <option value="JACKAL">JACKAL</option>
+        <option value="JAGUAR">JAGUAR</option>
+        <option value="JELLYFISH">JELLYFISH</option>
+        <option value="KANGAROO">KANGAROO</option>
+        <option value="KOALA">KOALA</option>
+        <option value="LEMMING">LEMMING</option>
+        <option value="LEMUR">LEMUR</option>
+        <option value="LEOPARD">LEOPARD</option>
+        <option value="LION">LION</option>
+        <option value="LIZARD">LIZARD</option>
+        <option value="LOBSTER">LOBSTER</option>
+        <option value="LYNX">LYNX</option>
+        <option value="MACKEREL">MACKEREL</option>
+        <option value="MAGPIE">MAGPIE</option>
+        <option value="MALLARD">MALLARD</option>
+        <option value="MARMOT">MARMOT</option>
+        <option value="MINNOW">MINNOW</option>
+        <option value="MONGOOSE">MONGOOSE</option>
+        <option value="MONKEY">MONKEY</option>
+        <option value="OPOSSUM">OPOSSUM</option>
+        <option value="OSTRICH">OSTRICH</option>
+        <option value="OTTER">OTTER</option>
+        <option value="PANDA">PANDA</option>
+        <option value="PANTHER">PANTHER</option>
+        <option value="PARROT">PARROT</option>
+        <option value="PEACOCK">PEACOCK</option>
+        <option value="PELICAN">PELICAN</option>
+        <option value="PENGUIN">PENGUIN</option>
+        <option value="PIGEON">PIGEON</option>
+        <option value="PIRANHA">PIRANHA</option>
+        <option value="PLATYPUS">PLATYPUS</option>
+        <option value="PONY">PONY</option>
+        <option value="POODLE">POODLE</option>
+        <option value="PUMA">PUMA</option>
+        <option value="PYTHON">PYTHON</option>
+        <option value="QUAIL">QUAIL</option>
+        <option value="RABBIT">RABBIT</option>
+        <option value="RACCOON">RACCOON</option>
+        <option value="RAT">RAT</option>
+        <option value="RAVEN">RAVEN</option>
+        <option value="RHINO">RHINO</option>
+        <option value="ROOSTER">ROOSTER</option>
+        <option value="SCORPION">SCORPION</option>
+        <option value="SEAL">SEAL</option>
+        <option value="SHARK">SHARK</option>
+        <option value="SKUNK">SKUNK</option>
+        <option value="SLOTH">SLOTH</option>
+        <option value="SNAIL">SNAIL</option>
+        <option value="SNAKE">SNAKE</option>
+        <option value="SPARROW">SPARROW</option>
+        <option value="SPIDER">SPIDER</option>
+        <option value="SQUIRREL">SQUIRREL</option>
+        <option value="STINGRAY">STINGRAY</option>
+        <option value="STORK">STORK</option>
+        <option value="SWAN">SWAN</option>
+        <option value="SWORDFISH">SWORDFISH</option>
+        <option value="TAPIR">TAPIR</option>
+        <option value="TERMITE">TERMITE</option>
+        <option value="TIGER">TIGER</option>
+        <option value="TOUCAN">TOUCAN</option>
+        <option value="TURTLE">TURTLE</option>
+        <option value="VIPER">VIPER</option>
+        <option value="WALRUS">WALRUS</option>
+        <option value="WOMBAT">WOMBAT</option>
+        <option value="WOODCHUCK">WOODCHUCK</option>
+        <option value="ZEBRA">ZEBRA</option>
+    </select>
+    <p style="margin-top: 10px; font-size: 12px; color: #6b7280;">All code examples will automatically update with your selected username.</p>
+</div>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Lab 5: Data Transformation During Data Loading</h2>
+    <p><strong style="color: #1e40af;">Objective:</strong> Learn how to transform data during the loading process using functions, CASE statements, and column reordering.</p>
+    <p><strong style="color: #1e40af;">Scenario:</strong> You're a data engineer at Snowbear Air. You need to populate a nations table with region names and codes, but the source file only has region keys. You'll transform the data during load to add the required fields.</p>
+</div>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1e40af; margin-top: 5px;">📚 Learning Objectives</h3>
+    <ul>
+        <li>How to transform data during the loading process</li>
+        <li>How to reorder columns from source file to target table</li>
+        <li>How to use CASE statements to derive new values</li>
+        <li>How to use functions to manipulate data during load</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">1. Setup</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.1 Create Folder and Worksheet</h3>
+<ol>
+    <li>Create a new folder called <strong>Data Loading and Transformation</strong></li>
+    <li>Create a new worksheet named <strong>Transforming Data During Load</strong></li>
+</ol>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1.2 Create Objects and Set Context</h3>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE DATABASE IF NOT EXISTS WOODCHUCK_db;
+USE DATABASE WOODCHUCK_db;
+CREATE SCHEMA IF NOT EXISTS WOODCHUCK_transform;
+USE SCHEMA WOODCHUCK_db.WOODCHUCK_transform;
+</pre>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">2. Explore the Source File</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.1 Search for the Nation File</h3>
+<p>List the files in the stage to find nation.tbl:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+LIST @training_db.traininglab.ed_stage/load/lab_files/ pattern='.*\.tbl.*';
+</pre>
+<p>Scroll through the results to find <strong>nation.tbl</strong>.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.2 Query the File Without File Format</h3>
+<p>First, try querying the file without a file format:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT n.$1, n.$2, n.$3
+FROM @training_db.traininglab.ed_stage/load/lab_files/nation.tbl n;
+</pre>
+<p>Notice that only the first column has data, and the third column is null. This is because the file is pipe-delimited, but we're not specifying a file format.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.3 Create a Pipe-Delimited File Format</h3>
+<p>Create a file format to properly parse the pipe-delimited data:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE OR REPLACE FILE FORMAT MYPIPEFORMAT
+  TYPE = CSV
+  COMPRESSION = NONE
+  FIELD_DELIMITER = '|'
+  FILE_EXTENSION = 'tbl'
+  ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE;
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2.4 Query File Using the File Format</h3>
+<p>Now query the file with the file format to see individual columns:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT 
+    n.$1 AS N_KEY,
+    n.$2 AS N_NAME,
+    n.$3 AS R_KEY,
+    n.$4 AS N_COMMENT
+FROM @training_db.traininglab.ed_stage/load/lab_files/nation.tbl
+    (file_format => 'MYPIPEFORMAT') n;
+</pre>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">💡 Understanding the Source Data</h3>
+    <p>The file contains:</p>
+    <ul>
+        <li><strong>$1 (N_KEY):</strong> Nation key (integer)</li>
+        <li><strong>$2 (N_NAME):</strong> Nation name (e.g., "ALGERIA")</li>
+        <li><strong>$3 (R_KEY):</strong> Region key (0-4 representing different regions)</li>
+        <li><strong>$4 (N_COMMENT):</strong> Comments about the nation</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">3. Create Target Table</h2>
+
+<p>Our target table needs a different structure than the source file:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+CREATE OR REPLACE TABLE nation (
+    NATION_KEY INTEGER,
+    REGION VARCHAR,
+    REGION_CODE VARCHAR,
+    NATION VARCHAR,
+    COMMENTS VARCHAR
+);
+</pre>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">⚠️ The Challenge</h3>
+    <p>The target table requires:</p>
+    <ul>
+        <li><strong>REGION:</strong> Region name (not in source - derived from R_KEY)</li>
+        <li><strong>REGION_CODE:</strong> First two letters of region name (calculated)</li>
+        <li>Columns in a different order than the source file</li>
+    </ul>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">4. Transform and Load Data</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.1 Build the Transformation Query</h3>
+<p>Create a query that transforms the data to match the target table structure:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT 
+    n.$1 AS N_KEY,
+    CASE
+        WHEN n.$3 = 0 THEN 'AFRICA'
+        WHEN n.$3 = 1 THEN 'AMERICA'
+        WHEN n.$3 = 2 THEN 'ASIA'
+        WHEN n.$3 = 3 THEN 'EUROPE'
+        ELSE 'MIDDLE EAST'
+    END AS REGION,
+    substr(REGION, 1, 2) AS REGION_CODE,
+    n.$2 AS NATION,
+    n.$4 AS COMMENTS
+FROM @training_db.traininglab.ed_stage/load/lab_files/nation.tbl
+    (file_format => 'MYPIPEFORMAT') n;
+</pre>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">💡 Transformation Techniques</h3>
+    <ul>
+        <li><strong>CASE statement:</strong> Converts region key (0-4) to region name</li>
+        <li><strong>substr() function:</strong> Extracts first 2 characters for region code</li>
+        <li><strong>Column reference:</strong> Uses REGION alias in substr() calculation</li>
+        <li><strong>Column reordering:</strong> Places N_NAME ($2) in 4th position instead of 2nd</li>
+    </ul>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.2 Load the Transformed Data</h3>
+<p>Use COPY INTO with a subquery to load the transformed data:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+COPY INTO nation
+FROM (
+    SELECT
+        n.$1 AS N_KEY,
+        CASE
+            WHEN n.$3 = 0 THEN 'AFRICA'
+            WHEN n.$3 = 1 THEN 'AMERICA'
+            WHEN n.$3 = 2 THEN 'ASIA'
+            WHEN n.$3 = 3 THEN 'EUROPE'
+            ELSE 'MIDDLE EAST'
+        END AS REGION,
+        substr(REGION, 1, 2) AS REGION_CODE,
+        n.$2 AS NATION,
+        n.$4 AS COMMENTS
+    FROM @training_db.traininglab.ed_stage/load/lab_files/nation.tbl
+        (file_format => 'MYPIPEFORMAT') n
+);
+</pre>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">4.3 Verify the Loaded Data</h3>
+<p>Check the results:</p>
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT * FROM nation LIMIT 10;
+</pre>
+
+<p>You should see:</p>
+<ul>
+    <li>Nation keys and names from the source file</li>
+    <li>Region names (AFRICA, AMERICA, ASIA, EUROPE, MIDDLE EAST) derived from region keys</li>
+    <li>Region codes (AF, AM, AS, EU, MI) calculated from region names</li>
+    <li>All columns in the correct order</li>
+</ul>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">5. Key Takeaways</h2>
+
+<div style="background-color: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <ul>
+        <li>You can transform data during loading using COPY INTO with a subquery</li>
+        <li>Use CASE...WHEN statements to derive new values based on source data</li>
+        <li>Use functions (like substr, concat, etc.) to manipulate data during load</li>
+        <li>You can reorder columns - the source file order doesn't dictate target table order</li>
+        <li>You can reference calculated columns (aliases) in subsequent calculations</li>
+        <li>File formats are essential for properly parsing delimited files</li>
+        <li>Test your transformation query with SELECT before using it in COPY INTO</li>
+    </ul>
+</div>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #1d4ed8; margin-top: 5px;">Check Your Understanding</h3>
+    <ul>
+        <li>Why do we need to create a file format for the nation.tbl file?</li>
+        <li>How does the CASE statement help us transform the region key into a region name?</li>
+        <li>Can you reference a column alias in the same SELECT statement? (Yes - REGION_CODE uses REGION)</li>
+        <li>What are the benefits of transforming data during load versus loading raw data first?</li>
+    </ul>
+</div>
+
+<script>
+// Store original content on page load
+let originalContent = {};
+
+function storeOriginalContent() {
+    const elementsToStore = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+    elementsToStore.forEach((element, index) => {
+        originalContent[index] = element.innerHTML;
+    });
+}
+
+function updateUserReferences() {
+    const selectedUser = document.getElementById('userSelect').value;
+
+    if (!selectedUser) {
+        return;
+    }
+
+    // Find all elements that contain user-specific references
+    const elementsToUpdate = document.querySelectorAll('pre, code, p, li, h1, h2, h3, h4');
+
+    let updatedCount = 0;
+    elementsToUpdate.forEach((element, index) => {
+        // Get the original content for this element
+        let originalHTML = originalContent[index] || element.innerHTML;
+
+        // Replace all user patterns with selected user
+        let newHTML = originalHTML;
+        newHTML = newHTML.replace(/WOODCHUCK_wh/g, selectedUser + '_wh');
+        newHTML = newHTML.replace(/WOODCHUCK_db/g, selectedUser + '_db');
+        newHTML = newHTML.replace(/WOODCHUCK_WH/g, selectedUser + '_WH');
+        newHTML = newHTML.replace(/WOODCHUCK_DB/g, selectedUser + '_DB');
+        newHTML = newHTML.replace(/WOODCHUCK_transform/g, selectedUser + '_transform');
+        newHTML = newHTML.replace(/WOODCHUCK(?!_)/g, selectedUser);
+
+        if (newHTML !== originalHTML) {
+            element.innerHTML = newHTML;
+            updatedCount++;
+        }
+    });
+
+    // Store selection in localStorage
+    localStorage.setItem('selectedLabUser', selectedUser);
+
+    // Show confirmation
+    const userSelect = document.getElementById('userSelect');
+    userSelect.style.backgroundColor = '#dcfce7';
+    userSelect.style.borderColor = '#16a34a';
+
+    setTimeout(() => {
+        userSelect.style.backgroundColor = '';
+        userSelect.style.borderColor = '#3b82f6';
+    }, 1000);
+}
+
+// Load saved user selection on page load
+window.addEventListener('load', function() {
+    // Store original content first
+    storeOriginalContent();
+
+    const savedUser = localStorage.getItem('selectedLabUser');
+    if (savedUser) {
+        document.getElementById('userSelect').value = savedUser;
+        updateUserReferences();
+    }
+});
+</script>
+
+<div class="lab-nav" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+  <a href="snowflake-lab4-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">← Previous: Lab 4</a>
+  <a href="snowflake-lab6-notes.html" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Next: Lab 6 →</a>
+</div>
+
+</body>
+</html>
