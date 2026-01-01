@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session 4: Monte Carlo Aggregation & Decision Metrics</title>
+</head>
+<body>
+
+<nav style="background-color: #1e40af; padding: 12px 20px; margin: -8px -8px 20px -8px; border-radius: 0 0 8px 8px;">
+    <span style="color: white; font-weight: bold; margin-right: 30px;">RMD Seminar</span>
+    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Framework</a>
+    <a href="01_opening_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">1-Opening</a>
+    <a href="02_definitions_glossary.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">2-Glossary</a>
+    <a href="03_data_model_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">3-Data Model</a>
+    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">4-Stats</a>
+    <a href="05_monte_carlo_aggregation.html" style="color: #93c5fd; text-decoration: none; font-weight: bold;">[5-Monte Carlo]</a>
+</nav>
+
+<h1>Session 4: Monte Carlo Aggregation & Decision Metrics</h1>
+<p style="color: #64748b; font-style: italic;">Turning 10,000 simulations into actionable decisions</p>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">The Aggregation Problem</h2>
+<p>You have run 10,000 simulations. Each path has a different market trajectory and death age. Each produces a terminal wealth value. Now what?</p>
+<p>This session covers the statistical techniques for extracting decision-relevant insights from simulation output.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Metric 1: Expected Value</h2>
+
+<p>The simplest aggregation: what is the average terminal wealth across all paths?</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT 
+    strategy,
+    AVG(terminal_wealth) AS expected_wealth,
+    COUNT(*) AS n_paths
+FROM simulation_results
+GROUP BY strategy;
+</pre>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">Limitation</h3>
+<p>Expected value ignores risk. A strategy with E[W] = $2M but 20% chance of $0 may be worse than E[W] = $1.5M with guaranteed minimum of $500K.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Metric 2: Value at Risk (VaR)</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Definition</h3>
+<p><strong style="color: #1e40af;">VaR at confidence level α</strong> = the value below which only (1-α)% of outcomes fall.</p>
+<p>VaR(95%) answers: "What is the worst outcome I should expect 95% of the time?"</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT 
+    strategy,
+    PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY terminal_wealth) AS var_95,
+    PERCENTILE_CONT(0.01) WITHIN GROUP (ORDER BY terminal_wealth) AS var_99
+FROM simulation_results
+GROUP BY strategy;
+</pre>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Metric</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Interpretation</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">When to Use</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">VaR(95%)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">5th percentile of outcomes</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Standard risk assessment</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">VaR(99%)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">1st percentile of outcomes</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Stress testing, tail risk</td>
+</tr>
+</table>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Metric 3: Confidence Intervals</h2>
+
+<p>Report the range within which we expect the true expected value to fall, given sampling uncertainty.</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+import numpy as np
+from scipy import stats
+
+def confidence_interval(data, confidence=0.95):
+    """
+    Calculate confidence interval for the mean.
+    """
+    n = len(data)
+    mean = np.mean(data)
+    se = stats.sem(data)  # Standard error of the mean
+    h = se * stats.t.ppf((1 + confidence) / 2, n - 1)
+    return mean - h, mean + h
+
+# Example: 95% CI for terminal wealth
+terminal_wealth = results_df['terminal_wealth'].values
+ci_low, ci_high = confidence_interval(terminal_wealth)
+print(f"95% CI: ${ci_low:,.0f} to ${ci_high:,.0f}")
+</pre>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">How Many Paths?</h3>
+<p>CI width scales with 1/sqrt(n). With 10,000 paths, your CI is 10x narrower than with 100 paths. For most applications, 10,000 paths gives sufficient precision.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Metric 4: Tax Alpha</h2>
+
+<p>The core metric for this seminar: how much additional wealth does the optimized strategy generate?</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+WITH strategy_stats AS (
+    SELECT 
+        strategy,
+        AVG(terminal_wealth) AS avg_wealth
+    FROM simulation_results
+    GROUP BY strategy
+),
+baseline AS (
+    SELECT avg_wealth FROM strategy_stats WHERE strategy = 'baseline'
+)
+SELECT 
+    s.strategy,
+    s.avg_wealth,
+    s.avg_wealth - b.avg_wealth AS tax_alpha_dollars,
+    (s.avg_wealth - b.avg_wealth) / b.avg_wealth * 100 AS tax_alpha_pct
+FROM strategy_stats s
+CROSS JOIN baseline b;
+</pre>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Metric 5: Win Rate</h2>
+
+<p>In what percentage of simulations does Strategy A beat Strategy B?</p>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+WITH paired AS (
+    SELECT 
+        a.path_id,
+        a.terminal_wealth AS wealth_a,
+        b.terminal_wealth AS wealth_b
+    FROM simulation_results a
+    JOIN simulation_results b ON a.path_id = b.path_id
+    WHERE a.strategy = 'hold_to_death' AND b.strategy = 'aggressive_rmd'
+)
+SELECT 
+    COUNT(*) AS total_paths,
+    SUM(CASE WHEN wealth_a > wealth_b THEN 1 ELSE 0 END) AS a_wins,
+    SUM(CASE WHEN wealth_a > wealth_b THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS a_win_rate
+FROM paired;
+</pre>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Finding the Decision Boundary</h2>
+
+<p>The ultimate goal: at what parameter values does the optimal strategy change?</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Grid Search Approach</h3>
+<ol>
+    <li>Define a grid of volatility values: σ ∈ {0.10, 0.12, 0.14, ..., 0.24}</li>
+    <li>For each σ, run 10,000 simulations for both strategies</li>
+    <li>Compute Tax Alpha at each grid point</li>
+    <li>Find the σ where Tax Alpha crosses zero</li>
+</ol>
+
+<pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
+SELECT 
+    volatility_override AS sigma,
+    strategy,
+    AVG(terminal_wealth) AS avg_wealth
+FROM simulation_results sr
+JOIN simulation_runs r ON sr.run_id = r.run_id
+GROUP BY volatility_override, strategy
+ORDER BY volatility_override, strategy;
+</pre>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">The Visualization Goal</h3>
+<p>Plot Tax Alpha (y-axis) against Volatility (x-axis). The point where the line crosses zero is the <strong>decision boundary</strong>. Above this volatility, hold-to-death wins. Below it, aggressive decumulation wins.</p>
+</div>
+
+</body>
+</html>
+

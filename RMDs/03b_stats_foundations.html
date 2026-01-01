@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Foundations: Why Averages Fail</title>
+</head>
+<body>
+
+<nav style="background-color: #1e40af; padding: 12px 20px; margin: -8px -8px 20px -8px; border-radius: 0 0 8px 8px;">
+    <span style="color: white; font-weight: bold; margin-right: 30px;">RMD Seminar</span>
+    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Framework</a>
+    <a href="01_opening_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">1-Opening</a>
+    <a href="01b_problem_scenarios.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Scenarios</a>
+    <a href="02_definitions_glossary.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Glossary</a>
+    <a href="03_data_model_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Data Model</a>
+    <a href="03b_stats_foundations.html" style="color: #93c5fd; margin-right: 15px; text-decoration: none; font-weight: bold;">[Stats Intro]</a>
+    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Stats Methods</a>
+    <a href="05_monte_carlo_aggregation.html" style="color: #dbeafe; text-decoration: none;">Monte Carlo</a>
+</nav>
+
+<h1>Statistics Foundations: Why Averages Fail</h1>
+<p style="color: #64748b; font-style: italic;">Building intuition before we build code</p>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">The Dangerous Statement</h2>
+<p style="font-size: 18px; text-align: center; font-style: italic;">"The stock market returns 7% per year on average."</p>
+<p>This statement is technically true and practically useless for retirement planning. This page explains why, and what we need instead.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Problem 1: Volatility Destroys Averages</h2>
+
+<p>Consider two investment paths over 4 years, both with the same arithmetic average return of 5%:</p>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Year</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">Path A (Steady)</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">Path B (Volatile)</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Year 1</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">+5%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">+30%</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Year 2</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">+5%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">-20%</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Year 3</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">+5%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">+25%</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Year 4</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">+5%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">-15%</td>
+</tr>
+<tr style="background-color: #dbeafe;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Average Return</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; font-weight: bold;">5%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; font-weight: bold;">5%</td>
+</tr>
+</table>
+
+<p>Starting with $100,000:</p>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #f1f5f9;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Metric</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">Path A</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">Path B</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Final Value</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">$121,551</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">$110,500</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Actual Compound Return</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">5.0% per year</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">2.5% per year</td>
+</tr>
+</table>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">The Lesson</h3>
+<p><strong>Volatility is a drag on compound returns.</strong> Path B had the same average return but ended with $11,051 less. This is called "volatility drag" and it's why we cannot use simple averages for financial planning.</p>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Problem 2: Sequence of Returns Risk</h2>
+
+<p>The order of returns matters enormously when you're withdrawing money. Consider two retirees who both experience the same returns, just in different order:</p>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Year</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">Retiree A</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">Retiree B</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">Withdrawal</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Year 1</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; color: green;">+15%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; color: red;">-15%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">$50,000</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Year 2</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; color: green;">+10%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; color: red;">-10%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">$50,000</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Year 3</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; color: red;">-10%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; color: green;">+10%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">$50,000</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Year 4</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; color: red;">-15%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; color: green;">+15%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">$50,000</td>
+</tr>
+</table>
+
+<p>Both retirees start with $1,000,000 and experience the exact same set of returns. Only the order differs.</p>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #f1f5f9;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Outcome</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">Retiree A (good start)</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">Retiree B (bad start)</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Portfolio after 4 years</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; color: green; font-weight: bold;">$823,687</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center; color: red; font-weight: bold;">$659,045</td>
+</tr>
+</table>
+
+<p><strong>Same returns. Different order. $164,642 difference.</strong></p>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">Why This Matters for RMDs</h3>
+<p>RMDs force withdrawals every year. A market crash early in retirement is devastating because you're selling shares at low prices. This is exactly the kind of path-dependent risk that averages cannot capture.</p>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Problem 3: Lifespan is Unknown</h2>
+
+<p>We showed in the <a href="01b_problem_scenarios.html" style="color: #1e40af;">Scenarios page</a> that dying at 70 vs 90 completely changes which strategy wins. But we don't know when someone will die.</p>
+
+<p>Here's what actuarial data tells us about a 65-year-old male:</p>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Age at Death</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">Probability</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">Cumulative</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Before 70</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">8%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">8%</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">70-75</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">12%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">20%</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">75-80</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">18%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">38%</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">80-85</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">22%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">60%</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">85-90</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">20%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">80%</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">90+</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">20%</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; text-align: center;">100%</td>
+</tr>
+</table>
+
+<p>Planning for the "average" lifespan of 82 ignores that 40% of people will live longer and 60% will die sooner.</p>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">The Solution: Simulation</h2>
+
+<p>Since we cannot predict the future, we simulate many possible futures and analyze the distribution of outcomes.</p>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">The Monte Carlo Approach</h3>
+<ol>
+    <li><strong>Generate random market paths</strong> - Not one path, but 10,000 different possible market histories</li>
+    <li><strong>Generate random lifespans</strong> - Sample from actuarial tables to get 10,000 possible death ages</li>
+    <li><strong>Pair them up</strong> - Each simulation combines one market path with one lifespan</li>
+    <li><strong>Apply the strategy</strong> - Calculate taxes, RMDs, and terminal wealth for each simulation</li>
+    <li><strong>Analyze the distribution</strong> - What's the average outcome? The worst 5%? How often does Strategy A beat Strategy B?</li>
+</ol>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">What We Need to Model</h2>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Uncertainty</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Statistical Model</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Key Parameters</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Market returns</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Geometric Brownian Motion (GBM)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Drift (expected return), Volatility (standard deviation)</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Lifespan</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Survival Analysis</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Actuarial life tables (age-specific mortality rates)</td>
+</tr>
+</table>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Preview: The Questions We Can Answer</h2>
+
+<p>Once we build the simulation, we can answer questions like:</p>
+
+<ul>
+    <li><strong>Expected Value:</strong> "On average, how much more wealth does Strategy A generate?"</li>
+    <li><strong>Risk:</strong> "What's the worst outcome in the bottom 5% of simulations?"</li>
+    <li><strong>Win Rate:</strong> "In what percentage of simulations does Strategy A beat Strategy B?"</li>
+    <li><strong>Decision Boundary:</strong> "At what volatility level does the optimal strategy change?"</li>
+</ul>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">Next: The Mathematical Models</h3>
+<p>Now that you understand <em>why</em> we need simulation, let's learn <em>how</em> to model market returns and lifespans mathematically. <a href="04_statistical_methods.html" style="color: #1e40af; font-weight: bold;">Continue to Statistical Methods</a></p>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Key Takeaways</h2>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #f1f5f9;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 30%;">Concept</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 70%;">Why It Matters</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Volatility Drag</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Same average return can produce very different compound outcomes</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Sequence Risk</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Order of returns matters when withdrawing; early losses are devastating</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Lifespan Uncertainty</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Planning for "average" ignores the wide distribution of actual outcomes</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Monte Carlo</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Simulate thousands of scenarios to understand the full distribution of outcomes</td>
+</tr>
+</table>
+
+</body>
+</html>
+

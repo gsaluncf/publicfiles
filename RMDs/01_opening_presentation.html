@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session 1: The Tax Alpha Problem</title>
+</head>
+<body>
+
+<nav style="background-color: #1e40af; padding: 12px 20px; margin: -8px -8px 20px -8px; border-radius: 0 0 8px 8px;">
+    <span style="color: white; font-weight: bold; margin-right: 30px;">RMD Seminar</span>
+    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Framework</a>
+    <a href="01_opening_presentation.html" style="color: #93c5fd; margin-right: 15px; text-decoration: none; font-weight: bold;">[1-Opening]</a>
+    <a href="02_definitions_glossary.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">2-Glossary</a>
+    <a href="03_data_model_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">3-Data Model</a>
+    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">4-Stats</a>
+    <a href="05_monte_carlo_aggregation.html" style="color: #dbeafe; text-decoration: none;">5-Monte Carlo</a>
+</nav>
+
+<h1>Session 1: The Tax Alpha Problem</h1>
+<p style="color: #64748b; font-style: italic;">A Multi-Variable Optimization Challenge for Data Scientists</p>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">The Core Question</h2>
+<p style="font-size: 18px; line-height: 1.6;">How do we maximize multi-generational wealth when <strong style="color: #1e40af;">market returns</strong> and <strong style="color: #1e40af;">human lifespans</strong> are both uncertain?</p>
+<p>This seminar treats retirement wealth management as what it truly is: a stochastic optimization problem with competing tax strategies, probabilistic inputs, and no closed-form solution.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Why Data Scientists Should Care</h2>
+
+<p>You are not here to become financial advisors. You are here because this problem domain offers:</p>
+
+<ul>
+    <li><strong style="color: #1e40af;">Real-world Monte Carlo application</strong> - Not a textbook example, but a problem where simulation is the only viable approach</li>
+    <li><strong style="color: #1e40af;">Temporal database design</strong> - Financial data has time-varying attributes that break naive schemas</li>
+    <li><strong style="color: #1e40af;">Decision science under uncertainty</strong> - Quantifying when Strategy A beats Strategy B across probability distributions</li>
+    <li><strong style="color: #1e40af;">Multi-objective optimization</strong> - Balancing expected value against tail risk</li>
+</ul>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">The Backstory: Two Tax Rules in Tension</h2>
+
+<p>The U.S. tax code creates a fascinating optimization problem through two rules that pull in opposite directions:</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Rule 1: Required Minimum Distributions (RMDs)</h3>
+<p>Starting at age 73, the IRS forces you to withdraw money from tax-deferred retirement accounts (401k, Traditional IRA). These withdrawals are taxed as ordinary income. The government wants its tax revenue before you die.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Rule 2: Step-Up in Basis</h3>
+<p>When you die, your heirs inherit your assets at their current market value, not what you paid. All unrealized capital gains disappear. The government forgives decades of appreciation.</p>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">The Tension</h3>
+<p><strong>RMDs say:</strong> "Take money out now and pay taxes."</p>
+<p><strong>Step-Up says:</strong> "Hold until death and pay nothing."</p>
+<p>Which strategy wins? It depends on how long you live and what the market does. Both are uncertain.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">A Concrete Example</h2>
+
+<p>Consider a 65-year-old retiree with:</p>
+<ul>
+    <li>$1,000,000 in a Traditional IRA (all withdrawals taxed as income)</li>
+    <li>$500,000 in a taxable brokerage account (cost basis: $200,000, unrealized gain: $300,000)</li>
+</ul>
+
+<p><strong>Strategy A: Aggressive Decumulation</strong></p>
+<p>Convert IRA to Roth aggressively, pay taxes now at known rates, let Roth grow tax-free.</p>
+
+<p><strong>Strategy B: Hold to Death</strong></p>
+<p>Take only required RMDs, keep assets in taxable account, let heirs inherit with stepped-up basis.</p>
+
+<p>If the retiree dies at 70, Strategy B wins decisively (heirs get step-up, avoided most RMDs).</p>
+<p>If the retiree lives to 95, Strategy A may win (30 years of RMDs would have eroded the portfolio anyway).</p>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">The Data Science Question</h3>
+<p>At what combination of <strong>market volatility</strong> and <strong>life expectancy</strong> does the optimal strategy flip? This is not a calculation. This is a simulation.</p>
+</div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">What We Will Build</h2>
+
+<p>Over 1.5 days, you will construct a simulation engine that:</p>
+
+<ol>
+    <li><strong>Generates 10,000+ market paths</strong> using Geometric Brownian Motion</li>
+    <li><strong>Samples lifespans</strong> from actuarial survival distributions</li>
+    <li><strong>Applies tax logic</strong> to a database of individual tax lots</li>
+    <li><strong>Aggregates results</strong> to find expected values, confidence intervals, and decision boundaries</li>
+    <li><strong>Visualizes the tax-efficient frontier</strong> showing when each strategy dominates</li>
+</ol>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Technical Stack</h2>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #f1f5f9;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Component</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Tool</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Why</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Database</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">DuckDB</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">In-process analytics, no server setup, SQL interface</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Simulation</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">NumPy / Polars</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Vectorized operations for 10K+ paths</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Survival Analysis</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">SciPy / lifelines</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Sampling from actuarial life tables</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Visualization</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Plotly / Seaborn</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Interactive exploration of results</td>
+</tr>
+</table>
+
+</body>
+</html>
+

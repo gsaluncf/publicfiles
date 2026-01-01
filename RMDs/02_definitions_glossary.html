@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glossary: Wealth Management Terms for Data Scientists</title>
+</head>
+<body>
+
+<nav style="background-color: #1e40af; padding: 12px 20px; margin: -8px -8px 20px -8px; border-radius: 0 0 8px 8px;">
+    <span style="color: white; font-weight: bold; margin-right: 30px;">RMD Seminar</span>
+    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Framework</a>
+    <a href="01_opening_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">1-Opening</a>
+    <a href="02_definitions_glossary.html" style="color: #93c5fd; margin-right: 15px; text-decoration: none; font-weight: bold;">[2-Glossary]</a>
+    <a href="03_data_model_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">3-Data Model</a>
+    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">4-Stats</a>
+    <a href="05_monte_carlo_aggregation.html" style="color: #dbeafe; text-decoration: none;">5-Monte Carlo</a>
+</nav>
+
+<h1>Glossary: Wealth Management Terms for Data Scientists</h1>
+<p style="color: #64748b; font-style: italic;">Formal definitions with data modeling implications</p>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">How to Use This Glossary</h2>
+<p>Each term includes a formal definition, a plain-language explanation, and notes on how the concept affects database design or simulation logic.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Core Tax Concepts</h2>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 20%;">Term</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 40%;">Formal Definition</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 40%;">Data Modeling Note</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Required Minimum Distribution (RMD)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">The minimum amount that must be withdrawn annually from tax-deferred retirement accounts starting at age 73, calculated as account balance divided by an IRS life expectancy factor.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Requires annual recalculation. The divisor comes from IRS Uniform Lifetime Table. Must track account balance at year-end.</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Step-Up in Basis</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Upon death, inherited assets receive a new cost basis equal to fair market value at date of death, eliminating all unrealized capital gains for tax purposes.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Simulation must track death event and reset cost_basis = market_value at that moment. Affects terminal wealth calculation.</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Cost Basis</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">The original purchase price of an asset, used to calculate capital gains or losses when the asset is sold. Basis = Purchase Price + Adjustments.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Immutable after purchase (except for specific adjustments). Stored per tax lot, not per security.</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Unrealized Gain</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">The difference between current market value and cost basis for an asset that has not been sold. Unrealized Gain = Market Value - Cost Basis.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Computed field, not stored. Changes with every market price update. This is what Step-Up eliminates.</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Tax Lot</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">A record of a specific purchase of a security, including date, quantity, and price. Multiple purchases of the same security create multiple tax lots.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Primary entity in our schema. One client may have hundreds of lots. Each lot has its own basis and holding period.</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Tax Alpha</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">The excess wealth generated by tax-optimized investment decisions compared to a tax-naive baseline strategy, measured in dollars or percentage points.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Our target metric. Computed as E[Wealth|Strategy A] - E[Wealth|Baseline] across simulation paths.</td>
+</tr>
+</table>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Account Types</h2>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 20%;">Account Type</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 25%;">Tax Treatment</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 25%;">RMD Required?</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 30%;">Step-Up Applies?</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Traditional IRA / 401(k)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Tax-deferred. Contributions deductible, withdrawals taxed as ordinary income.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Yes, starting age 73</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">No. Entire balance taxable to heirs.</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Roth IRA / Roth 401(k)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Tax-free growth. Contributions after-tax, qualified withdrawals tax-free.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">No (for original owner)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">N/A. Already tax-free.</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Taxable Brokerage</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">No special treatment. Dividends and realized gains taxed annually.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">No</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Yes. Heirs inherit at FMV.</td>
+</tr>
+</table>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Statistical / Simulation Terms</h2>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 25%;">Term</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 75%;">Definition</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Geometric Brownian Motion (GBM)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">A stochastic process where the logarithm of the variable follows a Brownian motion with drift. Used to model stock prices: dS = μS dt + σS dW, where μ is drift (expected return), σ is volatility, and dW is a Wiener process increment.</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Survival Function S(t)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">The probability that an individual survives beyond time t. S(t) = P(T > t), where T is the random variable representing time of death. Derived from actuarial life tables.</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Monte Carlo Simulation</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">A computational technique that uses repeated random sampling to obtain numerical results. We generate N independent paths, apply deterministic logic to each, then aggregate statistics across all paths.</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Value at Risk (VaR)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">The maximum expected loss at a given confidence level over a specified time horizon. VaR(95%) = the 5th percentile of the terminal wealth distribution.</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Decision Boundary</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">The set of parameter values (e.g., volatility, life expectancy) where two strategies have equal expected outcomes. Above the boundary, Strategy A dominates; below, Strategy B dominates.</td>
+</tr>
+</table>
+
+</body>
+</html>
+

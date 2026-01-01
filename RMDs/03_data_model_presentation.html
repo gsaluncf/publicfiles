@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session 2: The Wealth Management Data Model</title>
+</head>
+<body>
+
+<nav style="background-color: #1e40af; padding: 12px 20px; margin: -8px -8px 20px -8px; border-radius: 0 0 8px 8px;">
+    <span style="color: white; font-weight: bold; margin-right: 30px;">RMD Seminar</span>
+    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Framework</a>
+    <a href="01_opening_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">1-Opening</a>
+    <a href="02_definitions_glossary.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">2-Glossary</a>
+    <a href="03_data_model_presentation.html" style="color: #93c5fd; margin-right: 15px; text-decoration: none; font-weight: bold;">[3-Data Model]</a>
+    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">4-Stats</a>
+    <a href="05_monte_carlo_aggregation.html" style="color: #dbeafe; text-decoration: none;">5-Monte Carlo</a>
+</nav>
+
+<h1>Session 2: The Wealth Management Data Model</h1>
+<p style="color: #64748b; font-style: italic;">Designing schemas for temporal financial data</p>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Session Goal</h2>
+<p>Understand why financial data is harder to model than typical transactional data, and build a schema that supports Monte Carlo simulation of tax strategies.</p>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Why Financial Data is Different</h2>
+
+<p>Most database courses teach you to model orders, customers, and products. Financial data introduces three complications:</p>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Challenge</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Example</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Design Implication</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Temporal Attributes</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Market value changes every second. Which value do we store?</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Separate "facts" (immutable) from "current state" (volatile)</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Lot-Level Granularity</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Buying AAPL on Jan 1 and Feb 1 creates two tax lots, not one position</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Primary entity is the purchase event, not the security</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Derived Calculations</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Unrealized gain = current price - cost basis (computed, not stored)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Views and computed columns, not redundant storage</td>
+</tr>
+</table>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Entity Relationship Diagram</h2>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<pre style="font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.4;">
+┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
+│  account_types  │       │     clients     │       │  asset_classes  │
+├─────────────────┤       ├─────────────────┤       ├─────────────────┤
+│ account_type_id │       │ client_id  [PK] │       │ asset_class_id  │
+│ tax_treatment   │       │ birth_date      │       │ expected_return │
+│ rmd_required    │       │ gender          │       │ volatility      │
+│ step_up_eligible│       │ tax_bracket     │       │ dividend_yield  │
+└────────┬────────┘       └────────┬────────┘       └────────┬────────┘
+         │                         │                         │
+         │ 1                       │ 1                       │ 1
+         │                         │                         │
+         ▼ M                       ▼ M                       │
+┌─────────────────────────────────────────┐                  │
+│               accounts                   │                  │
+├─────────────────────────────────────────┤                  │
+│ account_id  [PK]                        │                  │
+│ client_id   [FK] ───────────────────────┘                  │
+│ account_type_id [FK]                                       │
+│ account_name                                               │
+└────────────────────┬────────────────────┘                  │
+                     │ 1                                     │
+                     │                                       │
+                     ▼ M                                     │
+         ┌───────────────────────────────────────────────────┘
+         │           tax_lots                    
+         ├─────────────────────────────────────┐
+         │ lot_id  [PK]                        │
+         │ account_id [FK]                     │
+         │ asset_class_id [FK] ────────────────┘
+         │ security_symbol                     
+         │ purchase_date      ◄── Immutable    
+         │ purchase_price     ◄── Immutable    
+         │ quantity           ◄── Immutable    
+         │ cost_basis         ◄── Computed     
+         │ is_sold                             
+         └─────────────────────────────────────┘
+</pre>
+</div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Key Design Decisions</h2>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">1. Lookup Tables vs. Transactional Tables</h3>
+<p><strong style="color: #1e40af;">Lookup tables</strong> contain reference data that rarely changes:</p>
+<ul>
+    <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">account_types</code> - Tax treatment rules (5 rows, changes with tax law)</li>
+    <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">asset_classes</code> - GBM parameters for simulation (updated annually)</li>
+    <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">rmd_factors</code> - IRS life expectancy divisors (changes with legislation)</li>
+</ul>
+
+<p><strong style="color: #1e40af;">Transactional tables</strong> grow with business activity:</p>
+<ul>
+    <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">tax_lots</code> - Every purchase creates a new row (millions of rows in production)</li>
+    <li><code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">simulation_results</code> - Every Monte Carlo path creates a new row</li>
+</ul>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">2. Immutable vs. Mutable Fields</h3>
+<p>Tax lots have a critical property: <strong>purchase facts never change</strong>.</p>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #f1f5f9;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Immutable (set once)</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Mutable (can change)</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Computed (derived)</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">purchase_date, purchase_price, quantity</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">is_sold, sold_date, sold_price</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">cost_basis, unrealized_gain, holding_period</td>
+</tr>
+</table>
+
+<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+<h3 style="color: #1d4ed8; margin-top: 5px;">Why This Matters for Simulation</h3>
+<p>When we run 10,000 Monte Carlo paths, we do not copy the tax_lots table 10,000 times. The lots are immutable facts. Only the <em>simulated market prices</em> and <em>simulated death dates</em> vary per path.</p>
+</div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">3. The "Current Price" Problem</h3>
+<p>Where does current market value live? Three options:</p>
+
+<ol>
+    <li><strong>Column on tax_lots</strong> - Bad. Updates millions of rows daily.</li>
+    <li><strong>Separate prices table</strong> - Good. Join when needed.</li>
+    <li><strong>Computed at query time</strong> - Best for simulation. Price comes from the simulation path.</li>
+</ol>
+
+</body>
+</html>
+

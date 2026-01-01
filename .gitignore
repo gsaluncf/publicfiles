@@ -1,0 +1,13 @@
+# Track only the RMDs folder in this repo
+# Ignore everything by default
+*
+
+# Allow directory traversal
+!*/
+
+# Keep this file
+!.gitignore
+
+# Allow the RMDs directory and all of its content
+!RMDs/
+!RMDs/**
