@@ -9,16 +9,16 @@
 
 <!-- Top navigation matches the other seminar pages (inline styles per style guide) -->
 <nav style="background-color: #1e40af; padding: 12px 20px; margin: -8px -8px 20px -8px; border-radius: 0 0 8px 8px;">
-    <span style="color: white; font-weight: bold; margin-right: 30px;">RMD Seminar</span>
-    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Framework</a>
-    <a href="01_opening_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">[1-Opening]</a>
-    <a href="01b_problem_scenarios.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Scenarios</a>
-    <a href="02_definitions_glossary.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Glossary</a>
-    <a href="03_data_model_presentation.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Data Model</a>
-    <a href="03b_stats_foundations.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Stats Intro</a>
-    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 15px; text-decoration: none;">Stats Methods</a>
-    <a href="05_monte_carlo_aggregation.html" style="color: #dbeafe; text-decoration: none;">Monte Carlo</a>
-    <a href="06_aggregation_metrics.html" style="color: #dbeafe; text-decoration: none; margin-left: 15px;">Metrics</a>
+    <a href="index.html" style="color: white; font-weight: bold; margin-right: 30px; text-decoration: none;">RMD Seminar</a>
+    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Framework</a>
+    <a href="01_opening_presentation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Opening</a>
+    <a href="01b_problem_scenarios.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Scenarios</a>
+    <a href="02_definitions_glossary.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Glossary</a>
+    <a href="03_data_model_presentation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Data Model</a>
+    <a href="03b_stats_foundations.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Stats Intro</a>
+    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Stats Methods</a>
+    <a href="05_monte_carlo_aggregation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Monte Carlo</a>
+    <a href="06_aggregation_metrics.html" style="color: #dbeafe; text-decoration: none;">Metrics</a>
 </nav>
 
 <h1>Welcome to the Wealth Management Data Seminar</h1>
@@ -69,22 +69,38 @@
 </div>
 
 <!-- Contents list: links to all HTML files in this directory -->
-<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Contents</h2>
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Presentations</h2>
+<ol>
+    <li><a href="00_seminar_framework.html" style="color: #1e40af;">Seminar Framework</a> - Schedule and materials overview</li>
+    <li><a href="01_opening_presentation.html" style="color: #1e40af;">The Tax Alpha Problem</a> - Why this matters</li>
+    <li><a href="01b_problem_scenarios.html" style="color: #1e40af;">Problem Scenarios</a> - Concrete examples</li>
+    <li><a href="02_definitions_glossary.html" style="color: #1e40af;">Definitions &amp; Glossary</a> - Key terminology</li>
+    <li><a href="03_data_model_presentation.html" style="color: #1e40af;">Data Model</a> - Tax lots and accounts</li>
+    <li><a href="03b_stats_foundations.html" style="color: #1e40af;">Why Averages Fail</a> - Building intuition</li>
+    <li><a href="04_statistical_methods.html" style="color: #1e40af;">Statistical Methods</a> - GBM and survival analysis</li>
+    <li><a href="05_monte_carlo_aggregation.html" style="color: #1e40af;">Monte Carlo Simulation</a> - Why we simulate</li>
+    <li><a href="06_aggregation_metrics.html" style="color: #1e40af;">Aggregation Metrics</a> - VaR, confidence intervals</li>
+</ol>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Hands-On Notebooks</h2>
+<p>Progressive Jupyter notebooks that build the simulation step by step:</p>
+<ol>
+    <li><a href="notebooks/01_intro_monte_carlo.ipynb" style="color: #1e40af;">Intro to Monte Carlo</a> - Random numbers and pi estimation</li>
+    <li><a href="notebooks/02_geometric_brownian_motion.ipynb" style="color: #1e40af;">Geometric Brownian Motion</a> - Simulating stock prices</li>
+    <li><a href="notebooks/03_survival_analysis.ipynb" style="color: #1e40af;">Survival Analysis</a> - SSA life tables</li>
+    <li><a href="notebooks/04_tax_strategies.ipynb" style="color: #1e40af;">Tax Strategies</a> - RMDs and step-up in basis</li>
+    <li><a href="notebooks/05_full_monte_carlo.ipynb" style="color: #1e40af;">Full Monte Carlo</a> - Complete simulation with DuckDB</li>
+</ol>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Code &amp; Schema</h2>
 <ul>
-    <li><a href="00_seminar_framework.html" style="color: #1e40af;">Seminar Framework</a></li>
-    <li><a href="01_opening_presentation.html" style="color: #1e40af;">Session 1: The Tax Alpha Problem</a></li>
-    <li><a href="01b_problem_scenarios.html" style="color: #1e40af;">Problem Scenarios</a></li>
-    <li><a href="02_definitions_glossary.html" style="color: #1e40af;">Definitions &amp; Glossary</a></li>
-    <li><a href="03_data_model_presentation.html" style="color: #1e40af;">Data Model Presentation</a></li>
-    <li><a href="03b_stats_foundations.html" style="color: #1e40af;">Statistical Foundations</a></li>
-    <li><a href="04_statistical_methods.html" style="color: #1e40af;">Statistical Methods</a></li>
-    <li><a href="05_monte_carlo_aggregation.html" style="color: #1e40af;">Monte Carlo Aggregation</a></li>
-    <li><a href="06_aggregation_metrics.html" style="color: #1e40af;">Aggregation Metrics</a></li>
+    <li><a href="code/" style="color: #1e40af;">code/</a> - Python modules (simulation_engine.py, tax_strategies.py, etc.)</li>
+    <li><a href="schema/" style="color: #1e40af;">schema/</a> - DuckDB DDL for tax lots and accounts</li>
 </ul>
 
 <!-- Footer with last-updated note -->
 <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
-<p style="color: #64748b;">Last updated: 2026-01-01 18:53 (local). Repository: gsaluncf/publicfiles → folder <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">w2026Seminar/RMDs</code></p>
+<p style="color: #64748b;">Last updated: 2026-01-02. Repository: gsaluncf/publicfiles → folder <code style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">w2026Seminar/RMDs</code></p>
 
 </body>
 </html>
