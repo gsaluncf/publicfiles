@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Session 3: Statistical Methods for Tax-Optimized Simulation</title>
+    <title>Session 4: The Math - Data Science in Wealth Management</title>
 </head>
 <body>
 
@@ -19,62 +19,98 @@
     <a href="02_definitions_glossary.html" style="color: #dbeafe; text-decoration: none;">Glossary</a>
 </nav>
 
-<h1>Session 3: Statistical Methods for Tax-Optimized Simulation</h1>
-<p style="color: #64748b; font-style: italic;">The data science toolkit for wealth management simulation</p>
+<h1>Session 4: The Math</h1>
+<p style="color: #64748b; font-style: italic;">Statistical methods for simulating markets and lifespans</p>
+
+<div style="background-color: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<h2 style="color: #92400e; margin-top: 5px;">Key Terms for This Session</h2>
+<p style="margin-bottom: 10px;">You'll encounter these concepts in this session. Don't worry if they're unfamiliar - we'll explain each one.</p>
+<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+<tr style="background-color: #fef3c7;">
+    <th style="border: 1px solid #fbbf24; padding: 8px; text-align: left; width: 30%;">Term</th>
+    <th style="border: 1px solid #fbbf24; padding: 8px; text-align: left; width: 70%;">What It Means</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #fbbf24; padding: 8px;"><strong>GBM</strong></td>
+    <td style="border: 1px solid #fbbf24; padding: 8px;">Geometric Brownian Motion - a way to simulate stock prices</td>
+</tr>
+<tr style="background-color: #fffbeb;">
+    <td style="border: 1px solid #fbbf24; padding: 8px;"><strong>Drift (μ)</strong></td>
+    <td style="border: 1px solid #fbbf24; padding: 8px;">Expected return - the average growth rate</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #fbbf24; padding: 8px;"><strong>Volatility (σ)</strong></td>
+    <td style="border: 1px solid #fbbf24; padding: 8px;">How much prices bounce around - the standard deviation</td>
+</tr>
+<tr style="background-color: #fffbeb;">
+    <td style="border: 1px solid #fbbf24; padding: 8px;"><strong>Survival Function</strong></td>
+    <td style="border: 1px solid #fbbf24; padding: 8px;">Probability of living past a certain age</td>
+</tr>
+</table>
+<p style="margin-top: 10px; font-size: 14px; color: #92400e;">See the <a href="02_definitions_glossary.html" style="color: #92400e; font-weight: bold;">Glossary</a> for more detailed definitions.</p>
+</div>
 
 <div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
 <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Why Averages Fail</h2>
 <p>The statement "the market returns 7% per year on average" is useless for retirement planning. Two portfolios with identical average returns can have wildly different outcomes depending on the <em>sequence</em> of returns and the <em>timing</em> of death.</p>
-<p>This session introduces the statistical machinery needed to model uncertainty properly.</p>
+<p>This session introduces the statistical methods needed to model uncertainty properly.</p>
 </div>
 
-<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Method 1: Geometric Brownian Motion (GBM)</h2>
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Method 1: Simulating Stock Prices with GBM</h2>
 
-<h3 style="color: #1d4ed8; margin-top: 25px;">What It Models</h3>
-<p>GBM models the evolution of asset prices over time, capturing both expected growth and random volatility.</p>
+<h3 style="color: #1d4ed8; margin-top: 25px;">What We're Trying to Do</h3>
+<p>We need to simulate what the stock market might do over the next 30 years. We know two things:</p>
+<ul>
+    <li>The market tends to grow over time (on average, about 7% per year)</li>
+    <li>The market is volatile - some years it's up 20%, other years it's down 10%</li>
+</ul>
+<p>Geometric Brownian Motion (GBM) is a mathematical model that captures both of these features. It's the standard way to simulate stock prices in finance.</p>
 
-<h3 style="color: #1d4ed8; margin-top: 25px;">The Mathematics</h3>
+<h3 style="color: #1d4ed8; margin-top: 25px;">The Formula (Don't Panic)</h3>
 <div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; margin: 15px 0;">
 <p style="font-family: 'Courier New', monospace; font-size: 16px; text-align: center;">
 dS = μS dt + σS dW
 </p>
+<p style="text-align: center; margin-top: 10px; color: #64748b;">This says: "Price change = expected growth + random shock"</p>
 </div>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Breaking Down the Formula</h3>
 
 <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
 <tr style="background-color: #1e40af; color: white;">
     <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Symbol</th>
     <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Name</th>
-    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Interpretation</th>
-    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Typical Value</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">What It Means in Plain English</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Example Value</th>
 </tr>
 <tr>
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-family: 'Courier New', monospace;">S</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">Stock price</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Current value of the asset</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">The current value of the portfolio</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">$100 (starting)</td>
 </tr>
 <tr style="background-color: #f8fafc;">
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-family: 'Courier New', monospace;">μ</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">Drift</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Expected annual return</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">The average growth rate we expect (like "7% per year")</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">0.07 (7%)</td>
 </tr>
 <tr>
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-family: 'Courier New', monospace;">σ</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">Volatility</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Standard deviation of returns</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">How much the returns bounce around (higher = more unpredictable)</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">0.16 (16%)</td>
 </tr>
 <tr style="background-color: #f8fafc;">
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-family: 'Courier New', monospace;">dW</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Wiener process</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Random shock ~ N(0, dt)</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Sampled each step</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Random shock</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">A random number we draw each year to simulate unpredictability</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Different each time</td>
 </tr>
 </table>
 
-<h3 style="color: #1d4ed8; margin-top: 25px;">Discrete Implementation</h3>
-<p>For simulation, we use the discrete form over annual time steps:</p>
+<h3 style="color: #1d4ed8; margin-top: 25px;">How We Actually Code This</h3>
+<p>In practice, we simulate year by year. Each year, we calculate the new price based on the old price, the expected growth, and a random shock:</p>
 
 <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
 import numpy as np
@@ -119,37 +155,43 @@ def simulate_gbm_paths(S0, mu, sigma, T, n_paths, seed=42):
 
 <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
 
-<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Method 2: Survival Analysis</h2>
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Method 2: Simulating Lifespans</h2>
 
-<h3 style="color: #1d4ed8; margin-top: 25px;">What It Models</h3>
-<p>Survival analysis models the probability distribution of "time until event" - in our case, time until death. We use actuarial life tables published by the Social Security Administration.</p>
+<h3 style="color: #1d4ed8; margin-top: 25px;">What We're Trying to Do</h3>
+<p>We also need to simulate how long Robert might live. We can't just use "average life expectancy" because:</p>
+<ul>
+    <li>Some people die young, others live to 100</li>
+    <li>The timing of death dramatically affects which strategy wins</li>
+    <li>We need to capture the full range of possibilities</li>
+</ul>
+<p>The Social Security Administration publishes life tables that tell us the probability of dying at each age. We use these tables to randomly sample realistic lifespans.</p>
 
-<h3 style="color: #1d4ed8; margin-top: 25px;">Key Functions</h3>
+<h3 style="color: #1d4ed8; margin-top: 25px;">Key Concepts</h3>
 
 <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
 <tr style="background-color: #1e40af; color: white;">
-    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Function</th>
-    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Definition</th>
-    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Use in Simulation</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Concept</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">What It Means</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Why We Care</th>
 </tr>
 <tr>
-    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Survival Function S(t)</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">P(T > t) = probability of surviving past age t</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Determines when step-up in basis occurs</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Survival Probability</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Chance of living past a certain age (e.g., 60% chance of reaching 85)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Determines when the step-up in basis happens</td>
 </tr>
 <tr style="background-color: #f8fafc;">
-    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Hazard Function h(t)</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Instantaneous risk of death at age t, given survival to t</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Increases with age (mortality acceleration)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Mortality Rate</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Risk of dying at each age (increases as you get older)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Helps us sample realistic death ages</td>
 </tr>
 <tr>
-    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Life Expectancy E[T|t]</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Expected remaining years of life at age t</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Used in RMD divisor calculations</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Life Expectancy</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Average remaining years at a given age</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Used in RMD calculations (IRS divisor)</td>
 </tr>
 </table>
 
-<h3 style="color: #1d4ed8; margin-top: 25px;">Sampling from Life Tables</h3>
+<h3 style="color: #1d4ed8; margin-top: 25px;">How We Sample Death Ages</h3>
 
 <pre style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;">
 import numpy as np

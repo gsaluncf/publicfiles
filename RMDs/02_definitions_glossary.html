@@ -70,20 +70,20 @@
 <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
 <tr style="background-color: #1e40af; color: white;">
     <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 20%;">Term</th>
-    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 40%;">Formal Definition</th>
-    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 40%;">Data Modeling Note</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 40%;">Definition</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 40%;">How It Affects Our Work</th>
 </tr>
-<tr>
+<tr id="rmd">
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Required Minimum Distribution (RMD)</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">The minimum amount that must be withdrawn annually from tax-deferred retirement accounts starting at age 73, calculated as account balance divided by an IRS life expectancy factor.</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Requires annual recalculation. The divisor comes from IRS Uniform Lifetime Table. Must track account balance at year-end.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Requires annual recalculation in our simulation. The divisor comes from IRS Uniform Lifetime Table. Must track account balance at year-end.</td>
 </tr>
-<tr style="background-color: #f8fafc;">
+<tr style="background-color: #f8fafc;" id="stepup">
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Step-Up in Basis</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">Upon death, inherited assets receive a new cost basis equal to fair market value at date of death, eliminating all unrealized capital gains for tax purposes.</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">Simulation must track death event and reset cost_basis = market_value at that moment. Affects terminal wealth calculation.</td>
 </tr>
-<tr>
+<tr id="costbasis">
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Cost Basis</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">The original purchase price of an asset, used to calculate capital gains or losses when the asset is sold. Basis = Purchase Price + Adjustments.</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">Immutable after purchase (except for specific adjustments). Stored per tax lot, not per security.</td>
@@ -93,7 +93,7 @@
     <td style="border: 1px solid #cbd5e1; padding: 12px;">The difference between current market value and cost basis for an asset that has not been sold. Unrealized Gain = Market Value - Cost Basis.</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">Computed field, not stored. Changes with every market price update. This is what Step-Up eliminates.</td>
 </tr>
-<tr>
+<tr id="taxlot">
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Tax Lot</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">A record of a specific purchase of a security, including date, quantity, and price. Multiple purchases of the same security create multiple tax lots.</td>
     <td style="border: 1px solid #cbd5e1; padding: 12px;">Primary entity in our schema. One client may have hundreds of lots. Each lot has its own basis and holding period.</td>
@@ -141,21 +141,21 @@
     <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 25%;">Term</th>
     <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; width: 75%;">Definition</th>
 </tr>
-<tr>
+<tr id="gbm">
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Geometric Brownian Motion (GBM)</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">A stochastic process where the logarithm of the variable follows a Brownian motion with drift. Used to model stock prices: dS = μS dt + σS dW, where μ is drift (expected return), σ is volatility, and dW is a Wiener process increment.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">A mathematical model for simulating stock prices over time. It captures both expected growth (drift) and random volatility. Formula: dS = μS dt + σS dW, where μ is expected return, σ is volatility, and dW represents random shocks.</td>
 </tr>
 <tr style="background-color: #f8fafc;">
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Survival Function S(t)</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">The probability that an individual survives beyond time t. S(t) = P(T > t), where T is the random variable representing time of death. Derived from actuarial life tables.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">The probability that an individual survives beyond time t. S(t) = P(T > t), where T is the random variable representing time of death. Derived from actuarial life tables published by the Social Security Administration.</td>
 </tr>
-<tr>
+<tr id="montecarlo">
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Monte Carlo Simulation</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">A computational technique that uses repeated random sampling to obtain numerical results. We generate N independent paths, apply deterministic logic to each, then aggregate statistics across all paths.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">A computational technique that uses repeated random sampling to estimate outcomes when the math is too complex to solve directly. We generate thousands of independent scenarios, apply our logic to each, then aggregate statistics across all scenarios.</td>
 </tr>
-<tr style="background-color: #f8fafc;">
+<tr style="background-color: #f8fafc;" id="var">
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Value at Risk (VaR)</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">The maximum expected loss at a given confidence level over a specified time horizon. VaR(95%) = the 5th percentile of the terminal wealth distribution.</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">A measure of downside risk. VaR(95%) answers: "What is the worst outcome I should expect 95% of the time?" Calculated as the 5th percentile of the terminal wealth distribution.</td>
 </tr>
 <tr>
     <td style="border: 1px solid #cbd5e1; padding: 12px; font-weight: bold;">Decision Boundary</td>
