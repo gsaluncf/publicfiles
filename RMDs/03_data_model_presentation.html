@@ -85,45 +85,9 @@
 
 <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Entity Relationship Diagram</h2>
 
-<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin: 20px 0;">
-<pre style="font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.4;">
-┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
-│  account_types  │       │     clients     │       │  asset_classes  │
-├─────────────────┤       ├─────────────────┤       ├─────────────────┤
-│ account_type_id │       │ client_id  [PK] │       │ asset_class_id  │
-│ tax_treatment   │       │ birth_date      │       │ expected_return │
-│ rmd_required    │       │ gender          │       │ volatility      │
-│ step_up_eligible│       │ tax_bracket     │       │ dividend_yield  │
-└────────┬────────┘       └────────┬────────┘       └────────┬────────┘
-         │                         │                         │
-         │ 1                       │ 1                       │ 1
-         │                         │                         │
-         ▼ M                       ▼ M                       │
-┌─────────────────────────────────────────┐                  │
-│               accounts                   │                  │
-├─────────────────────────────────────────┤                  │
-│ account_id  [PK]                        │                  │
-│ client_id   [FK] ───────────────────────┘                  │
-│ account_type_id [FK]                                       │
-│ account_name                                               │
-└────────────────────┬────────────────────┘                  │
-                     │ 1                                     │
-                     │                                       │
-                     ▼ M                                     │
-         ┌───────────────────────────────────────────────────┘
-         │           tax_lots                    
-         ├─────────────────────────────────────┐
-         │ lot_id  [PK]                        │
-         │ account_id [FK]                     │
-         │ asset_class_id [FK] ────────────────┘
-         │ security_symbol                     
-         │ purchase_date      ◄── Immutable    
-         │ purchase_price     ◄── Immutable    
-         │ quantity           ◄── Immutable    
-         │ cost_basis         ◄── Computed     
-         │ is_sold                             
-         └─────────────────────────────────────┘
-</pre>
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+    <img src="src/ERD_for_Wealth_DM.png" alt="Entity Relationship Diagram for Wealth Management Data Model" style="max-width: 100%; height: auto; border-radius: 4px;">
+    <p style="color: #64748b; font-size: 14px; margin-top: 10px;">The wealth management data model: clients own accounts, accounts contain tax lots, each with specific tax treatment rules.</p>
 </div>
 
 <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Key Design Decisions</h2>
