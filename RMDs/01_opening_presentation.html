@@ -8,125 +8,183 @@
 <body>
 
 <nav style="background-color: #1e40af; padding: 12px 20px; margin: -8px -8px 20px -8px; border-radius: 0 0 8px 8px;">
-    <a href="index.html" style="color: white; font-weight: bold; margin-right: 30px; text-decoration: none;">RMD Seminar</a>
-    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Framework</a>
-    <a href="01_opening_presentation.html" style="color: #93c5fd; margin-right: 12px; text-decoration: none; font-weight: bold;">[Opening]</a>
-    <a href="01b_problem_scenarios.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Scenarios</a>
-    <a href="02_definitions_glossary.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Glossary</a>
-    <a href="03_data_model_presentation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Data Model</a>
-    <a href="03b_stats_foundations.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Stats Intro</a>
-    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Stats Methods</a>
-    <a href="05_monte_carlo_aggregation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Monte Carlo</a>
-    <a href="06_aggregation_metrics.html" style="color: #dbeafe; text-decoration: none;">Metrics</a>
+    <a href="index.html" style="color: white; font-weight: bold; margin-right: 30px; text-decoration: none;">Home</a>
+    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Agenda</a>
+    <a href="01_opening_presentation.html" style="color: #93c5fd; margin-right: 12px; text-decoration: none; font-weight: bold;">[1. Problem]</a>
+    <a href="03_data_model_presentation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">2. Data Model</a>
+    <a href="03b_stats_foundations.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">3. Why Simulate</a>
+    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">4. Math</a>
+    <a href="05_monte_carlo_aggregation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">5. Simulation</a>
+    <a href="06_aggregation_metrics.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">6. Analysis</a>
+    <a href="02_definitions_glossary.html" style="color: #dbeafe; text-decoration: none;">Glossary</a>
 </nav>
 
-<h1>Session 1: The Tax Alpha Problem</h1>
-<p style="color: #64748b; font-style: italic;">A Multi-Variable Optimization Challenge for Data Scientists</p>
+<h1>Session 1: The Problem</h1>
+<p style="font-size: 18px; color: #475569;">Understanding wealth management data through a real tax optimization problem</p>
 
-<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
-<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">The Core Question</h2>
-<p style="font-size: 18px; line-height: 1.6;">How do we maximize multi-generational wealth when <strong style="color: #1e40af;">market returns</strong> and <strong style="color: #1e40af;">human lifespans</strong> are both uncertain?</p>
-<p>This seminar treats retirement wealth management as what it truly is: a stochastic optimization problem with competing tax strategies, probabilistic inputs, and no closed-form solution.</p>
-</div>
+<h2 style="color: #1e40af; margin-top: 30px;">What Is Wealth Management?</h2>
 
-<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Why Data Scientists Should Care</h2>
+<p>Wealth management is a service business. Clients pay advisors to help them make financial decisions: how to invest, when to sell, how to minimize taxes, how to plan for retirement, how to pass money to their kids.</p>
 
-<p>You are not here to become financial advisors. You are here because this problem domain offers:</p>
+<p>Behind every recommendation is data. Lots of it:</p>
 
 <ul>
-    <li><strong style="color: #1e40af;">Real-world Monte Carlo application</strong> - Not a textbook example, but a problem where simulation is the only viable approach</li>
-    <li><strong style="color: #1e40af;">Temporal database design</strong> - Financial data has time-varying attributes that break naive schemas</li>
-    <li><strong style="color: #1e40af;">Decision science under uncertainty</strong> - Quantifying when Strategy A beats Strategy B across probability distributions</li>
-    <li><strong style="color: #1e40af;">Multi-objective optimization</strong> - Balancing expected value against tail risk</li>
+    <li><strong>Holdings data:</strong> What does the client own? Stocks, bonds, real estate, cash.</li>
+    <li><strong>Tax lot data:</strong> When did they buy each asset? At what price? This determines taxes when they sell.</li>
+    <li><strong>Account data:</strong> Is the money in a 401(k)? An IRA? A regular brokerage account? Each has different tax rules.</li>
+    <li><strong>Market data:</strong> What are current prices? What are expected returns?</li>
+    <li><strong>Client data:</strong> How old are they? What is their risk tolerance? When do they need the money?</li>
 </ul>
 
-<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">The Backstory: Two Tax Rules in Tension</h2>
+<p>This seminar uses a specific wealth management problem to teach you how this data works. You will not become a financial advisor. But you will understand how to model financial data and make decisions under uncertainty.</p>
 
-<p>The U.S. tax code creates a fascinating optimization problem through two rules that pull in opposite directions:</p>
+<h2 style="color: #1e40af; margin-top: 30px;">The Three Types of Investment Accounts</h2>
+
+<p>In the United States, there are three main types of accounts where people hold investments. Each has different tax treatment:</p>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Account Type</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">When You Put Money In</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">While It Grows</th>
+    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">When You Take Money Out</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;"><strong>Traditional IRA / 401(k)</strong></td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Tax deduction (you pay less tax now)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">No taxes on growth</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Taxed as ordinary income</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 12px;"><strong>Roth IRA / Roth 401(k)</strong></td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">No deduction (you already paid tax)</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">No taxes on growth</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Tax-free</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;"><strong>Taxable Brokerage</strong></td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">No deduction</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Dividends taxed each year</td>
+    <td style="border: 1px solid #cbd5e1; padding: 12px;">Capital gains tax on profits</td>
+</tr>
+</table>
+
+<p>Most retirees have money in multiple account types. The question is: which account should they take money from first?</p>
+
+<h2 style="color: #1e40af; margin-top: 30px;">What Is a Tax Lot?</h2>
+
+<p>When you buy shares of a stock, you create a "tax lot." A tax lot records:</p>
+
+<ul>
+    <li>What you bought (e.g., 100 shares of Apple)</li>
+    <li>When you bought it (e.g., March 15, 2020)</li>
+    <li>What you paid (e.g., $250 per share, so $25,000 total)</li>
+</ul>
+
+<p>The price you paid is called your <strong>cost basis</strong>. When you sell, you pay taxes on the difference between the sale price and your cost basis. This difference is your <strong>capital gain</strong>.</p>
+
+<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<p><strong>Example:</strong> You bought 100 shares of Apple at $250 (cost basis = $25,000). Today Apple is $400 per share (value = $40,000). If you sell, your capital gain is $15,000. You owe taxes on that $15,000.</p>
+<p>But if you never sell, you never owe taxes. The gain is "unrealized" - it exists on paper but you have not locked it in.</p>
+</div>
+
+<h2 style="color: #1e40af; margin-top: 30px;">Two Tax Rules That Create Our Problem</h2>
+
+<p>The U.S. tax code has two rules that pull in opposite directions. Understanding these rules is the key to understanding our problem.</p>
 
 <h3 style="color: #1d4ed8; margin-top: 25px;">Rule 1: Required Minimum Distributions (RMDs)</h3>
-<p>Starting at age 73, the IRS forces you to withdraw money from tax-deferred retirement accounts (401k, Traditional IRA). These withdrawals are taxed as ordinary income. The government wants its tax revenue before you die.</p>
+
+<p>The government gave you a tax break when you put money into your Traditional IRA or 401(k). But they want their taxes eventually. So starting at age 73, the IRS <em>forces</em> you to withdraw money from these accounts every year.</p>
+
+<p>The amount you must withdraw is based on your account balance and your age. At 73, you must withdraw about 3.8% of your balance. At 80, about 5%. At 90, about 8.8%. The percentage increases as you age because the IRS assumes you have fewer years left.</p>
+
+<p>Every dollar you withdraw is taxed as ordinary income. If you are in the 24% tax bracket, you lose 24 cents of every dollar to taxes.</p>
+
+<p><strong>The IRS is saying:</strong> "We let you defer taxes for decades. Now pay up."</p>
 
 <h3 style="color: #1d4ed8; margin-top: 25px;">Rule 2: Step-Up in Basis</h3>
-<p>When you die, your heirs inherit your assets at their current market value, not what you paid. All unrealized capital gains disappear. The government forgives decades of appreciation.</p>
 
-<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
-<h3 style="color: #1d4ed8; margin-top: 5px;">The Tension</h3>
-<p><strong>RMDs say:</strong> "Take money out now and pay taxes."</p>
-<p><strong>Step-Up says:</strong> "Hold until death and pay nothing."</p>
-<p>Which strategy wins? It depends on how long you live and what the market does. Both are uncertain.</p>
+<p>When you die, something remarkable happens to your taxable brokerage account. Your heirs inherit your assets at their <em>current market value</em>, not at your original cost basis.</p>
+
+<p>Remember that Apple stock you bought at $250 that is now worth $400? If you sell it, you owe taxes on the $150 gain. But if you die holding it, your daughter inherits it with a cost basis of $400. If she sells it immediately for $400, her gain is zero. She owes nothing.</p>
+
+<p>All those years of appreciation? The IRS forgives them. The unrealized gains disappear.</p>
+
+<p><strong>The IRS is saying:</strong> "If you hold until death, we will pretend the gains never happened."</p>
+
+<div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<h3 style="color: #92400e; margin-top: 5px;">The Conflict</h3>
+<p>These two rules create a tension:</p>
+<ul>
+    <li><strong>RMDs force you to take money out</strong> of tax-deferred accounts and pay taxes now.</li>
+    <li><strong>Step-up rewards you for holding</strong> appreciated assets in taxable accounts until death.</li>
+</ul>
+<p>If you knew exactly when you would die and exactly what the market would do, you could calculate the optimal strategy. But you do not know either of those things.</p>
 </div>
 
-<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">A Concrete Example</h2>
+<h2 style="color: #1e40af; margin-top: 30px;">Meet Robert: A Concrete Example</h2>
 
-<p>Consider a 65-year-old retiree with:</p>
+<p>Robert is 65 years old. He just retired. He has:</p>
+
 <ul>
-    <li>$1,000,000 in a Traditional IRA (all withdrawals taxed as income)</li>
-    <li>$500,000 in a taxable brokerage account (cost basis: $200,000, unrealized gain: $300,000)</li>
+    <li><strong>$1,000,000 in a Traditional IRA.</strong> He contributed over 30 years of working. He got tax deductions on every contribution. He has never paid taxes on any of this money.</li>
+    <li><strong>$500,000 in a taxable brokerage account.</strong> He invested $200,000 over the years. It has grown to $500,000. He has $300,000 in unrealized gains.</li>
 </ul>
 
-<p><strong>Strategy A: Aggressive Decumulation</strong></p>
-<p>Convert IRA to Roth aggressively, pay taxes now at known rates, let Roth grow tax-free.</p>
+<p>Robert needs $60,000 per year to live on. He has two children he wants to leave money to.</p>
 
-<p><strong>Strategy B: Hold to Death</strong></p>
-<p>Take only required RMDs, keep assets in taxable account, let heirs inherit with stepped-up basis.</p>
+<p>Robert has a choice:</p>
 
-<p>If the retiree dies at 70, Strategy B wins decisively (heirs get step-up, avoided most RMDs).</p>
-<p>If the retiree lives to 95, Strategy A may win (30 years of RMDs would have eroded the portfolio anyway).</p>
+<h3 style="color: #1d4ed8; margin-top: 25px;">Strategy A: Spend Down the IRA First</h3>
 
-<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
-<h3 style="color: #1d4ed8; margin-top: 5px;">The Data Science Question</h3>
-<p>At what combination of <strong>market volatility</strong> and <strong>life expectancy</strong> does the optimal strategy flip? This is not a calculation. This is a simulation.</p>
+<p>Robert takes $60,000 per year from his IRA. He pays income tax on every withdrawal (let's say 22%, so $13,200 per year in taxes). His taxable brokerage account continues to grow untouched.</p>
+
+<p>When Robert dies, his children inherit the brokerage account with a stepped-up basis. They owe no taxes on the $300,000+ in gains.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Strategy B: Spend the Taxable Account First</h3>
+
+<p>Robert takes $60,000 per year from his taxable brokerage account. He pays capital gains tax on the gains portion (let's say 15%, so less than the income tax rate). His IRA continues to grow untouched.</p>
+
+<p>But at age 73, RMDs kick in. Robert is forced to withdraw from his IRA whether he needs the money or not. And his IRA has been growing for 8 more years, so the RMDs are larger. He pays income tax on all of it.</p>
+
+<h3 style="color: #1d4ed8; margin-top: 25px;">Which Strategy Wins?</h3>
+
+<p>It depends on two things Robert cannot control:</p>
+
+<ol>
+    <li><strong>How long Robert lives.</strong> If he dies at 70, he never faces RMDs. Strategy B wins because his children get the step-up on the brokerage account AND inherit the IRA (which they can stretch over 10 years). If he lives to 95, he faces 22 years of RMDs that drain his IRA anyway.</li>
+    <li><strong>What the market does.</strong> If the market crashes, his unrealized gains shrink and the step-up is worth less. If the market booms, his IRA grows larger and RMDs become more painful.</li>
+</ol>
+
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<h3 style="color: #1e40af; margin-top: 5px;">This Is Our Problem</h3>
+<p>We cannot calculate the answer because we do not know the inputs. We need to simulate thousands of possible futures - different lifespans, different market returns - and see which strategy wins more often, and by how much.</p>
+<p>This is what you will build in this seminar.</p>
 </div>
 
 <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
 
-<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">What We Will Build</h2>
+<h2 style="color: #1e40af; margin-top: 30px;">What You Will Build</h2>
 
-<p>Over 1.5 days, you will construct a simulation engine that:</p>
+<p>Over the next 1.5 days, you will build a simulation that answers Robert's question. The simulation will:</p>
 
 <ol>
-    <li><strong>Generates 10,000+ market paths</strong> using Geometric Brownian Motion</li>
-    <li><strong>Samples lifespans</strong> from actuarial survival distributions</li>
-    <li><strong>Applies tax logic</strong> to a database of individual tax lots</li>
-    <li><strong>Aggregates results</strong> to find expected values, confidence intervals, and decision boundaries</li>
-    <li><strong>Visualizes the tax-efficient frontier</strong> showing when each strategy dominates</li>
+    <li><strong>Generate 10,000 possible market futures</strong> using a model called Geometric Brownian Motion (we will explain this)</li>
+    <li><strong>Generate 10,000 possible lifespans</strong> using real actuarial data from the Social Security Administration</li>
+    <li><strong>Apply the tax rules</strong> to each combination of market path and lifespan</li>
+    <li><strong>Store the results</strong> in a database so you can query them</li>
+    <li><strong>Find the answer:</strong> Under what conditions does Strategy A beat Strategy B? By how much? How confident can we be?</li>
 </ol>
 
-<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Technical Stack</h2>
+<p>You will use Python for the simulation and DuckDB for the database. By the end, you will have a working system that can answer questions like: "If Robert has a 60% chance of living past 85, which strategy maximizes expected wealth for his children?"</p>
 
-<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-<tr style="background-color: #f1f5f9;">
-    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Component</th>
-    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Tool</th>
-    <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left;">Why</th>
-</tr>
-<tr>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Database</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">DuckDB</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">In-process analytics, no server setup, SQL interface</td>
-</tr>
-<tr>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Simulation</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">NumPy / Polars</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Vectorized operations for 10K+ paths</td>
-</tr>
-<tr>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Survival Analysis</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">SciPy / lifelines</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Sampling from actuarial life tables</td>
-</tr>
-<tr>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Visualization</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Plotly / Seaborn</td>
-    <td style="border: 1px solid #cbd5e1; padding: 12px;">Interactive exploration of results</td>
-</tr>
-</table>
-
-<div style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
-<h3 style="color: #1d4ed8; margin-top: 5px;">Next: See the Problem in Action</h3>
-<p>Now let's look at concrete scenarios with real dollar amounts to understand how the RMD vs Step-Up tension plays out. <a href="01b_problem_scenarios.html" style="color: #1e40af; font-weight: bold;">Continue to Problem Scenarios</a></p>
+<div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 30px 0; text-align: center;">
+    <p style="font-size: 18px; margin: 0;"><a href="03_data_model_presentation.html" style="color: #1e40af; font-weight: bold; text-decoration: none;">Next: How to Model This Data →</a></p>
+    <p style="color: #64748b; margin: 10px 0 0 0;">Learn how to represent tax lots, accounts, and transactions in a database</p>
 </div>
+
+<hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+<p style="color: #64748b; font-size: 14px;">Last updated: 2026-01-02</p>
 
 </body>
 </html>

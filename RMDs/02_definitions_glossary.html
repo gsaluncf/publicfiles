@@ -8,25 +8,62 @@
 <body>
 
 <nav style="background-color: #1e40af; padding: 12px 20px; margin: -8px -8px 20px -8px; border-radius: 0 0 8px 8px;">
-    <a href="index.html" style="color: white; font-weight: bold; margin-right: 30px; text-decoration: none;">RMD Seminar</a>
-    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Framework</a>
-    <a href="01_opening_presentation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Opening</a>
-    <a href="01b_problem_scenarios.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Scenarios</a>
-    <a href="02_definitions_glossary.html" style="color: #93c5fd; margin-right: 12px; text-decoration: none; font-weight: bold;">[Glossary]</a>
-    <a href="03_data_model_presentation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Data Model</a>
-    <a href="03b_stats_foundations.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Stats Intro</a>
-    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Stats Methods</a>
-    <a href="05_monte_carlo_aggregation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Monte Carlo</a>
-    <a href="06_aggregation_metrics.html" style="color: #dbeafe; text-decoration: none;">Metrics</a>
+    <a href="index.html" style="color: white; font-weight: bold; margin-right: 30px; text-decoration: none;">Home</a>
+    <a href="00_seminar_framework.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">Agenda</a>
+    <a href="01_opening_presentation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">1. Problem</a>
+    <a href="03_data_model_presentation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">2. Data Model</a>
+    <a href="03b_stats_foundations.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">3. Why Simulate</a>
+    <a href="04_statistical_methods.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">4. Math</a>
+    <a href="05_monte_carlo_aggregation.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">5. Simulation</a>
+    <a href="06_aggregation_metrics.html" style="color: #dbeafe; margin-right: 12px; text-decoration: none;">6. Analysis</a>
+    <a href="02_definitions_glossary.html" style="color: #93c5fd; text-decoration: none; font-weight: bold;">[Glossary]</a>
 </nav>
 
-<h1>Glossary: Wealth Management Terms for Data Scientists</h1>
-<p style="color: #64748b; font-style: italic;">Formal definitions with data modeling implications</p>
+<h1>Glossary: Data Science in Wealth Management</h1>
+<p style="color: #64748b; font-style: italic;">Quick reference for financial and technical terms</p>
 
 <div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
-<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">How to Use This Glossary</h2>
-<p>Each term includes a formal definition, a plain-language explanation, and notes on how the concept affects database design or simulation logic.</p>
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Quick Reference</h2>
+<p>Use this page to look up unfamiliar terms as you work through the seminar. Each term includes a plain-language explanation and notes on how it affects our data science work.</p>
 </div>
+
+<h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Quick Lookup Table</h2>
+<p style="color: #64748b; margin-bottom: 15px;">One-sentence definitions for fast reference. Click any term to jump to the full explanation below.</p>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background-color: #1e40af; color: white;">
+    <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left; width: 25%;">Term</th>
+    <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left; width: 75%;">Quick Definition</th>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 10px;"><a href="#rmd" style="color: #1e40af; font-weight: bold; text-decoration: none;">RMD</a></td>
+    <td style="border: 1px solid #cbd5e1; padding: 10px;">Required Minimum Distribution - forced annual withdrawals from retirement accounts starting at age 73</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 10px;"><a href="#stepup" style="color: #1e40af; font-weight: bold; text-decoration: none;">Step-Up in Basis</a></td>
+    <td style="border: 1px solid #cbd5e1; padding: 10px;">Tax rule that eliminates capital gains taxes on inherited assets</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 10px;"><a href="#costbasis" style="color: #1e40af; font-weight: bold; text-decoration: none;">Cost Basis</a></td>
+    <td style="border: 1px solid #cbd5e1; padding: 10px;">Original purchase price of an asset, used to calculate taxes when sold</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 10px;"><a href="#taxlot" style="color: #1e40af; font-weight: bold; text-decoration: none;">Tax Lot</a></td>
+    <td style="border: 1px solid #cbd5e1; padding: 10px;">A record of a specific purchase of a security (date, quantity, price)</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 10px;"><a href="#gbm" style="color: #1e40af; font-weight: bold; text-decoration: none;">GBM</a></td>
+    <td style="border: 1px solid #cbd5e1; padding: 10px;">Geometric Brownian Motion - mathematical model for simulating stock prices</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+    <td style="border: 1px solid #cbd5e1; padding: 10px;"><a href="#montecarlo" style="color: #1e40af; font-weight: bold; text-decoration: none;">Monte Carlo</a></td>
+    <td style="border: 1px solid #cbd5e1; padding: 10px;">Simulation technique that runs thousands of random scenarios to estimate outcomes</td>
+</tr>
+<tr>
+    <td style="border: 1px solid #cbd5e1; padding: 10px;"><a href="#var" style="color: #1e40af; font-weight: bold; text-decoration: none;">VaR</a></td>
+    <td style="border: 1px solid #cbd5e1; padding: 10px;">Value at Risk - worst-case outcome at a given confidence level (e.g., 5th percentile)</td>
+</tr>
+</table>
 
 <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Core Tax Concepts</h2>
 
