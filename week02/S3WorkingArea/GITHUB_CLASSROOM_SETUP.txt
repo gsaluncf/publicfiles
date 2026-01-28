@@ -1,0 +1,243 @@
+================================================================================
+GITHUB CLASSROOM SETUP GUIDE - Week 2 S3 Assignment
+================================================================================
+
+Classroom URL: https://classroom.github.com/classrooms/256166596-ncf-distributed-computing-2026-classroom
+
+================================================================================
+STEP 1: CREATE TEMPLATE REPOSITORY
+================================================================================
+
+1. Go to GitHub and create a new repository:
+   Name: week02-s3-static-site-template
+   Description: Week 2 - S3 Static Website Assignment Template
+   Visibility: Public (so GitHub Classroom can access it)
+
+2. Initialize with:
+   ✓ README.md (use the one from S3WorkingArea)
+   ✓ .gitignore (use the one from S3WorkingArea)
+   ✗ No license needed (educational use)
+
+3. Upload all files from S3WorkingArea:
+   - site/ directory (index.html, styles.css, script.js)
+   - All .bat scripts (00-04, 99)
+   - README.md
+   - .gitignore
+   - CONTENT_GUIDE.txt (for instructor reference)
+
+4. Create a release (optional but recommended):
+   Tag: v1.0
+   Title: Week 2 S3 Assignment - Initial Release
+
+================================================================================
+STEP 2: CREATE GITHUB CLASSROOM ASSIGNMENT
+================================================================================
+
+1. Go to: https://classroom.github.com/classrooms/256166596-ncf-distributed-computing-2026-classroom
+
+2. Click "New Assignment"
+
+3. Assignment Settings:
+   Title: Week 2 - S3 Static Website
+   
+   Deadline: Sunday, February 8, 2026, 11:59 PM
+   
+   Repository Visibility: Private
+   (Students get private copies, can't see each other's work)
+   
+   Template Repository: Select "week02-s3-static-site-template"
+   
+   Grant students admin access: YES
+   (Allows them to manage their own repo)
+
+4. Starter Code:
+   ✓ Import starter code from template repository
+   
+5. Supported Editors (optional):
+   - Visual Studio Code
+   - GitHub Codespaces (if available)
+
+6. Autograding (optional - can add later):
+   - Test 1: Check if site/ directory exists
+   - Test 2: Verify index.html has required elements
+   - Test 3: Check if styles.css exists
+   
+   Note: Can't autograde AWS deployment, but can check file structure
+
+7. Feedback Pull Request: Enable
+   (Creates a PR for instructor feedback)
+
+8. Create Assignment
+
+================================================================================
+STEP 3: DISTRIBUTE ASSIGNMENT LINK
+================================================================================
+
+After creating assignment, GitHub Classroom provides:
+- Assignment invitation link (e.g., https://classroom.github.com/a/XXXXXXXX)
+- Share this link with students via Canvas
+
+Students will:
+1. Click invitation link
+2. Accept assignment
+3. GitHub creates personal repository: week02-s3-static-site-{username}
+4. Clone repository to local machine
+5. Complete assignment
+6. Push customizations back to GitHub (optional)
+7. Deploy to S3 and submit URL to Canvas
+
+================================================================================
+STEP 4: CANVAS INTEGRATION
+================================================================================
+
+In Canvas Assignment:
+1. Title: Week 2 - S3 Static Website
+2. Points: 100
+3. Due Date: Sunday, February 8, 2026, 11:59 PM
+4. Submission Type: Website URL
+5. Instructions: Link to lab.html (detailed instructions)
+
+Assignment Description:
+"""
+Deploy a static website to Amazon S3 using the AWS CLI.
+
+1. Accept GitHub Classroom assignment: [LINK]
+2. Clone your repository
+3. Follow instructions in README.md
+4. Deploy site to S3
+5. Submit your S3 website URL below
+
+Required Submission:
+- S3 website endpoint URL (e.g., http://bucket-name.s3-website-us-east-1.amazonaws.com)
+- Screenshot of live website
+
+Optional Extra Credit:
+- Customize site using LLM assistant
+- Add CloudFront distribution
+- Connect custom domain (from Week 1 extra credit)
+"""
+
+================================================================================
+STEP 5: GRADING RUBRIC
+================================================================================
+
+Total: 100 points
+
+Basic Requirements (70 points):
+- S3 bucket created with correct naming convention (10 pts)
+- Static website hosting enabled (10 pts)
+- Files uploaded using aws s3 sync (10 pts)
+- Bucket policy configured for public access (10 pts)
+- Website accessible via S3 endpoint (20 pts)
+- Screenshot provided (10 pts)
+
+Customization (20 points):
+- Site files customized (not default) (10 pts)
+- Evidence of LLM enhancement (10 pts)
+
+Documentation (10 points):
+- Clear bucket naming (5 pts)
+- Proper cleanup (mentioned in submission) (5 pts)
+
+Extra Credit (up to 20 points):
+- CloudFront distribution configured (10 pts)
+- Custom domain connected (10 pts)
+
+================================================================================
+STEP 6: MONITORING STUDENT PROGRESS
+================================================================================
+
+GitHub Classroom Dashboard shows:
+- Who has accepted assignment
+- Last commit timestamp
+- Repository activity
+
+Canvas shows:
+- Who has submitted URL
+- Submission timestamps
+
+Instructor can:
+- View all student repositories
+- Leave feedback via Pull Requests
+- Check commit history
+- Clone and test locally
+
+================================================================================
+STEP 7: COMMON STUDENT ISSUES
+================================================================================
+
+Issue: "Can't clone repository"
+Solution: Check Git is installed, SSH keys configured
+
+Issue: "Scripts don't run"
+Solution: Must use Command Prompt (cmd.exe), not PowerShell
+
+Issue: "AWS CLI not found"
+Solution: Install AWS CLI, restart terminal
+
+Issue: "Bucket name already exists"
+Solution: Choose different name (globally unique)
+
+Issue: "403 Forbidden"
+Solution: Run 03_set_bucket_policy.bat
+
+Issue: "Can't delete bucket"
+Solution: Run 99_teardown.bat or manually empty bucket first
+
+================================================================================
+STEP 8: AFTER ASSIGNMENT DEADLINE
+================================================================================
+
+1. Grade submissions in Canvas
+2. Verify URLs are accessible
+3. Check for customization
+4. Leave feedback in GitHub Classroom
+5. Remind students to run 99_teardown.bat to avoid charges
+
+================================================================================
+ALTERNATIVE: MANUAL DISTRIBUTION (Without GitHub Classroom)
+================================================================================
+
+If GitHub Classroom doesn't work:
+
+1. Create public repository with template
+2. Share repository URL with students
+3. Students fork or download ZIP
+4. Complete assignment locally
+5. Deploy to S3
+6. Submit URL to Canvas
+
+Pros: Simpler, no GitHub Classroom account needed
+Cons: No automatic repository creation, harder to track progress
+
+================================================================================
+FILES TO COMMIT TO TEMPLATE REPOSITORY
+================================================================================
+
+Required:
+✓ site/index.html
+✓ site/styles.css
+✓ site/script.js
+✓ 00_verify_aws_cli.bat
+✓ 01_create_bucket.bat
+✓ 02_sync_site.bat
+✓ 03_set_bucket_policy.bat
+✓ 04_verify_website.bat
+✓ 99_teardown.bat
+✓ README.md
+✓ .gitignore
+
+Optional (for instructor reference):
+✓ CONTENT_GUIDE.txt
+✓ TEST_MODE_walkthrough.bat
+✓ GITHUB_CLASSROOM_SETUP.txt (this file)
+
+Do NOT commit:
+✗ bucket_name.txt (generated by scripts)
+✗ bucket_region.txt (generated by scripts)
+✗ bucket_policy.json (generated by scripts)
+
+================================================================================
+END OF GITHUB CLASSROOM SETUP GUIDE
+================================================================================
+

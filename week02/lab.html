@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 2 Lab — S3 Static Website Deployment</title>
+</head>
+<body>
+
+<div style="background-color:#dbeafe;border:1px solid #93c5fd;border-radius:8px;padding:20px;margin:20px 0;">
+  <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:10px;">Lab: Deploy a Static Website to AWS S3</h2>
+  <p style="color:#1e293b;">This lab guides you through deploying a static website to Amazon S3 using <strong>both AWS Console UI and AWS CLI methods</strong>. You'll learn the complete workflow from bucket creation to public website deployment.</p>
+  <p style="color:#1e293b;margin-top:10px;"><strong>Time estimate:</strong> 45-60 minutes</p>
+</div>
+
+<div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Important: Two Methods Provided</h3>
+  <p style="color:#1e293b;">This lab provides <strong>two complete methods</strong> for deploying your S3 website:</p>
+  <ul style="color:#1e293b;">
+    <li><strong>Method 1: AWS Console UI</strong> — Click-through steps in the AWS web interface (good for understanding concepts)</li>
+    <li><strong>Method 2: AWS CLI Scripts</strong> — Automated batch scripts (faster, repeatable, tested and verified)</li>
+  </ul>
+  <p style="color:#1e293b;margin-top:10px;"><strong>Recommendation:</strong> Try the Console UI method first to understand what's happening, then use the CLI scripts for efficiency. If you encounter issues with one method, you have a backup!</p>
+</div>
+
+<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Prerequisites</h2>
+
+<div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Before You Begin</h3>
+  <p style="color:#1e293b;">Verify you have completed:</p>
+  <ol style="color:#1e293b;">
+    <li>Week 1 AWS account setup and IAM user creation</li>
+    <li>AWS CLI installed and configured (<code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">aws configure</code>)</li>
+    <li>Verified credentials work: <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">aws sts get-caller-identity</code></li>
+    <li>Accepted GitHub Classroom assignment and cloned repository</li>
+  </ol>
+</div>
+
+<hr style="border:1px solid #cbd5e1;margin:30px 0;">
+
+<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Method 1: AWS Console UI</h2>
+
+<p style="color:#1e293b;">This method uses the AWS web interface. Follow these steps carefully, referencing the <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html" target="_blank">official AWS tutorial</a>.</p>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Step 1: Create an S3 Bucket</h3>
+
+<ol style="color:#1e293b;">
+  <li>Sign in to the <a href="https://console.aws.amazon.com/s3/" target="_blank">AWS S3 Console</a></li>
+  <li>Click <strong>Create bucket</strong></li>
+  <li>Enter a <strong>globally unique bucket name</strong>:
+    <ul>
+      <li>Format: <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">ncf-s26-yourname-site</code></li>
+      <li>Example: <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">ncf-s26-gsalu-demo-site</code></li>
+      <li>Must be lowercase, no spaces, globally unique across all AWS</li>
+    </ul>
+  </li>
+  <li>Choose <strong>AWS Region</strong>: <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">us-east-1</code> (recommended for simplicity)</li>
+  <li>Leave all other settings as default</li>
+  <li>Click <strong>Create bucket</strong></li>
+</ol>
+
+<div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Why bucket names must be globally unique</h3>
+  <p style="color:#1e293b;">S3 bucket names form part of the URL (e.g., <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">bucket-name.s3.amazonaws.com</code>). Since URLs must be unique, bucket names must be unique across all AWS accounts worldwide.</p>
+</div>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Step 2: Enable Static Website Hosting</h3>
+
+<ol style="color:#1e293b;">
+  <li>In the S3 console, click on your newly created bucket name</li>
+  <li>Click the <strong>Properties</strong> tab</li>
+  <li>Scroll down to <strong>Static website hosting</strong></li>
+  <li>Click <strong>Edit</strong></li>
+  <li>Select <strong>Enable</strong></li>
+  <li>Under <strong>Hosting type</strong>, choose <strong>Host a static website</strong></li>
+  <li>Enter <strong>Index document</strong>: <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">index.html</code></li>
+  <li>Enter <strong>Error document</strong>: <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">index.html</code> (for single-page apps)</li>
+  <li>Click <strong>Save changes</strong></li>
+  <li><strong>Important:</strong> Note the <strong>Bucket website endpoint</strong> URL shown at the bottom (you'll need this later)</li>
+</ol>
+
+<div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Website Endpoint Format</h3>
+  <p style="color:#1e293b;">Your website endpoint will look like:</p>
+  <pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;border-left:4px solid #3b82f6;padding:15px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;">http://bucket-name.s3-website-region.amazonaws.com</pre>
+  <p style="color:#1e293b;margin-top:10px;">Example: <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">http://ncf-s26-gsalu-demo-site.s3-website-us-east-1.amazonaws.com</code></p>
+</div>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Step 3: Upload Website Files</h3>
+
+<ol style="color:#1e293b;">
+  <li>In your cloned repository, navigate to <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">S3WorkingArea/site/</code></li>
+  <li>You should see three files:
+    <ul>
+      <li><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">index.html</code> — Main page</li>
+      <li><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">styles.css</code> — Styling</li>
+      <li><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">script.js</code> — JavaScript</li>
+    </ul>
+  </li>
+  <li>Back in the S3 console, click the <strong>Objects</strong> tab</li>
+  <li>Click <strong>Upload</strong></li>
+  <li>Click <strong>Add files</strong> and select all three files from the <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">site/</code> directory</li>
+  <li>Click <strong>Upload</strong></li>
+  <li>Wait for upload to complete, then click <strong>Close</strong></li>
+</ol>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Step 4: Edit Block Public Access Settings</h3>
+
+<div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">⚠️ Security Warning</h3>
+  <p style="color:#1e293b;">By default, AWS blocks all public access to S3 buckets for security. To host a public website, you must disable this protection. <strong>Only do this for buckets intended to be public websites.</strong></p>
+</div>
+
+<ol style="color:#1e293b;">
+  <li>In your bucket, click the <strong>Permissions</strong> tab</li>
+  <li>Under <strong>Block public access (bucket settings)</strong>, click <strong>Edit</strong></li>
+  <li>Uncheck <strong>Block all public access</strong></li>
+  <li>Click <strong>Save changes</strong></li>
+  <li>Type <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">confirm</code> in the confirmation box</li>
+  <li>Click <strong>Confirm</strong></li>
+</ol>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Step 5: Add Bucket Policy for Public Read Access</h3>
+
+<p style="color:#1e293b;">Disabling Block Public Access isn't enough — you must also add a bucket policy that explicitly grants public read permissions.</p>
+
+<ol style="color:#1e293b;">
+  <li>Still in the <strong>Permissions</strong> tab, scroll to <strong>Bucket policy</strong></li>
+  <li>Click <strong>Edit</strong></li>
+  <li>Paste the following policy (replace <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">YOUR-BUCKET-NAME</code> with your actual bucket name):</li>
+</ol>
+
+<pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;border-left:4px solid #3b82f6;padding:15px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::YOUR-BUCKET-NAME/*"
+    }
+  ]
+}</pre>
+
+<ol style="color:#1e293b;" start="4">
+  <li>Click <strong>Save changes</strong></li>
+</ol>
+
+<div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Understanding the Bucket Policy</h3>
+  <ul style="color:#1e293b;">
+    <li><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">"Principal": "*"</code> — Allows anyone (public access)</li>
+    <li><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">"Action": "s3:GetObject"</code> — Allows reading objects (not writing or deleting)</li>
+    <li><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">"Resource": ".../*"</code> — Applies to all objects in the bucket</li>
+  </ul>
+</div>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Step 6: Test Your Website</h3>
+
+<ol style="color:#1e293b;">
+  <li>Go back to the <strong>Properties</strong> tab</li>
+  <li>Scroll to <strong>Static website hosting</strong></li>
+  <li>Click the <strong>Bucket website endpoint</strong> URL</li>
+  <li>Your website should open in a new tab!</li>
+</ol>
+
+<div style="background-color:#dcfce7;border:1px solid #16a34a;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#15803d;margin-top:5px;">✅ Success!</h3>
+  <p style="color:#1e293b;">If you see your website, congratulations! You've successfully deployed a static website to AWS S3 using the Console UI.</p>
+  <p style="color:#1e293b;margin-top:10px;"><strong>Next steps:</strong></p>
+  <ul style="color:#1e293b;">
+    <li>Customize the site files in <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">S3WorkingArea/site/</code></li>
+    <li>Re-upload the files using the Console (or try Method 2 CLI scripts for faster updates)</li>
+    <li>Take a screenshot for your Canvas submission</li>
+  </ul>
+</div>
+
+<div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Check your understanding</h3>
+  <ul>
+    <li>What is the difference between S3 website endpoint and REST endpoint?</li>
+    <li>Why do we need both Block Public Access disabled AND a bucket policy?</li>
+    <li>What does the <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">/*</code> in the bucket policy Resource mean?</li>
+  </ul>
+</div>
+
+<hr style="border:1px solid #cbd5e1;margin:30px 0;">
+
+<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Method 2: AWS CLI Scripts (Recommended)</h2>
+
+<p style="color:#1e293b;">This method uses pre-built, tested automation scripts. These scripts have been verified to work and provide a faster, more reliable deployment process.</p>
+
+<div style="background-color:#dcfce7;border:1px solid #16a34a;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#15803d;margin-top:5px;">Why Use CLI Scripts?</h3>
+  <ul style="color:#1e293b;">
+    <li><strong>Tested and verified:</strong> All scripts have been run successfully and produce working websites</li>
+    <li><strong>Faster:</strong> Complete deployment in minutes instead of clicking through multiple screens</li>
+    <li><strong>Repeatable:</strong> Easy to tear down and redeploy if needed</li>
+    <li><strong>Automation practice:</strong> Learn infrastructure-as-code concepts</li>
+    <li><strong>Error handling:</strong> Scripts check for common issues and provide helpful error messages</li>
+  </ul>
+</div>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Script Overview</h3>
+
+<p style="color:#1e293b;">Your <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">S3WorkingArea</code> directory contains these scripts:</p>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <table style="width:100%;border-collapse:collapse;color:#1e293b;">
+    <tr style="background-color:#f1f5f9;">
+      <th style="padding:10px;text-align:left;border:1px solid #cbd5e1;">Script</th>
+      <th style="padding:10px;text-align:left;border:1px solid #cbd5e1;">Purpose</th>
+    </tr>
+    <tr>
+      <td style="padding:10px;border:1px solid #cbd5e1;"><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">00_verify_aws_cli.bat</code></td>
+      <td style="padding:10px;border:1px solid #cbd5e1;">Verify AWS CLI is installed and credentials work</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;border:1px solid #cbd5e1;"><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">01_create_bucket.bat</code></td>
+      <td style="padding:10px;border:1px solid #cbd5e1;">Create S3 bucket and enable static website hosting</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;border:1px solid #cbd5e1;"><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">02_sync_site.bat</code></td>
+      <td style="padding:10px;border:1px solid #cbd5e1;">Upload/sync website files to S3</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;border:1px solid #cbd5e1;"><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">03_set_bucket_policy.bat</code></td>
+      <td style="padding:10px;border:1px solid #cbd5e1;">Configure public access and bucket policy</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;border:1px solid #cbd5e1;"><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">04_verify_website.bat</code></td>
+      <td style="padding:10px;border:1px solid #cbd5e1;">Test website and display URL</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;border:1px solid #cbd5e1;"><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">99_teardown.bat</code></td>
+      <td style="padding:10px;border:1px solid #cbd5e1;">Delete all resources (CRITICAL for cost management)</td>
+    </tr>
+  </table>
+</div>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Step-by-Step CLI Deployment</h3>
+
+<h4 style="color:#1e293b;margin-top:20px;"><strong>Step 1: Verify AWS CLI Setup</strong></h4>
+
+<p style="color:#1e293b;">Open PowerShell or Command Prompt and navigate to your repository:</p>
+
+<pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;border-left:4px solid #3b82f6;padding:15px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;">cd path\to\your\repository\S3WorkingArea
+.\00_verify_aws_cli.bat</pre>
+
+<p style="color:#1e293b;margin-top:10px;">This script checks:</p>
+<ul style="color:#1e293b;">
+  <li>AWS CLI is installed</li>
+  <li>Credentials are configured</li>
+  <li>You have S3 access permissions</li>
+</ul>
+
+<div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Troubleshooting: If verification fails</h3>
+  <ul style="color:#1e293b;">
+    <li><strong>"AWS CLI not found":</strong> Install AWS CLI from <a href="https://aws.amazon.com/cli/" target="_blank">aws.amazon.com/cli</a></li>
+    <li><strong>"Unable to locate credentials":</strong> Run <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">aws configure</code> and enter your access keys</li>
+    <li><strong>"SignatureDoesNotMatch":</strong> Your credentials are invalid. Run <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">aws configure</code> with new access keys</li>
+  </ul>
+</div>
+
+<h4 style="color:#1e293b;margin-top:20px;"><strong>Step 2: Create S3 Bucket</strong></h4>
+
+<pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;border-left:4px solid #3b82f6;padding:15px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;">.\01_create_bucket.bat</pre>
+
+<p style="color:#1e293b;margin-top:10px;">The script will prompt you for:</p>
+<ul style="color:#1e293b;">
+  <li><strong>Bucket name:</strong> Enter a globally unique name (e.g., <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">ncf-s26-yourname-site</code>)</li>
+  <li><strong>AWS region:</strong> Press Enter for default (<code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">us-east-1</code>) or enter your preferred region</li>
+</ul>
+
+<p style="color:#1e293b;margin-top:10px;"><strong>What this script does:</strong></p>
+<ol style="color:#1e293b;">
+  <li>Creates the S3 bucket in your chosen region</li>
+  <li>Enables static website hosting</li>
+  <li>Sets <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">index.html</code> as the index document</li>
+  <li>Saves bucket name and region to <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">bucket_config.txt</code> for other scripts to use</li>
+</ol>
+
+<h4 style="color:#1e293b;margin-top:20px;"><strong>Step 3: Upload Website Files</strong></h4>
+
+<pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;border-left:4px solid #3b82f6;padding:15px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;">.\02_sync_site.bat</pre>
+
+<p style="color:#1e293b;margin-top:10px;"><strong>What this script does:</strong></p>
+<ul style="color:#1e293b;">
+  <li>Syncs all files from <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">site/</code> directory to your S3 bucket</li>
+  <li>Uses <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">aws s3 sync</code> command with <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">--delete</code> flag</li>
+  <li>Uploads: <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">index.html</code>, <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">styles.css</code>, <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">script.js</code></li>
+</ul>
+
+<div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Key Command: aws s3 sync</h3>
+  <pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;padding:10px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;">aws s3 sync .\site s3://bucket-name --delete</pre>
+  <p style="color:#1e293b;margin-top:10px;"><strong>What it does:</strong></p>
+  <ul style="color:#1e293b;">
+    <li><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">sync</code> — Uploads new/changed files, skips unchanged files</li>
+    <li><code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">--delete</code> — Removes files from S3 that don't exist locally</li>
+    <li>Much faster than uploading all files every time</li>
+  </ul>
+</div>
+
+
+<h4 style="color:#1e293b;margin-top:20px;"><strong>Step 4: Configure Public Access</strong></h4>
+
+<pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;border-left:4px solid #3b82f6;padding:15px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;">.\03_set_bucket_policy.bat</pre>
+
+<p style="color:#1e293b;margin-top:10px;"><strong>What this script does:</strong></p>
+<ol style="color:#1e293b;">
+  <li>Disables Block Public Access settings</li>
+  <li>Creates a bucket policy JSON file</li>
+  <li>Applies the policy to allow public read access (<code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">s3:GetObject</code>)</li>
+</ol>
+
+<div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">⚠️ Security Note</h3>
+  <p style="color:#1e293b;">This script makes your bucket publicly readable. This is required for static websites, but be careful:</p>
+  <ul style="color:#1e293b;">
+    <li>Only upload files you want to be public</li>
+    <li>Don't upload sensitive data, credentials, or private information</li>
+    <li>The policy only allows reading (GET), not writing or deleting</li>
+  </ul>
+</div>
+
+<h4 style="color:#1e293b;margin-top:20px;"><strong>Step 5: Verify and Test Website</strong></h4>
+
+<pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;border-left:4px solid #3b82f6;padding:15px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;">.\04_verify_website.bat</pre>
+
+<p style="color:#1e293b;margin-top:10px;"><strong>What this script does:</strong></p>
+<ul style="color:#1e293b;">
+  <li>Displays your website endpoint URL</li>
+  <li>Tests HTTP connectivity</li>
+  <li>Lists bucket contents</li>
+  <li>Shows website configuration</li>
+  <li>Optionally opens the website in your browser</li>
+</ul>
+
+<div style="background-color:#dcfce7;border:1px solid #16a34a;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#15803d;margin-top:5px;">✅ Deployment Complete!</h3>
+  <p style="color:#1e293b;">Your website is now live on AWS S3! The verification script will display your URL:</p>
+  <pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;padding:10px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;">http://your-bucket-name.s3-website-us-east-1.amazonaws.com</pre>
+  <p style="color:#1e293b;margin-top:10px;">Copy this URL for your Canvas submission!</p>
+</div>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Updating Your Website</h3>
+
+<p style="color:#1e293b;">To make changes to your website:</p>
+
+<ol style="color:#1e293b;">
+  <li>Edit files in the <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">site/</code> directory</li>
+  <li>Run <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">.\02_sync_site.bat</code> to upload changes</li>
+  <li>Refresh your browser to see updates</li>
+</ol>
+
+<div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">💡 Pro Tip: Use LLM Assistants</h3>
+  <p style="color:#1e293b;">The starter site includes an "LLM Enhancement Zone" with suggestions for using AI coding assistants:</p>
+  <ul style="color:#1e293b;">
+    <li><strong>ChatGPT Plus:</strong> Upload your files and ask for enhancements</li>
+    <li><strong>GitHub Copilot:</strong> Get inline suggestions as you code</li>
+    <li><strong>Cursor:</strong> AI-first code editor with built-in chat</li>
+    <li><strong>Augment:</strong> Understands your entire codebase</li>
+  </ul>
+  <p style="color:#1e293b;margin-top:10px;">Example prompt: "Add a dark mode toggle and smooth animations to this website while keeping it static and S3-compatible"</p>
+</div>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">CRITICAL: Teardown After Grading</h3>
+
+<div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">⚠️ Avoid Ongoing AWS Charges</h3>
+  <p style="color:#1e293b;"><strong>After your assignment is graded, you MUST delete all resources:</strong></p>
+  <pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;border-left:4px solid #3b82f6;padding:15px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;">.\99_teardown.bat</pre>
+  <p style="color:#1e293b;margin-top:10px;"><strong>What this script does:</strong></p>
+  <ol style="color:#1e293b;">
+    <li>Deletes all objects in your bucket</li>
+    <li>Deletes the bucket itself</li>
+    <li>Confirms deletion</li>
+  </ol>
+  <p style="color:#1e293b;margin-top:10px;"><strong>Why this matters:</strong> S3 charges accumulate over time. While costs are minimal (< $0.01/month for this assignment), it's good practice to clean up resources you're not using.</p>
+</div>
+
+<hr style="border:1px solid #cbd5e1;margin:30px 0;">
+
+<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Troubleshooting Common Issues</h2>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Issue: "Bucket name already exists"</h3>
+  <p style="color:#1e293b;"><strong>Cause:</strong> Bucket names are globally unique across all AWS accounts.</p>
+  <p style="color:#1e293b;"><strong>Solution:</strong> Choose a different name. Try adding your initials or a random number.</p>
+</div>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Issue: "403 Forbidden" when accessing website</h3>
+  <p style="color:#1e293b;"><strong>Cause:</strong> Bucket policy not applied or Block Public Access still enabled.</p>
+  <p style="color:#1e293b;"><strong>Solution:</strong></p>
+  <ol style="color:#1e293b;">
+    <li>Run <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">.\03_set_bucket_policy.bat</code> again</li>
+    <li>Verify Block Public Access is disabled in Console</li>
+    <li>Check bucket policy is applied correctly</li>
+  </ol>
+</div>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Issue: "SignatureDoesNotMatch" error</h3>
+  <p style="color:#1e293b;"><strong>Cause:</strong> AWS credentials are invalid or expired.</p>
+  <p style="color:#1e293b;"><strong>Solution:</strong> Run <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">aws configure</code> and enter new access keys from IAM console.</p>
+</div>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Issue: "Unable to locate credentials"</h3>
+  <p style="color:#1e293b;"><strong>Cause:</strong> AWS CLI not configured.</p>
+  <p style="color:#1e293b;"><strong>Solution:</strong> Run <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">aws configure</code> and enter your access key ID, secret access key, region, and output format.</p>
+</div>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Issue: Cannot delete bucket</h3>
+  <p style="color:#1e293b;"><strong>Cause:</strong> Bucket must be empty before deletion.</p>
+  <p style="color:#1e293b;"><strong>Solution:</strong> The <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">99_teardown.bat</code> script handles this automatically. If doing manually:</p>
+  <pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;padding:10px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;">aws s3 rm s3://bucket-name --recursive
+aws s3api delete-bucket --bucket bucket-name</pre>
+</div>
+
+<hr style="border:1px solid #cbd5e1;margin:30px 0;">
+
+<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Submission Requirements</h2>
+
+<div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">What to Submit to Canvas</h3>
+  <ol style="color:#1e293b;">
+    <li><strong>S3 Website URL:</strong> Your full website endpoint (e.g., <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">http://ncf-s26-yourname-site.s3-website-us-east-1.amazonaws.com</code>)</li>
+    <li><strong>Screenshot:</strong> Full browser window showing your live website with the URL visible in the address bar</li>
+    <li><strong>Customization Description:</strong> 2-3 sentences explaining what you changed from the starter site</li>
+  </ol>
+  <p style="color:#1e293b;margin-top:10px;"><strong>Grading Criteria:</strong></p>
+  <ul style="color:#1e293b;">
+    <li>Website is publicly accessible (not 403 Forbidden)</li>
+    <li>Site shows customization (not just default starter content)</li>
+    <li>URL format is correct (S3 website endpoint, not REST endpoint)</li>
+    <li>Screenshot clearly shows your deployed site</li>
+  </ul>
+</div>
+
+<div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Check your understanding</h3>
+  <ul>
+    <li>What is the difference between <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">aws s3 sync</code> and <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">aws s3 cp</code>?</li>
+    <li>Why does the bucket policy use <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">"Principal": "*"</code>?</li>
+    <li>What happens if you don't run the teardown script?</li>
+    <li>How would you update a single file on your website?</li>
+  </ul>
+</div>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:10px;">Additional Resources</h2>
+  <ul>
+    <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html" target="_blank">AWS: Hosting a static website using Amazon S3</a></li>
+    <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html" target="_blank">AWS: Tutorial - Configuring a static website on Amazon S3</a></li>
+    <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html" target="_blank">AWS CLI: s3 sync command reference</a></li>
+    <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html" target="_blank">AWS: Blocking public access to your Amazon S3 storage</a></li>
+    <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteEndpoints.html" target="_blank">AWS: Website endpoints</a></li>
+    <li><a href="s3-overview.html">Course: AWS S3 Overview</a> — Cost breakdown and alternatives</li>
+    <li><a href="cloudfront-optional.html">Course: CloudFront Integration (Optional)</a> — HTTPS and custom domains</li>
+  </ul>
+</div>
+
+</body>
+</html>

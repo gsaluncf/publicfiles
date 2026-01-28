@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My S3 Static Site - Week 2</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Week 2: S3 Static Website</h1>
+        <p class="subtitle">Distributed Computing - NCF Spring 2026</p>
+    </header>
+
+    <main>
+        <section class="intro">
+            <h2>Welcome!</h2>
+            <p>This is a simple static website hosted on Amazon S3. It demonstrates the basics of cloud-based web hosting.</p>
+            <p><strong>Student:</strong> <span id="student-name">[Your Name Here]</span></p>
+            <p><strong>Date:</strong> <span id="current-date"></span></p>
+        </section>
+
+        <section class="assignment-info">
+            <h2>Assignment Objectives</h2>
+            <ul>
+                <li>✓ Create an S3 bucket with static website hosting enabled</li>
+                <li>✓ Upload site files using AWS CLI (<code>aws s3 sync</code>)</li>
+                <li>✓ Configure bucket policy for public read access</li>
+                <li>✓ Verify the site loads via S3 website endpoint</li>
+            </ul>
+        </section>
+
+        <section class="enhancement-zone">
+            <h2>LLM Enhancement Zone</h2>
+            <p class="enhancement-instructions">
+                <strong>Want to make this site more interesting?</strong> 
+                Use an LLM coding assistant (like GitHub Copilot, Cursor, or Augment) to enhance this basic template!
+            </p>
+            <div class="enhancement-ideas">
+                <h3>Ideas to try:</h3>
+                <ul>
+                    <li>Add interactive JavaScript features (animations, form validation, etc.)</li>
+                    <li>Improve the CSS with modern layouts (Grid, Flexbox, animations)</li>
+                    <li>Add a dark mode toggle</li>
+                    <li>Create a simple portfolio or project showcase</li>
+                    <li>Add a contact form (front-end only, no backend needed)</li>
+                    <li>Integrate a simple data visualization with Chart.js or D3.js</li>
+                </ul>
+                <p class="tip">
+                    <strong>Tip:</strong> Use an LLM coding assistant to enhance this site:
+                </p>
+                <ul class="llm-options">
+                    <li><strong>ChatGPT Plus users:</strong> Use <a href="https://openai.com/index/introducing-codex/" target="_blank">OpenAI Codex</a> in the web interface. Upload your HTML/CSS/JS files and ask it to enhance them while keeping everything static and S3-compatible.</li>
+                    <li><strong>GitHub Copilot:</strong> Install in VS Code, enable for this project, and get inline suggestions as you code.</li>
+                    <li><strong>Cursor:</strong> AI-first code editor with built-in chat and code generation.</li>
+                    <li><strong>Augment:</strong> AI coding assistant that understands your entire codebase.</li>
+                    <li><strong>Free options:</strong> GitHub Copilot (free for students), ChatGPT free tier, or Claude.</li>
+                </ul>
+                <p class="tip">
+                    <strong>Example prompt:</strong> "Enhance this static website with a dark mode toggle, smooth animations, and better mobile responsiveness. Keep it pure HTML/CSS/JS with no backend dependencies."
+                </p>
+            </div>
+        </section>
+
+        <section class="tech-stack">
+            <h2>Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h3>AWS S3</h3>
+                    <p>Object storage with static website hosting</p>
+                </div>
+                <div class="tech-item">
+                    <h3>HTML5</h3>
+                    <p>Semantic markup structure</p>
+                </div>
+                <div class="tech-item">
+                    <h3>CSS3</h3>
+                    <p>Modern styling and layout</p>
+                </div>
+                <div class="tech-item">
+                    <h3>JavaScript</h3>
+                    <p>Client-side interactivity</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Hosted on Amazon S3 | <a href="https://aws.amazon.com/s3/" target="_blank">Learn more about S3</a></p>
+        <p class="bucket-info">Bucket: <span id="bucket-name">[Your bucket name will appear here]</span></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

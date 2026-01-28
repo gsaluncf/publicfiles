@@ -1,0 +1,298 @@
+================================================================================
+CUSTOM DOMAIN INSTRUCTIONS - Week 1 Extra Credit Continuation
+================================================================================
+
+For students who completed Week 1 extra credit and registered a custom domain,
+these instructions explain how to point that domain to your S3 static website.
+
+IMPORTANT: This is OPTIONAL extra credit. Basic assignment only requires S3.
+
+================================================================================
+PREREQUISITES
+================================================================================
+
+From Week 1 Extra Credit, you should have:
+- A registered domain name (e.g., yourname.com)
+- Access to domain registrar's DNS settings
+- Completed basic S3 website deployment (scripts 01-04)
+
+From Week 2 Assignment, you should have:
+- Working S3 static website
+- S3 website endpoint URL (e.g., http://bucket-name.s3-website-us-east-1.amazonaws.com)
+
+================================================================================
+OPTION 1: SIMPLE CNAME (HTTP Only, Subdomain Only)
+================================================================================
+
+Difficulty: Easy
+Cost: FREE
+Time: 5-10 minutes
+Limitations: HTTP only (no HTTPS), subdomain only (www.yourname.com, not yourname.com)
+
+Steps:
+
+1. Get your S3 website endpoint (without http://)
+   Run: 04_verify_website.bat
+   Copy the URL, remove "http://"
+   Example: bucket-name.s3-website-us-east-1.amazonaws.com
+
+2. Log into your domain registrar (Namecheap, GoDaddy, Google Domains, etc.)
+
+3. Find DNS settings (usually called "DNS Management" or "Advanced DNS")
+
+4. Add a CNAME record:
+   Type: CNAME
+   Host: www (or any subdomain like "portfolio", "site", etc.)
+   Value: bucket-name.s3-website-us-east-1.amazonaws.com
+   TTL: 300 (5 minutes) or Auto
+
+5. Save changes
+
+6. Wait 5-60 minutes for DNS propagation
+
+7. Test: http://www.yourname.com (should show your S3 site)
+
+Pros:
+- Simple, no additional AWS services needed
+- Free
+- Works immediately after DNS propagation
+
+Cons:
+- HTTP only (browsers show "Not Secure")
+- Can't use root domain (yourname.com), only subdomain (www.yourname.com)
+- No caching/CDN benefits
+
+================================================================================
+OPTION 2: CLOUDFRONT + CUSTOM DOMAIN (HTTPS, Root or Subdomain)
+================================================================================
+
+Difficulty: Moderate
+Cost: ~$0.50-2/month (CloudFront data transfer + Route 53 if used)
+Time: 30-60 minutes
+Benefits: HTTPS, root domain support, global CDN, faster load times
+
+This is the RECOMMENDED approach for production sites.
+
+Prerequisites:
+- Completed Option 1 OR basic S3 setup
+- AWS account with billing enabled
+- Domain registered (from Week 1)
+
+Steps:
+
+1. CREATE CLOUDFRONT DISTRIBUTION
+
+   a. Go to AWS Console > CloudFront > Create Distribution
+   
+   b. Origin Settings:
+      - Origin Domain: bucket-name.s3-website-us-east-1.amazonaws.com
+        (Use website endpoint, NOT the S3 bucket dropdown!)
+      - Protocol: HTTP only
+      - Name: S3-bucket-name
+   
+   c. Default Cache Behavior:
+      - Viewer Protocol Policy: Redirect HTTP to HTTPS
+      - Allowed HTTP Methods: GET, HEAD
+      - Cache Policy: CachingOptimized
+   
+   d. Settings:
+      - Alternate Domain Names (CNAMEs): www.yourname.com
+        (Add both yourname.com and www.yourname.com if you want both)
+      - Custom SSL Certificate: Request certificate (see step 2)
+      - Default Root Object: index.html
+   
+   e. Click "Create Distribution" (takes 10-20 minutes to deploy)
+
+2. REQUEST SSL CERTIFICATE (For HTTPS)
+
+   a. Go to AWS Console > Certificate Manager (ACM)
+      IMPORTANT: Must be in us-east-1 region for CloudFront!
+   
+   b. Click "Request Certificate"
+   
+   c. Certificate Type: Public certificate
+   
+   d. Domain Names:
+      - yourname.com
+      - www.yourname.com
+      (Add both to support root and www)
+   
+   e. Validation Method: DNS validation (recommended)
+   
+   f. Click "Request"
+   
+   g. Follow DNS validation instructions:
+      - ACM provides CNAME records to add to your domain
+      - Add these records in your domain registrar's DNS settings
+      - Wait for validation (5-30 minutes)
+   
+   h. Once validated, go back to CloudFront distribution
+      - Edit > Custom SSL Certificate > Select your certificate
+      - Save changes
+
+3. UPDATE DNS SETTINGS
+
+   Option A: Using Your Domain Registrar (Simple)
+   
+   a. Log into domain registrar
+   
+   b. Add CNAME record:
+      Type: CNAME
+      Host: www
+      Value: d1234abcd.cloudfront.net (your CloudFront domain)
+      TTL: 300
+   
+   c. For root domain (yourname.com):
+      - Some registrars support ALIAS or ANAME records
+      - Point to CloudFront domain
+      - If not supported, use Option B (Route 53)
+
+   Option B: Using AWS Route 53 (Advanced, Better Integration)
+   
+   a. Go to AWS Console > Route 53 > Hosted Zones
+   
+   b. Click "Create Hosted Zone"
+      - Domain Name: yourname.com
+      - Type: Public Hosted Zone
+      - Click "Create"
+   
+   c. Note the 4 nameservers (ns-1234.awsdns-56.com, etc.)
+   
+   d. Update nameservers at your domain registrar:
+      - Go to registrar's domain settings
+      - Find "Nameservers" or "DNS Servers"
+      - Replace with Route 53 nameservers
+      - Save (takes 24-48 hours to fully propagate)
+   
+   e. Create DNS records in Route 53:
+      
+      For root domain (yourname.com):
+      - Type: A
+      - Alias: Yes
+      - Alias Target: CloudFront distribution
+      
+      For www subdomain (www.yourname.com):
+      - Type: A
+      - Alias: Yes
+      - Alias Target: CloudFront distribution
+
+4. TEST YOUR SITE
+
+   a. Wait for CloudFront deployment (check status in console)
+   
+   b. Wait for DNS propagation (5 minutes to 48 hours)
+   
+   c. Test URLs:
+      - https://yourname.com (should work with HTTPS!)
+      - https://www.yourname.com (should work with HTTPS!)
+      - http://yourname.com (should redirect to HTTPS)
+   
+   d. Check SSL certificate:
+      - Click padlock in browser
+      - Should show valid certificate
+
+5. UPDATE S3 SYNC WORKFLOW
+
+   After making changes to your site:
+   
+   a. Run: 02_sync_site.bat (uploads to S3)
+   
+   b. Invalidate CloudFront cache:
+      aws cloudfront create-invalidation \
+        --distribution-id E1234ABCD \
+        --paths "/*"
+      
+      (Replace E1234ABCD with your distribution ID)
+   
+   c. Wait 1-2 minutes for cache invalidation
+   
+   d. Refresh your custom domain to see changes
+
+================================================================================
+COST BREAKDOWN - OPTION 2
+================================================================================
+
+CloudFront:
+- First 10 TB/month data transfer: $0.085/GB
+- 10,000 HTTPS requests: FREE
+- Example: 1,000 page views (1 MB each) = 1 GB = $0.085
+
+Route 53 (if used):
+- Hosted zone: $0.50/month
+- DNS queries: $0.40 per million queries
+- Example: 10,000 queries = $0.004
+
+SSL Certificate (ACM):
+- FREE when used with CloudFront
+
+Total Monthly Cost (typical student site):
+- CloudFront: $0.10-0.50
+- Route 53: $0.50 (if used)
+- S3: $0.01
+- TOTAL: $0.60-1.00/month
+
+Teardown to Avoid Charges:
+- Delete CloudFront distribution
+- Delete Route 53 hosted zone (if created)
+- Run 99_teardown.bat for S3
+- Keep domain registration (already paid for year)
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Problem: "This site can't be reached"
+Solution: DNS not propagated yet. Wait longer or check DNS with: nslookup www.yourname.com
+
+Problem: "Certificate doesn't match domain"
+Solution: Make sure certificate includes both yourname.com and www.yourname.com
+
+Problem: "403 Forbidden" on CloudFront
+Solution: Check S3 bucket policy is still public. CloudFront needs to access S3.
+
+Problem: Changes don't appear on custom domain
+Solution: CloudFront caches content. Create cache invalidation or wait 24 hours.
+
+Problem: Root domain doesn't work, only www
+Solution: Need ALIAS record (Route 53) or ANAME record (some registrars). CNAME doesn't work for root.
+
+Problem: HTTP works but HTTPS doesn't
+Solution: Check SSL certificate is validated and attached to CloudFront distribution.
+
+================================================================================
+EXTRA CREDIT SUBMISSION
+================================================================================
+
+To receive extra credit, submit:
+
+1. Custom domain URL (https://yourname.com or https://www.yourname.com)
+2. Screenshot showing:
+   - Browser address bar with your custom domain
+   - Padlock icon (for HTTPS)
+   - Your website content
+3. Brief description of which option you used (Option 1 or Option 2)
+
+Grading Criteria:
+- Option 1 (CNAME only): +5 points
+- Option 2 (CloudFront + HTTPS): +10 points
+- Option 2 with Route 53: +15 points
+
+================================================================================
+LEARNING OUTCOMES
+================================================================================
+
+By completing this extra credit, you learn:
+- DNS configuration (CNAME, A, ALIAS records)
+- SSL/TLS certificates and HTTPS
+- Content Delivery Networks (CDNs)
+- AWS CloudFront and Route 53
+- Cache invalidation
+- Production-ready web hosting
+- Cost management for cloud services
+
+These are valuable real-world skills for web development and cloud engineering!
+
+================================================================================
+END OF CUSTOM DOMAIN INSTRUCTIONS
+================================================================================
+
