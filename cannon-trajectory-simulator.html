@@ -163,6 +163,11 @@
           <input id="playSpeed" type="range" min="0.2" max="3" step="0.1" value="1" />
           <div class="value-display">Current: <span id="playSpeedValue">1.0</span>x</div>
         </div>
+        <div class="input-row">
+          <label for="timeScrub">Replay Timeline (t)</label>
+          <input id="timeScrub" type="range" min="0" max="0" step="0.05" value="0" />
+          <div class="value-display">t = <span id="timeScrubValue">0.00</span> s</div>
+        </div>
       </div>
       <div class="buttons">
         <button id="fireBtn">Fire</button>
@@ -171,9 +176,9 @@
       <div class="equations" aria-live="polite">
         <div class="equation" id="eq-vx">v₀ₓ = v₀ · cos(θ)</div>
         <div class="equation" id="eq-vy">v₀ᵧ = v₀ · sin(θ)</div>
-        <div class="equation" id="eq-x">x(t) = v₀ₓ · t</div>
-        <div class="equation" id="eq-y">y(t) = v₀ᵧ · t − ½ · g · t²</div>
-        <div class="equation" id="eq-speed">speed(t) = √(vₓ² + vᵧ²)</div>
+        <div class="equation" id="eq-x">x(t) = v₀ₓ · t = <span id="eqXValue">0.00</span></div>
+        <div class="equation" id="eq-y">y(t) = v₀ᵧ · t − ½ · g · t² = <span id="eqYValue">0.00</span></div>
+        <div class="equation" id="eq-speed">speed(t) = √(vₓ² + vᵧ²) = <span id="eqSpeedValue">0.00</span></div>
       </div>
       <div class="readout">
         <div>Time: <span id="timeValue">0.00</span> s</div>
@@ -194,6 +199,8 @@
     const gravityInput = document.getElementById("gravity");
     const playSpeedInput = document.getElementById("playSpeed");
     const playSpeedValue = document.getElementById("playSpeedValue");
+    const timeScrubInput = document.getElementById("timeScrub");
+    const timeScrubValue = document.getElementById("timeScrubValue");
     const fireBtn = document.getElementById("fireBtn");
     const restartBtn = document.getElementById("restartBtn");
 
@@ -203,6 +210,9 @@
     const eqX = document.getElementById("eq-x");
     const eqY = document.getElementById("eq-y");
     const eqSpeed = document.getElementById("eq-speed");
+    const eqXValue = document.getElementById("eqXValue");
+    const eqYValue = document.getElementById("eqYValue");
+    const eqSpeedValue = document.getElementById("eqSpeedValue");
 
     const origin = { x: 70, y: canvas.height - 60 };
     const scale = 5;
@@ -225,6 +235,7 @@
         this.v0x = speed * Math.cos(radians);
         this.v0y = speed * Math.sin(radians);
         this.gravity = gravity;
+        this.totalTime = (2 * this.v0y) / this.gravity;
         this.time = 0;
         this.position = { x: 0, y: 0 };
         this.velocity = { x: this.v0x, y: this.v0y };
@@ -234,6 +245,7 @@
         this.v0x = 0;
         this.v0y = 0;
         this.gravity = 9.8;
+        this.totalTime = 0;
         this.time = 0;
         this.position = { x: 0, y: 0 };
         this.velocity = { x: 0, y: 0 };
@@ -255,6 +267,24 @@
           position: { ...this.position },
           velocity: { ...this.velocity },
           speed,
+        };
+      }
+
+      getStateAtTime(time) {
+        const clampedTime = Math.max(0, time);
+        const position = {
+          x: this.v0x * clampedTime,
+          y: this.v0y * clampedTime - 0.5 * this.gravity * clampedTime * clampedTime,
+        };
+        const velocity = {
+          x: this.v0x,
+          y: this.v0y - this.gravity * clampedTime,
+        };
+        return {
+          time: clampedTime,
+          position,
+          velocity,
+          speed: Math.hypot(velocity.x, velocity.y),
         };
       }
     }
@@ -324,13 +354,29 @@
       ctx.lineWidth = 2;
       ctx.fillStyle = "#fff";
       ctx.beginPath();
-      ctx.rect(origin.x - 20, origin.y - 10, 30, 20);
+      ctx.rect(origin.x - 25, origin.y - 14, 40, 24);
       ctx.fill();
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.moveTo(origin.x - 5, origin.y - 10);
-      ctx.lineTo(origin.x + 15, origin.y - 25);
+      ctx.arc(origin.x - 8, origin.y + 10, 8, 0, Math.PI * 2);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(origin.x + 12, origin.y + 10, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.rect(origin.x - 5, origin.y - 26, 20, 12);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(origin.x + 5, origin.y - 26);
+      ctx.lineTo(origin.x + 32, origin.y - 40);
       ctx.stroke();
     };
 
@@ -400,6 +446,9 @@
     const updateReadout = (simState) => {
       timeValue.textContent = simState.time.toFixed(2);
       speedValue.textContent = simState.speed.toFixed(2);
+      eqXValue.textContent = simState.position.x.toFixed(2);
+      eqYValue.textContent = Math.max(0, simState.position.y).toFixed(2);
+      eqSpeedValue.textContent = simState.speed.toFixed(2);
     };
 
     const updateEquationHighlight = (running) => {
@@ -443,6 +492,8 @@
       state.trail.push(canvasPosition);
       updateReadout(simState);
       updateEquationHighlight(true);
+      timeScrubInput.value = simState.time.toFixed(2);
+      timeScrubValue.textContent = simState.time.toFixed(2);
 
       renderScene(renderState);
 
@@ -455,6 +506,7 @@
         fireBtn.disabled = true;
         state.lastTimestamp = 0;
         updateEquationHighlight(false);
+        timeScrubInput.disabled = false;
         return;
       }
 
@@ -468,6 +520,10 @@
       const gravity = Number.parseFloat(gravityInput.value);
 
       physics.configure({ angleDeg: angle, speed, gravity });
+      timeScrubInput.max = physics.totalTime.toFixed(2);
+      timeScrubInput.value = "0";
+      timeScrubValue.textContent = "0.00";
+      timeScrubInput.disabled = true;
       state.running = true;
       state.lastTimestamp = 0;
       fireBtn.disabled = true;
@@ -481,6 +537,13 @@
       physics.reset();
       timeValue.textContent = "0.00";
       speedValue.textContent = "0.00";
+      eqXValue.textContent = "0.00";
+      eqYValue.textContent = "0.00";
+      eqSpeedValue.textContent = "0.00";
+      timeScrubInput.value = "0";
+      timeScrubInput.max = "0";
+      timeScrubValue.textContent = "0.00";
+      timeScrubInput.disabled = true;
       fireBtn.disabled = false;
       updateEquationHighlight(false);
       renderScene(null);
@@ -491,9 +554,26 @@
     };
 
     playSpeedInput.addEventListener("input", updatePlaySpeedLabel);
+    timeScrubInput.addEventListener("input", () => {
+      if (!state.stopped || physics.totalTime === 0) return;
+      const scrubTime = Number.parseFloat(timeScrubInput.value);
+      const simState = physics.getStateAtTime(scrubTime);
+      const canvasPosition = toCanvasPoint(simState.position);
+      state.trail = [];
+      const steps = Math.max(2, Math.floor(scrubTime / baseDt));
+      for (let i = 0; i <= steps; i += 1) {
+        const stepTime = (scrubTime / steps) * i;
+        const trailState = physics.getStateAtTime(stepTime);
+        state.trail.push(toCanvasPoint(trailState.position));
+      }
+      timeScrubValue.textContent = scrubTime.toFixed(2);
+      updateReadout(simState);
+      renderScene({ ...simState, canvasPosition });
+    });
     fireBtn.addEventListener("click", startSimulation);
     restartBtn.addEventListener("click", resetSimulation);
 
+    timeScrubInput.disabled = true;
     updatePlaySpeedLabel();
     renderScene(null);
   </script>
