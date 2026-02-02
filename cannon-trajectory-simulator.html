@@ -300,13 +300,25 @@
 
       ctx.strokeStyle = "#efefef";
       ctx.lineWidth = 1;
-      for (let x = 0; x <= canvas.width; x += minor) {
+      for (let x = origin.x; x <= canvas.width; x += minor) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
         ctx.stroke();
       }
-      for (let y = 0; y <= canvas.height; y += minor) {
+      for (let x = origin.x; x >= 0; x -= minor) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = origin.y; y <= canvas.height; y += minor) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+      for (let y = origin.y; y >= 0; y -= minor) {
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
@@ -315,13 +327,25 @@
 
       ctx.strokeStyle = "#cfcfcf";
       ctx.lineWidth = 1.5;
-      for (let x = 0; x <= canvas.width; x += major) {
+      for (let x = origin.x; x <= canvas.width; x += major) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
         ctx.stroke();
       }
-      for (let y = 0; y <= canvas.height; y += major) {
+      for (let x = origin.x; x >= 0; x -= major) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = origin.y; y <= canvas.height; y += major) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+      for (let y = origin.y; y >= 0; y -= major) {
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
@@ -349,7 +373,7 @@
       ctx.fillText("Y", origin.x + 8, 30);
     };
 
-    const drawCannon = () => {
+    const drawCannon = (angleDeg) => {
       ctx.strokeStyle = "#000";
       ctx.lineWidth = 2;
       ctx.fillStyle = "#fff";
@@ -374,10 +398,43 @@
       ctx.fill();
       ctx.stroke();
 
+      const angleRad = (angleDeg * Math.PI) / 180;
+      const barrelBase = { x: origin.x + 5, y: origin.y - 26 };
+      const barrelLength = 34;
+      const barrelEnd = {
+        x: barrelBase.x + barrelLength * Math.cos(angleRad),
+        y: barrelBase.y - barrelLength * Math.sin(angleRad),
+      };
       ctx.beginPath();
-      ctx.moveTo(origin.x + 5, origin.y - 26);
-      ctx.lineTo(origin.x + 32, origin.y - 40);
+      ctx.moveTo(barrelBase.x, barrelBase.y);
+      ctx.lineTo(barrelEnd.x, barrelEnd.y);
       ctx.stroke();
+    };
+
+    const drawMarker = (point, label) => {
+      if (!withinBounds(point)) return;
+      ctx.fillStyle = "#000";
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.font = "12px Arial";
+      ctx.fillText(label, point.x + 8, point.y - 8);
+    };
+
+    const computeMetrics = ({ angleDeg, speed, gravity }) => {
+      const radians = (angleDeg * Math.PI) / 180;
+      const v0x = speed * Math.cos(radians);
+      const v0y = speed * Math.sin(radians);
+      const totalTime = (2 * v0y) / gravity;
+      const maxHeightTime = v0y / gravity;
+      return {
+        v0x,
+        v0y,
+        totalTime,
+        maxHeightTime,
+        maxHeight: v0y * maxHeightTime - 0.5 * gravity * maxHeightTime * maxHeightTime,
+        range: v0x * totalTime,
+      };
     };
 
     const drawTrajectory = (trail) => {
@@ -458,9 +515,14 @@
     };
 
     const renderScene = (simState) => {
+      const metrics = computeMetrics({
+        angleDeg: Number.parseFloat(angleInput.value),
+        speed: Number.parseFloat(speedInput.value),
+        gravity: Number.parseFloat(gravityInput.value),
+      });
       drawGrid();
       drawAxes();
-      drawCannon();
+      drawCannon(Number.parseFloat(angleInput.value));
       drawTrajectory(state.trail);
 
       if (simState) {
@@ -472,6 +534,18 @@
           y: simState.velocity.y * velocityScale,
         };
         drawArrow(simState.canvasPosition, vector);
+      }
+
+      if (metrics.totalTime > 0) {
+        const maxPoint = toCanvasPoint({
+          x: metrics.v0x * metrics.maxHeightTime,
+          y: metrics.maxHeight,
+        });
+        const rangePoint = toCanvasPoint({ x: metrics.range, y: 0 });
+        const launchPoint = toCanvasPoint({ x: 0, y: 0 });
+        drawMarker(launchPoint, "Launch (0,0)");
+        drawMarker(maxPoint, `Max height (${metrics.maxHeight.toFixed(1)})`);
+        drawMarker(rangePoint, `Range (${metrics.range.toFixed(1)})`);
       }
     };
 
@@ -553,7 +627,15 @@
       playSpeedValue.textContent = Number.parseFloat(playSpeedInput.value).toFixed(1);
     };
 
+    const rerenderIfIdle = () => {
+      if (state.running) return;
+      renderScene(null);
+    };
+
     playSpeedInput.addEventListener("input", updatePlaySpeedLabel);
+    angleInput.addEventListener("input", rerenderIfIdle);
+    speedInput.addEventListener("input", rerenderIfIdle);
+    gravityInput.addEventListener("input", rerenderIfIdle);
     timeScrubInput.addEventListener("input", () => {
       if (!state.stopped || physics.totalTime === 0) return;
       const scrubTime = Number.parseFloat(timeScrubInput.value);
