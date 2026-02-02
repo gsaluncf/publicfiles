@@ -37,6 +37,85 @@
   </ol>
 </div>
 
+<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Getting Started: Clone Your Assignment Repository</h2>
+
+<p style="color:#1e293b;">This assignment uses a GitHub Classroom template repository that contains starter files for your website. Follow these steps to get set up:</p>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Step 1: Accept the GitHub Classroom Assignment</h3>
+
+<p style="color:#1e293b;">Click the assignment link (provided in Canvas or above) to accept the assignment. GitHub will create a personal copy of the template repository for you.</p>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <p style="color:#1e293b;"><strong>What happens when you accept:</strong></p>
+  <ul style="color:#1e293b;">
+    <li>GitHub creates a private repository named <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">week02-s3-static-site-{your-username}</code></li>
+    <li>The repository contains all starter files (website files, scripts, documentation)</li>
+    <li>Only you and the instructor can see your repository</li>
+  </ul>
+</div>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Step 2: Clone Your Repository</h3>
+
+<p style="color:#1e293b;">After accepting the assignment, clone your repository to your local machine:</p>
+
+<pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;border-left:4px solid #3b82f6;padding:15px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;"># Navigate to where you want to store the project
+cd ~/Documents/ncf-courses  # or wherever you keep your coursework
+
+# Clone your repository (replace YOUR-USERNAME with your GitHub username)
+git clone https://github.com/ncf-distributed-computing-2026/week02-s3-static-site-YOUR-USERNAME.git
+
+# Navigate into the repository
+cd week02-s3-static-site-YOUR-USERNAME</pre>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Step 3: Understand the Repository Structure</h3>
+
+<p style="color:#1e293b;">Your cloned repository contains the following files:</p>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;padding:10px;border-radius:5px;font-family:'Courier New',monospace;font-size:14px;">week02-s3-static-site-YOUR-USERNAME/
+├── site/                      # Your website files (THIS IS WHAT YOU'LL DEPLOY)
+│   ├── index.html            # Main HTML page
+│   ├── styles.css            # CSS styling
+│   └── script.js             # JavaScript functionality
+├── 00_verify_aws_cli.bat     # Script to verify AWS CLI setup (optional)
+├── 01_create_bucket.bat      # Script to create S3 bucket (optional)
+├── 02_sync_site.bat          # Script to upload files (optional)
+├── 03_set_bucket_policy.bat  # Script to set public access (optional)
+├── 04_verify_website.bat     # Script to test website (optional)
+├── 99_teardown.bat           # Script to delete everything (optional)
+└── README.md                 # Instructions and documentation</pre>
+</div>
+
+<div style="background-color:#dbeafe;border:1px solid #93c5fd;border-radius:8px;padding:20px;margin:20px 0;">
+  <h3 style="color:#1e40af;margin-top:5px;">Key Points</h3>
+  <ul style="color:#1e293b;">
+    <li><strong>The <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">site/</code> directory</strong> contains your starter website files. This is what you'll upload to S3.</li>
+    <li><strong>The <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">.bat</code> scripts</strong> are optional automation tools (Windows only). You can use them or follow the manual CLI commands below.</li>
+    <li><strong>You can customize the site files</strong> before deploying. The starter site includes suggestions for enhancements.</li>
+  </ul>
+</div>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Step 4: Preview the Starter Site Locally (Optional)</h3>
+
+<p style="color:#1e293b;">Before deploying to S3, you can preview the site locally by opening <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">site/index.html</code> in your web browser:</p>
+
+<pre style="background-color:#f1f5f9;border:1px solid #cbd5e1;border-left:4px solid #3b82f6;padding:15px;border-radius:5px;overflow-x:auto;font-family:'Courier New',monospace;font-size:14px;"># Windows
+start site/index.html
+
+# Mac
+open site/index.html
+
+# Linux
+xdg-open site/index.html</pre>
+
+<p style="color:#1e293b;margin-top:10px;">Or simply double-click <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">site/index.html</code> in your file explorer.</p>
+
+<div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">💡 Customization Tip</h3>
+  <p style="color:#1e293b;">The starter site includes an "LLM Enhancement Zone" with suggestions for improvements. You can use AI coding assistants (GitHub Copilot, Cursor, Augment, ChatGPT) to enhance the site while keeping it static and S3-compatible.</p>
+  <p style="color:#1e293b;margin-top:10px;"><strong>Ideas:</strong> Add dark mode, create interactive forms, add animations, build a quiz, integrate data visualizations.</p>
+</div>
+
 <hr style="border:1px solid #cbd5e1;margin:30px 0;">
 
 <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Method 1: AWS CLI Commands (Recommended)</h2>

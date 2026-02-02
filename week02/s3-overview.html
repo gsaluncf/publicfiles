@@ -8,352 +8,217 @@
 <body>
 
 <div style="background-color:#dbeafe;border:1px solid #93c5fd;border-radius:8px;padding:20px;margin:20px 0;">
-  <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:10px;">AWS S3 Overview</h2>
-  <p style="color:#1e293b;">Amazon S3 (Simple Storage Service) is AWS's object storage service — a massive, globally distributed file system in the cloud. This page explains what S3 is, why we use it for static websites, how much it costs, and what alternatives exist.</p>
+  <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:10px;">Understanding AWS and Cloud Storage</h2>
+  <p style="color:#1e293b;">Before we dive into S3, let's understand what AWS is, why it matters for data scientists, and why we're starting with storage rather than compute.</p>
+</div>
+
+<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">What is AWS (Amazon Web Services)?</h2>
+
+<p style="color:#1e293b;">AWS is Amazon's cloud computing platform — essentially, you rent computing resources (servers, storage, databases, etc.) from Amazon's massive data centers instead of buying and maintaining your own hardware.</p>
+
+<div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">The Cloud Computing Shift</h3>
+  <p style="color:#1e293b;"><strong>Traditional approach (pre-2006):</strong></p>
+  <ul style="color:#1e293b;">
+    <li>Buy physical servers (expensive upfront costs)</li>
+    <li>Set up and maintain your own data center</li>
+    <li>Pay for peak capacity even when idle</li>
+    <li>Wait weeks/months for new hardware</li>
+  </ul>
+
+  <p style="color:#1e293b;margin-top:10px;"><strong>Cloud approach (AWS, Azure, Google Cloud):</strong></p>
+  <ul style="color:#1e293b;">
+    <li>Rent exactly what you need, when you need it</li>
+    <li>Someone else handles hardware, security, maintenance</li>
+    <li>Pay only for what you use (pay-as-you-go)</li>
+    <li>Spin up resources in seconds, not weeks</li>
+  </ul>
+
+  <p style="color:#1e293b;margin-top:10px;"><strong>Learn more:</strong> <a href="https://aws.amazon.com/what-is-aws/" target="_blank">What is AWS?</a> | <a href="https://aws.amazon.com/what-is-cloud-computing/" target="_blank">What is Cloud Computing?</a></p>
+</div>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">AWS Market Position</h3>
+<ul style="color:#1e293b;">
+  <li><strong>32% cloud market share</strong> (2026) — larger than Microsoft Azure + Google Cloud combined</li>
+  <li><strong>200+ services</strong> — from basic storage to AI/ML, databases, IoT, and quantum computing</li>
+  <li><strong>Used by millions</strong> — startups, Fortune 500s, governments, researchers</li>
+  <li><strong>Career relevance:</strong> AWS skills appear in 60%+ of cloud and data engineering job postings</li>
+</ul>
+<p style="color:#1e293b;margin-top:10px;"><strong>Source:</strong> <a href="https://aws.amazon.com/about-aws/" target="_blank">AWS Overview</a></p>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">Why AWS Matters for Data Scientists</h3>
+
+<div style="background-color:#dcfce7;border:1px solid #16a34a;border-radius:8px;padding:15px;margin:20px 0;">
+  <p style="color:#1e293b;">Modern data science happens in the cloud because:</p>
+  <ul style="color:#1e293b;">
+    <li><strong>Datasets are too big</strong> for your laptop (multi-terabyte training data)</li>
+    <li><strong>Processing is too slow</strong> on local machines (distributed computing needed)</li>
+    <li><strong>Collaboration requires shared infrastructure</strong> (team access to data/models)</li>
+    <li><strong>Production systems need reliability</strong> (24/7 uptime, auto-scaling)</li>
+    <li><strong>Cost efficiency</strong> — rent a $50,000 GPU cluster for 2 hours instead of buying it</li>
+  </ul>
+
+  <p style="color:#1e293b;margin-top:10px;"><strong>Real-world examples:</strong></p>
+  <ul style="color:#1e293b;">
+    <li>Training large language models (GPUs/TPUs in the cloud)</li>
+    <li>Processing genomic data (petabyte-scale analysis)</li>
+    <li>Running A/B tests on millions of users (distributed systems)</li>
+    <li>Serving ML models to mobile apps (auto-scaling APIs)</li>
+  </ul>
+</div>
+
+<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;"></h2>
+
+<div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Why Start with Storage (S3) Instead of Compute?</h3>
+  <p style="color:#1e293b;">We're starting with S3 (storage) rather than EC2 (servers) because:</p>
+
+  <ol style="color:#1e293b;">
+    <li><strong>Simpler mental model:</strong> Storage is easier to understand than virtual servers</li>
+    <li><strong>Immediate results:</strong> Upload a file, get a URL — instant gratification</li>
+    <li><strong>Lower cost/risk:</strong> Forgetting to delete a file costs pennies; forgetting to stop a server costs dollars per hour</li>
+    <li><strong>Foundation for everything:</strong> Every AWS service reads/writes data somewhere — usually S3</li>
+    <li><strong>Real-world relevance:</strong> Data scientists interact with S3 daily, even if they never touch EC2</li>
+  </ol>
+
+  <p style="color:#1e293b;margin-top:10px;"><strong>The learning path:</strong></p>
+  <ul style="color:#1e293b;">
+    <li><strong>Week 2 (now):</strong> S3 — store and serve static files</li>
+    <li><strong>Week 3-4:</strong> Databases — structured data storage</li>
+    <li><strong>Week 5+:</strong> Compute (EC2, Lambda) — processing that data</li>
+    <li><strong>Later:</strong> Distributed systems (Spark, EMR) — big data processing</li>
+  </ul>
+</div>
+
+<h3 style="color:#1d4ed8;margin-top:25px;">S3's Role in Data Workflows</h3>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <p style="color:#1e293b;">In professional data science, S3 is typically used for:</p>
+  <ul style="color:#1e293b;">
+    <li><strong>Data lakes:</strong> Central repository for raw data (CSV, Parquet, JSON, images)</li>
+    <li><strong>Model artifacts:</strong> Trained models, checkpoints, experiment logs</li>
+    <li><strong>ETL pipelines:</strong> Input/output for Spark, Airflow, Glue jobs</li>
+    <li><strong>Backup and archival:</strong> Long-term storage with automatic lifecycle management</li>
+    <li><strong>Static assets:</strong> Model documentation, dashboards, visualization exports</li>
+  </ul>
+
+  <p style="color:#1e293b;margin-top:10px;"><em>This lab focuses on the simplest use case (static website hosting), but the concepts apply directly to data engineering workflows.</em></p>
+
+  <p style="color:#1e293b;margin-top:10px;"><strong>Learn more:</strong> <a href="https://aws.amazon.com/big-data/datalakes-and-analytics/what-is-a-data-lake/" target="_blank">What is a Data Lake?</a> | <a href="https://aws.amazon.com/solutions/case-studies/data-analytics/" target="_blank">AWS Data Analytics Case Studies</a></p>
 </div>
 
 <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">What is AWS S3?</h2>
 
-<p style="color:#1e293b;">Amazon S3 is object storage designed to store and retrieve any amount of data from anywhere on the web. Think of it as a massive hard drive in the cloud that you can access via HTTP/HTTPS.</p>
+<p style="color:#1e293b;">Amazon S3 (Simple Storage Service) is AWS's object storage service — a massive, globally distributed file system in the cloud that can store and retrieve any amount of data from anywhere on the web.</p>
 
+<p style="color:#1e293b;margin-top:10px;"><strong>Official documentation:</strong> <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html" target="_blank">AWS S3 User Guide</a> | <a href="https://aws.amazon.com/s3/" target="_blank">S3 Product Page</a></p>
+
+<!-- REST OF YOUR EXISTING CONTENT STARTS HERE -->
 <div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
   <h3 style="color:#1d4ed8;margin-top:5px;">Key Characteristics</h3>
   <ul style="color:#1e293b;">
     <li><strong>Store any type of file:</strong> HTML, CSS, JavaScript, images, videos, data files, backups, etc.</li>
     <li><strong>Access via URLs:</strong> Every object gets a unique URL for HTTP/HTTPS access</li>
     <li><strong>Pay-as-you-go:</strong> Only pay for storage used + requests made + data transferred</li>
-    <li><strong>99.999999999% durability:</strong> That's 11 nines — your files won't get lost</li>
+    <li><strong>99.999999999% durability:</strong> That's 11 nines — your files won't get lost (<a href="https://aws.amazon.com/s3/storage-classes/" target="_blank">S3 Storage Classes</a>)</li>
     <li><strong>Automatic scaling:</strong> No capacity planning needed — S3 grows with your needs</li>
-    <li><strong>Global availability:</strong> Choose from 30+ AWS regions worldwide</li>
+    <li><strong>Global availability:</strong> Choose from 30+ AWS regions worldwide (<a href="https://aws.amazon.com/about-aws/global-infrastructure/regions_az/" target="_blank">AWS Regions</a>)</li>
   </ul>
 </div>
 
-<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Why Use S3 for Static Websites?</h2>
+<!-- Continue with your existing content from here -->
 
-<h3 style="color:#1d4ed8;margin-top:25px;">Traditional Web Hosting Problems</h3>
+<!-- ===================== Added: Other AWS Services Overview ===================== -->
+<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Beyond S3: Other AWS Services You'll Use</h2>
 
-<ul style="color:#1e293b;">
-  <li><strong>Server management:</strong> Need to install updates, patch security vulnerabilities, configure web servers</li>
-  <li><strong>Fixed costs:</strong> Pay for server capacity even when your site has zero visitors</li>
-  <li><strong>Scaling complexity:</strong> Traffic spike? Your server crashes or you overpay for unused capacity</li>
-  <li><strong>Deployment friction:</strong> FTP uploads, SSH access, file permissions, restart services</li>
-</ul>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">S3 Static Website Hosting Advantages</h3>
-
-<div style="background-color:#dcfce7;border:1px solid #16a34a;border-radius:8px;padding:15px;margin:20px 0;">
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Compute</h3>
   <ul style="color:#1e293b;">
-    <li><strong>Zero server management:</strong> AWS handles all infrastructure, updates, security</li>
-    <li><strong>Automatic scaling:</strong> Handle 10 visitors or 10 million — S3 scales automatically</li>
-    <li><strong>Pennies per month:</strong> Small sites cost less than $0.01/month</li>
-    <li><strong>Built-in redundancy:</strong> Files automatically replicated across multiple data centers</li>
-    <li><strong>Simple deployment:</strong> Just upload files — no server configuration needed</li>
-    <li><strong>Perfect for:</strong> Portfolios, documentation, landing pages, marketing sites, SPAs</li>
+    <li><strong>Amazon EC2</strong> — virtual servers you control. Run long‑lived apps, custom environments, or GPU instances for ML. <a href="https://aws.amazon.com/ec2/" target="_blank">EC2 product page</a></li>
+    <li><strong>AWS Lambda</strong> — serverless functions that run on demand. Great for event‑driven tasks and APIs without managing servers. <a href="https://aws.amazon.com/lambda/" target="_blank">Lambda product page</a></li>
+    <li><strong>Amazon ECS/EKS</strong> — container orchestration (ECS) and managed Kubernetes (EKS) for microservices. <a href="https://aws.amazon.com/containers/" target="_blank">Containers on AWS</a></li>
   </ul>
 </div>
 
-<h3 style="color:#1d4ed8;margin-top:25px;">What Does "Static" Mean?</h3>
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Databases and Storage</h3>
+  <ul style="color:#1e293b;">
+    <li><strong>Amazon RDS</strong> — managed relational databases (PostgreSQL, MySQL, etc.). <a href="https://aws.amazon.com/rds/" target="_blank">RDS product page</a></li>
+    <li><strong>Amazon DynamoDB</strong> — serverless NoSQL key‑value database with single‑digit ms latency. <a href="https://aws.amazon.com/dynamodb/" target="_blank">DynamoDB product page</a></li>
+    <li><strong>Amazon Aurora</strong> — high‑performance MySQL/PostgreSQL‑compatible database. <a href="https://aws.amazon.com/rds/aurora/" target="_blank">Aurora product page</a></li>
+    <li><strong>Amazon EFS</strong> — shared POSIX file system for Linux workloads. <a href="https://aws.amazon.com/efs/" target="_blank">EFS product page</a></li>
+  </ul>
+</div>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Data Integration and Orchestration</h3>
+  <ul style="color:#1e293b;">
+    <li><strong>AWS Glue</strong> — serverless ETL and data catalog for analytics. <a href="https://aws.amazon.com/glue/" target="_blank">Glue product page</a></li>
+    <li><strong>AWS Step Functions</strong> — visual workflows to coordinate Lambda/EC2/Glue jobs. <a href="https://aws.amazon.com/step-functions/" target="_blank">Step Functions product page</a></li>
+    <li><strong>Amazon EventBridge</strong> — event bus to connect apps and AWS services. <a href="https://aws.amazon.com/eventbridge/" target="_blank">EventBridge product page</a></li>
+  </ul>
+</div>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Analytics and Big Data</h3>
+  <ul style="color:#1e293b;">
+    <li><strong>Amazon Athena</strong> — serverless SQL on S3 (pay per query). <a href="https://aws.amazon.com/athena/" target="_blank">Athena product page</a></li>
+    <li><strong>Amazon EMR</strong> — managed Hadoop/Spark for large‑scale data processing. <a href="https://aws.amazon.com/emr/" target="_blank">EMR product page</a></li>
+    <li><strong>Amazon Redshift</strong> — cloud data warehouse for BI/analytics. <a href="https://aws.amazon.com/redshift/" target="_blank">Redshift product page</a></li>
+    <li><strong>Amazon Kinesis</strong> — real‑time data streaming and processing. <a href="https://aws.amazon.com/kinesis/" target="_blank">Kinesis product page</a></li>
+  </ul>
+</div>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Machine Learning and AI</h3>
+  <ul style="color:#1e293b;">
+    <li><strong>Amazon SageMaker</strong> — end‑to‑end platform to build, train, and deploy ML models. <a href="https://aws.amazon.com/sagemaker/" target="_blank">SageMaker product page</a></li>
+    <li><strong>Amazon Bedrock</strong> — foundation models and generative AI APIs (serverless). <a href="https://aws.amazon.com/bedrock/" target="_blank">Bedrock product page</a></li>
+    <li><strong>Amazon Comprehend</strong> — NLP for text analysis (entities, sentiment). <a href="https://aws.amazon.com/comprehend/" target="_blank">Comprehend product page</a></li>
+  </ul>
+</div>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Networking, Delivery, and APIs</h3>
+  <ul style="color:#1e293b;">
+    <li><strong>Amazon CloudFront</strong> — global CDN for low‑latency content delivery with HTTPS & custom domains. <a href="https://aws.amazon.com/cloudfront/" target="_blank">CloudFront product page</a></li>
+    <li><strong>Amazon Route 53</strong> — DNS, domain registration, and traffic routing. <a href="https://aws.amazon.com/route53/" target="_blank">Route 53 product page</a></li>
+    <li><strong>Amazon API Gateway</strong> — build and manage secure APIs at scale. <a href="https://aws.amazon.com/api-gateway/" target="_blank">API Gateway product page</a></li>
+  </ul>
+</div>
+
+<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+  <h3 style="color:#1d4ed8;margin-top:5px;">Security, Identity, and Monitoring</h3>
+  <ul style="color:#1e293b;">
+    <li><strong>AWS IAM</strong> — users, roles, and permissions for secure access control. <a href="https://aws.amazon.com/iam/" target="_blank">IAM product page</a></li>
+    <li><strong>AWS KMS</strong> — manage encryption keys for data at rest/in transit. <a href="https://aws.amazon.com/kms/" target="_blank">KMS product page</a></li>
+    <li><strong>AWS Secrets Manager</strong> — store and rotate app secrets safely. <a href="https://aws.amazon.com/secrets-manager/" target="_blank">Secrets Manager product page</a></li>
+    <li><strong>Amazon CloudWatch</strong> — metrics, logs, alarms, dashboards. <a href="https://aws.amazon.com/cloudwatch/" target="_blank">CloudWatch product page</a></li>
+    <li><strong>AWS CloudTrail</strong> — audit trail of API calls in your account. <a href="https://aws.amazon.com/cloudtrail/" target="_blank">CloudTrail product page</a></li>
+    <li><strong>AWS Cost Explorer & Budgets</strong> — track and control spend. <a href="https://aws.amazon.com/aws-cost-management/aws-cost-explorer/" target="_blank">Cost Explorer</a> | <a href="https://aws.amazon.com/aws-cost-management/aws-budgets/" target="_blank">Budgets</a></li>
+  </ul>
+</div>
 
 <div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
-  <p style="color:#1e293b;"><strong>Static website:</strong> HTML, CSS, and JavaScript files served directly to the browser without server-side processing.</p>
-  <p style="color:#1e293b;margin-top:10px;"><strong>What you CAN do:</strong></p>
+  <h3 style="color:#1d4ed8;margin-top:5px;">When to Choose What (Quick Cheats)</h3>
   <ul style="color:#1e293b;">
-    <li>Display content (text, images, videos)</li>
-    <li>Interactive JavaScript (animations, form validation, API calls)</li>
-    <li>Single Page Applications (React, Vue, Angular)</li>
-    <li>Call external APIs (weather, maps, payment processors)</li>
-  </ul>
-  <p style="color:#1e293b;margin-top:10px;"><strong>What you CANNOT do:</strong></p>
-  <ul style="color:#1e293b;">
-    <li>Run server-side code (PHP, Python, Ruby, Node.js)</li>
-    <li>Direct database access (MySQL, PostgreSQL)</li>
-    <li>Server-side authentication/sessions</li>
-    <li>File uploads to the server</li>
-  </ul>
-  <p style="color:#1e293b;margin-top:10px;"><em>Note: You can work around these limitations using serverless functions (AWS Lambda) and APIs, but that's beyond this course.</em></p>
-</div>
-
-<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">How Much Does S3 Cost?</h2>
-
-<p style="color:#1e293b;">S3 pricing has three components: storage, requests, and data transfer. Here's the breakdown for <strong>us-east-1</strong> region (2026 pricing):</p>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">Storage Costs</h3>
-
-<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
-  <p style="color:#1e293b;"><strong>S3 Standard Storage:</strong> $0.023 per GB per month</p>
-  <p style="color:#1e293b;margin-top:10px;"><strong>Examples:</strong></p>
-  <ul style="color:#1e293b;">
-    <li>10 KB starter site: $0.00000023/month (essentially free)</li>
-    <li>1 MB portfolio site: $0.000023/month</li>
-    <li>100 MB site with images: $0.0023/month (~$0.03/year)</li>
-    <li>1 GB site with videos: $0.023/month (~$0.28/year)</li>
+    <li><strong>EC2 vs. Lambda:</strong> Long‑running, custom OS → EC2. Event‑driven, short tasks → Lambda.</li>
+    <li><strong>RDS vs. DynamoDB:</strong> Joins/SQL/transactions → RDS. High scale, key‑value, serverless → DynamoDB.</li>
+    <li><strong>Athena vs. Redshift:</strong> Ad‑hoc SQL directly on S3 → Athena. BI warehouse with fast repeated queries → Redshift.</li>
+    <li><strong>S3 website vs. CloudFront:</strong> S3 is fine to start; add CloudFront for HTTPS, speed, and custom domains.</li>
   </ul>
 </div>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">Request Costs</h3>
-
-<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
-  <ul style="color:#1e293b;">
-    <li><strong>PUT/POST requests:</strong> $0.005 per 1,000 requests (uploading files)</li>
-    <li><strong>GET requests:</strong> $0.0004 per 1,000 requests (page views)</li>
-  </ul>
-  <p style="color:#1e293b;margin-top:10px;"><strong>Examples:</strong></p>
-  <ul style="color:#1e293b;">
-    <li>100 page views: $0.00004</li>
-    <li>1,000 page views: $0.0004</li>
-    <li>10,000 page views: $0.004</li>
-  </ul>
-</div>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">Data Transfer Costs</h3>
-
-<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
-  <ul style="color:#1e293b;">
-    <li><strong>First 100 GB/month:</strong> FREE</li>
-    <li><strong>After 100 GB:</strong> $0.09 per GB</li>
-  </ul>
-  <p style="color:#1e293b;margin-top:10px;"><strong>Examples:</strong></p>
-  <ul style="color:#1e293b;">
-    <li>1,000 page views × 1 MB each = 1 GB = FREE</li>
-    <li>10,000 page views × 1 MB each = 10 GB = FREE</li>
-    <li>100,000 page views × 1 MB each = 100 GB = FREE</li>
-  </ul>
-</div>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">AWS Free Tier</h3>
-
-<div style="background-color:#dcfce7;border:1px solid #16a34a;border-radius:8px;padding:15px;margin:20px 0;">
-  <p style="color:#1e293b;"><strong>For the first 12 months</strong> after creating your AWS account, you get:</p>
-  <ul style="color:#1e293b;">
-    <li>5 GB of S3 Standard storage</li>
-    <li>20,000 GET requests</li>
-    <li>2,000 PUT requests</li>
-    <li>100 GB data transfer out</li>
-  </ul>
-  <p style="color:#1e293b;margin-top:10px;"><strong>This assignment will use a tiny fraction of your free tier!</strong></p>
-</div>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">Typical Student Assignment Cost</h3>
-
-<div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
-  <p style="color:#1e293b;"><strong>Scenario:</strong> 10 KB starter site, 1,000 page views, kept online for 1 week</p>
-  <ul style="color:#1e293b;">
-    <li>Storage: $0.0002/month (10 KB)</li>
-    <li>Requests: $0.0004 (1,000 GET requests)</li>
-    <li>Data Transfer: $0 (under 100 GB free tier)</li>
-  </ul>
-  <p style="color:#1e293b;margin-top:10px;"><strong>TOTAL: Less than $0.01 for the entire assignment</strong></p>
-  <p style="color:#1e293b;margin-top:10px;"><strong style="color:#1e40af;">CRITICAL:</strong> Run <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">99_teardown.bat</code> after grading to delete resources and avoid ongoing charges!</p>
-</div>
-
-<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Alternatives to S3</h2>
-
-
-<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
-  <table style="width:100%;border-collapse:collapse;color:#1e293b;">
-    <thead>
-      <tr style="background-color:#e2e8f0;">
-        <th style="padding:10px;text-align:left;border:1px solid #cbd5e1;">Service</th>
-        <th style="padding:10px;text-align:left;border:1px solid #cbd5e1;">Cost</th>
-        <th style="padding:10px;text-align:left;border:1px solid #cbd5e1;">Best For</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="padding:10px;border:1px solid #cbd5e1;"><strong>GitHub Pages</strong></td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">FREE</td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">Personal sites, project documentation</td>
-      </tr>
-      <tr style="background-color:#f8fafc;">
-        <td style="padding:10px;border:1px solid #cbd5e1;"><strong>Netlify</strong></td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">FREE tier</td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">Modern web apps, CI/CD integration</td>
-      </tr>
-      <tr>
-        <td style="padding:10px;border:1px solid #cbd5e1;"><strong>Vercel</strong></td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">FREE tier</td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">Next.js, React apps</td>
-      </tr>
-      <tr style="background-color:#f8fafc;">
-        <td style="padding:10px;border:1px solid #cbd5e1;"><strong>Cloudflare Pages</strong></td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">FREE tier</td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">Fast global delivery</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">Paid Alternatives (Similar to S3)</h3>
-
-<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
-  <table style="width:100%;border-collapse:collapse;color:#1e293b;">
-    <thead>
-      <tr style="background-color:#e2e8f0;">
-        <th style="padding:10px;text-align:left;border:1px solid #cbd5e1;">Service</th>
-        <th style="padding:10px;text-align:left;border:1px solid #cbd5e1;">Cost</th>
-        <th style="padding:10px;text-align:left;border:1px solid #cbd5e1;">Differences from S3</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="padding:10px;border:1px solid #cbd5e1;"><strong>Azure Blob Storage</strong></td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">~$0.018/GB</td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">Microsoft ecosystem integration</td>
-      </tr>
-      <tr style="background-color:#f8fafc;">
-        <td style="padding:10px;border:1px solid #cbd5e1;"><strong>Google Cloud Storage</strong></td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">~$0.020/GB</td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">Google ecosystem integration</td>
-      </tr>
-      <tr>
-        <td style="padding:10px;border:1px solid #cbd5e1;"><strong>DigitalOcean Spaces</strong></td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">$5/month</td>
-        <td style="padding:10px;border:1px solid #cbd5e1;">Simpler pricing, includes CDN</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">When to Use Each</h3>
-
-<ul style="color:#1e293b;">
-  <li><strong>S3:</strong> Learning AWS, need AWS integration, enterprise projects</li>
-  <li><strong>GitHub Pages:</strong> Free, simple, already using GitHub for version control</li>
-  <li><strong>Netlify/Vercel:</strong> Modern frameworks, need CI/CD, form handling, serverless functions</li>
-  <li><strong>Azure/GCP:</strong> Already using those cloud platforms for other services</li>
-</ul>
-
-<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">What "More" Looks Like</h2>
-
-<p style="color:#1e293b;">This assignment teaches basic S3 static website hosting. Here's what the progression looks like as you build more sophisticated systems:</p>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">Level 1: Basic S3 (This Assignment)</h3>
-
-<div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
-  <ul style="color:#1e293b;">
-    <li>Upload files manually or via CLI</li>
-    <li>HTTP-only access (no HTTPS)</li>
-    <li>S3 website endpoint URL (long, ugly: <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">bucket-name.s3-website-us-east-1.amazonaws.com</code>)</li>
-    <li>No custom domain</li>
-    <li>Cost: Pennies per month</li>
-  </ul>
-</div>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">Level 2: S3 + CloudFront (Optional Extra Credit)</h3>
-
-<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
-  <p style="color:#1e293b;"><strong>CloudFront</strong> = AWS's Content Delivery Network (CDN)</p>
-  <ul style="color:#1e293b;">
-    <li>Caches content at edge locations worldwide (faster load times)</li>
-    <li>HTTPS support with free SSL/TLS certificates</li>
-    <li>Custom domain support (your-site.com)</li>
-    <li>Better security (DDoS protection)</li>
-    <li>Cost: ~$0.085 per GB transferred (first 10 TB)</li>
-  </ul>
-  <p style="color:#1e293b;margin-top:10px;"><em>See <a href="cloudfront-optional.html" style="color:#3b82f6;">CloudFront Optional Extra Credit</a> for details.</em></p>
-</div>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">Level 3: S3 + CloudFront + Route 53 (Production)</h3>
-
-<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
-  <p style="color:#1e293b;"><strong>Route 53</strong> = AWS's DNS service</p>
-  <ul style="color:#1e293b;">
-    <li>Manage custom domains (buy or transfer domains)</li>
-    <li>Advanced routing (geo-location, failover, weighted routing)</li>
-    <li>Health checks and monitoring</li>
-    <li>Integration with other AWS services</li>
-    <li>Cost: $0.50/month per hosted zone + $0.40 per million queries</li>
-  </ul>
-</div>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">Level 4: Full Static Site Pipeline (Professional)</h3>
-
-<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
-  <ul style="color:#1e293b;">
-    <li><strong>S3</strong> for storage</li>
-    <li><strong>CloudFront</strong> for global delivery</li>
-    <li><strong>Route 53</strong> for DNS</li>
-    <li><strong>AWS Certificate Manager</strong> for free SSL certificates</li>
-    <li><strong>CodePipeline</strong> for automated deployments (CI/CD)</li>
-    <li><strong>Lambda@Edge</strong> for dynamic content at edge locations</li>
-    <li>Cost: ~$5-20/month depending on traffic</li>
-  </ul>
-</div>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">Level 5: Hybrid Architecture (Advanced)</h3>
-
-<div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
-  <p style="color:#1e293b;"><strong>"Serverless" full-stack application</strong></p>
-  <ul style="color:#1e293b;">
-    <li><strong>S3</strong> for static assets (HTML, CSS, JS, images)</li>
-    <li><strong>API Gateway + Lambda</strong> for backend logic</li>
-    <li><strong>DynamoDB</strong> for database</li>
-    <li><strong>Cognito</strong> for user authentication</li>
-    <li>No servers to manage — everything scales automatically</li>
-    <li>Cost: Pay per request, scales to zero when idle</li>
-  </ul>
-</div>
-
-<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Why Learn S3 When Free Alternatives Exist?</h2>
-
-<p style="color:#1e293b;">Great question! Here's why S3 is worth learning even though GitHub Pages, Netlify, and Vercel are free:</p>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">1. Industry Standard</h3>
-<ul style="color:#1e293b;">
-  <li>AWS has 32% cloud market share (2026)</li>
-  <li>Most companies use AWS in some capacity</li>
-  <li>S3 skills transfer to other AWS services</li>
-</ul>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">2. Foundation for Cloud Computing</h3>
-<ul style="color:#1e293b;">
-  <li>Understanding S3 teaches core cloud concepts (object storage, regions, availability zones)</li>
-  <li>Object storage is fundamental to modern architecture</li>
-  <li>AWS CLI skills apply to other cloud providers (Azure CLI, gcloud)</li>
-</ul>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">3. Integration Ecosystem</h3>
-<ul style="color:#1e293b;">
-  <li>S3 integrates with 200+ AWS services</li>
-  <li>Can build complex systems starting with S3 (data lakes, backup systems, content delivery)</li>
-  <li>Learn how cloud services work together</li>
-</ul>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">4. Career Skills</h3>
-<ul style="color:#1e293b;">
-  <li>AWS certifications are valuable (Solutions Architect, Developer, SysOps)</li>
-  <li>Cloud skills in high demand</li>
-  <li>Understanding costs/billing is critical for real-world projects</li>
-</ul>
-
-<h3 style="color:#1d4ed8;margin-top:25px;">5. Real-World Experience</h3>
-<ul style="color:#1e293b;">
-  <li>Free tiers don't teach cost management</li>
-  <li>Learning to clean up resources is important (prevents surprise bills)</li>
-  <li>Understanding pricing helps make architecture decisions</li>
-</ul>
-
-<div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
-  <p style="color:#1e293b;"><strong>Bottom line:</strong> GitHub Pages is great for personal projects. But if you want to work in cloud computing, DevOps, or backend engineering, understanding AWS S3 is essential.</p>
-</div>
-
-<h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Ready to Get Started?</h2>
-
-<p style="color:#1e293b;\">Now that you understand what S3 is, why we use it, and how much it costs, you're ready to build your first S3-hosted website!</p>
 
 <div style="background-color:#dbeafe;border:1px solid #93c5fd;border-radius:8px;padding:20px;margin:20px 0;">
-  <h3 style="color:#1e40af;margin-top:5px;">Next Steps</h3>
+  <h3 style="color:#1e40af;margin-top:5px;">Where This Course Goes Next</h3>
   <ol style="color:#1e293b;">
-    <li><strong>Review the <a href="lab.html" style="color:#3b82f6;">Lab Instructions</a></strong> — Step-by-step guide for both Console UI and CLI methods</li>
-    <li><strong>Complete the assignment</strong> — Deploy your static website to S3</li>
-    <li><strong>Test your website</strong> — Make sure it's publicly accessible</li>
-    <li><strong>Run teardown script</strong> — Clean up resources to avoid charges</li>
-    <li><strong>(Optional) Try CloudFront</strong> — Add HTTPS and custom domain for extra credit</li>
+    <li>Finish the Week 2 lab: <a href="lab.html" target="_blank" style="color:#3b82f6;">S3 Static Website Lab</a></li>
+    <li>Review account protections: <a href="../week01/aws-account-setup.html" target="_blank" style="color:#3b82f6;">Week 1 — AWS Account Setup</a></li>
+    <li>Preview compute topics: EC2 and Lambda deployment patterns (coming soon)</li>
   </ol>
 </div>
 
-<p style="color:#1e293b;margin-top:30px;\"><a href="index.html" style="color:#3b82f6;">← Back to Week 2 Overview</a></p>
+<p style="color:#1e293b;margin-top:30px;"><a href="index.html" style="color:#3b82f6;">← Back to Week 2 Overview</a></p>
 
 </body>
 </html>
-
