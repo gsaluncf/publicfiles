@@ -191,14 +191,49 @@ Response:
   <p style="color:#1e293b;margin-top:10px;"><strong>Real-world analogy:</strong> A potluck dinner where everyone brings food and coordinates directly with each other</p>
 </div>
 
+<div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:20px;margin:20px 0;">
+  <h3 style="color:#1e40af;margin-top:5px;">💭 Thought Experiment: The Two Generals Problem</h3>
+
+  <p style="color:#1e293b;margin-top:15px;">Imagine this scenario:</p>
+
+  <div style="background-color:#fff;border:1px solid #d97706;border-radius:6px;padding:15px;margin:15px 0;">
+    <p style="color:#1e293b;"><strong>The Setup:</strong></p>
+    <p style="color:#1e293b;">Two generals are camped on opposite sides of an enemy city. They need to attack <strong>at the same time</strong> to win. If only one attacks, they'll be defeated.</p>
+
+    <p style="color:#1e293b;margin-top:10px;"><strong>The Problem:</strong></p>
+    <p style="color:#1e293b;">They can only communicate by sending messengers through enemy territory. Any messenger might be captured.</p>
+
+    <ul style="color:#1e293b;margin-top:10px;">
+      <li><strong>General A</strong> sends a message: "Attack at dawn"</li>
+      <li>But how does General A know the message was received?</li>
+      <li><strong>General B</strong> could send back: "Message received, will attack at dawn"</li>
+      <li>But how does General B know <em>that</em> message was received?</li>
+      <li>General A could send: "Acknowledged your acknowledgment"</li>
+      <li>But how does General A know <em>that</em> was received?</li>
+      <li>...and so on, forever</li>
+    </ul>
+  </div>
+
+  <p style="color:#1e293b;margin-top:15px;"><strong>The Question:</strong> Is there a protocol that guarantees both generals attack at the same time, even with unreliable communication?</p>
+
+  <p style="color:#1e293b;margin-top:10px;font-style:italic;">Take a moment to think about this. Can you design a solution?</p>
+</div>
+
 <div style="background-color:#dbeafe;border:1px solid #93c5fd;border-radius:8px;padding:20px;margin:20px 0;">
-  <h3 style="color:#1e40af;margin-top:5px;">Why This Matters for Data Science</h3>
-  <p style="color:#1e293b;">Understanding these architectures helps you:</p>
+  <h3 style="color:#1e40af;margin-top:5px;">What Happens When You Break Things Apart</h3>
+  <p style="color:#1e293b;">The Two Generals Problem illustrates a fundamental challenge in distributed systems:</p>
   <ul style="color:#1e293b;">
-    <li><strong>Choose the right tools:</strong> Should you use a single powerful server or distribute across many machines?</li>
-    <li><strong>Design scalable systems:</strong> How do you handle 1 million users instead of 100?</li>
-    <li><strong>Understand trade-offs:</strong> Consistency vs. availability vs. partition tolerance (CAP theorem)</li>
-    <li><strong>Work with cloud services:</strong> AWS, Azure, and Google Cloud are all <strong>distributed systems</strong></li>
+    <li><strong>Communication is unreliable:</strong> Networks fail, messages get lost, servers crash</li>
+    <li><strong>Coordination is hard:</strong> How do you ensure multiple computers agree on the same state?</li>
+    <li><strong>Perfect synchronization is impossible:</strong> There's no way to guarantee 100% certainty in distributed systems</li>
+    <li><strong>Trade-offs are inevitable:</strong> You must choose between consistency, availability, and partition tolerance</li>
+  </ul>
+
+  <p style="color:#1e293b;margin-top:15px;"><strong>Why this matters for data science:</strong></p>
+  <ul style="color:#1e293b;">
+    <li>When you use AWS, your data is distributed across multiple servers and data centers</li>
+    <li>Understanding these limitations helps you design better systems</li>
+    <li>You'll encounter concepts like "eventual consistency" and "at-least-once delivery"</li>
   </ul>
 </div>
 
