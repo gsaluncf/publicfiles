@@ -11,3 +11,6 @@
 # Allow the RMDs directory and all of its content
 !RMDs/
 !RMDs/**
+
+# Allow the cannon simulator page
+!cannon-trajectory-simulator.html
