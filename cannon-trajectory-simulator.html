@@ -543,9 +543,9 @@
         });
         const rangePoint = toCanvasPoint({ x: metrics.range, y: 0 });
         const launchPoint = toCanvasPoint({ x: 0, y: 0 });
-        drawMarker(launchPoint, "Launch");
-        drawMarker(maxPoint, "Max height");
-        drawMarker(rangePoint, "Range");
+        drawMarker(launchPoint, "Launch (0,0)");
+        drawMarker(maxPoint, `Max height (${metrics.maxHeight.toFixed(1)})`);
+        drawMarker(rangePoint, `Range (${metrics.range.toFixed(1)})`);
       }
     };
 
