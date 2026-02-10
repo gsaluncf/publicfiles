@@ -25,3 +25,9 @@
 !week03/src/**
 !week03/events/
 !week03/events/**
+
+# Allow week04 directory and its files
+!week04/
+!week04/*.html
+!week04/*.svg
+!week04/*.png
