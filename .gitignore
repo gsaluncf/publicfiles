@@ -14,3 +14,14 @@
 
 # Allow the cannon simulator page
 !cannon-trajectory-simulator.html
+
+# Allow week03 directory and its student files
+!week03/
+!week03/.gitignore
+!week03/template.yaml
+!week03/local_tester.html
+!week03/README.md
+!week03/src/
+!week03/src/**
+!week03/events/
+!week03/events/**
