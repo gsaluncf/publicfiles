@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 2 Reading Guide</title>
+</head>
+
+<body>
+
+    <div
+        style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">Chapter 2
+            Reading Guide</h2>
+        <p style="color: #1e293b; font-size: 16px; line-height: 1.6;">This guide covers the sections of Chapter 2 we
+            need to read carefully. For each section, you will find the specific pages to focus on, two key quotes from
+            the text, and two questions to think about as you read.</p>
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">The goal is not to memorize definitions. The goal
+            is to understand what these concepts mean for how real systems are designed, and what tradeoffs they force
+            you to make.</p>
+    </div>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <!-- ============================================ -->
+    <!-- SECTION 2.1 -->
+    <!-- ============================================ -->
+
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Section 2.1:
+        Publish-Subscribe</h2>
+    <p style="color: #64748b; font-size: 14px;">Pages 71-72 (the Linda example and Figure 2.12)</p>
+
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">We talked about this in class already. Now read the
+        formal version.</p>
+
+    <div style="text-align: center; margin: 20px 0;">
+        <svg viewBox="0 0 700 260" style="max-width: 680px; width: 100%; height: auto; font-family: Arial, sans-serif;">
+            <rect x="20" y="40" width="120" height="50" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" />
+            <text x="80" y="70" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="bold">Publisher A</text>
+            <rect x="20" y="150" width="120" height="50" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" />
+            <text x="80" y="180" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="bold">Publisher
+                B</text>
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+                </marker>
+            </defs>
+            <line x1="140" y1="65" x2="250" y2="120" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)" />
+            <line x1="140" y1="175" x2="250" y2="140" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)" />
+            <rect x="250" y="95" width="180" height="60" rx="10" fill="#1e40af" stroke="#1e3a8a" stroke-width="2" />
+            <text x="340" y="122" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="bold">Topic /
+                Broker</text>
+            <text x="340" y="142" text-anchor="middle" fill="#93c5fd" font-size="11">(decoupled middleware)</text>
+            <line x1="430" y1="110" x2="540" y2="55" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)" />
+            <line x1="430" y1="125" x2="540" y2="125" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)" />
+            <line x1="430" y1="140" x2="540" y2="195" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)" />
+            <rect x="540" y="30" width="140" height="50" rx="8" fill="#eff6ff" stroke="#60a5fa" stroke-width="2" />
+            <text x="610" y="60" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="bold">Subscriber
+                1</text>
+            <rect x="540" y="100" width="140" height="50" rx="8" fill="#eff6ff" stroke="#60a5fa" stroke-width="2" />
+            <text x="610" y="130" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="bold">Subscriber
+                2</text>
+            <rect x="540" y="170" width="140" height="50" rx="8" fill="#eff6ff" stroke="#60a5fa" stroke-width="2" />
+            <text x="610" y="200" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="bold">Subscriber
+                3</text>
+            <text x="80" y="25" text-anchor="middle" fill="#64748b" font-size="12">PUBLISH</text>
+            <text x="610" y="15" text-anchor="middle" fill="#64748b" font-size="12">SUBSCRIBE</text>
+            <text x="200" y="82" text-anchor="middle" fill="#64748b" font-size="11">event</text>
+            <text x="200" y="170" text-anchor="middle" fill="#64748b" font-size="11">event</text>
+            <text x="490" y="70" text-anchor="middle" fill="#64748b" font-size="11">notify</text>
+            <text x="500" y="118" text-anchor="middle" fill="#64748b" font-size="11">notify</text>
+            <text x="490" y="185" text-anchor="middle" fill="#64748b" font-size="11">notify</text>
+            <text x="340" y="245" text-anchor="middle" fill="#94a3b8" font-size="12" font-style="italic">Publishers and
+                subscribers never communicate directly.</text>
+        </svg>
+        <p style="color: #64748b; font-size: 13px; margin-top: 10px;">The publish-subscribe pattern: publishers send
+            events to a topic or broker. Subscribers receive only what they subscribed to. Neither side needs to know
+            the other exists.</p>
+    </div>
+
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6; font-style: italic; margin-bottom: 15px;">"The
+            important issue to note now, is that by providing only tags, a reader such as Chuck will be able to pick up
+            messages without needing to directly reference the poster."</p>
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6; font-style: italic; margin-bottom: 0;">"We have a
+            referentially decoupled, but temporally coupled system."</p>
+    </div>
+
+    <div
+        style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <h3 style="color: #1d4ed8; margin-top: 5px;">Think About</h3>
+        <ul style="color: #1e293b; font-size: 15px; line-height: 1.8;">
+            <li>What is the difference between forwarding data immediately vs. forwarding a notification and letting
+                subscribers read later? What does each approach require from the middleware?</li>
+            <li>If a subscriber is offline when an event is published, what happens to that event? Does the answer
+                change depending on whether the system forwards data or notifications?</li>
+        </ul>
+    </div>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <!-- ============================================ -->
+    <!-- SECTION 2.2 -->
+    <!-- ============================================ -->
+
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Section 2.2:
+        Middleware</h2>
+    <p style="color: #64748b; font-size: 14px;">Pages 77-78 (interceptors and modifiable middleware)</p>
+
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">This section is about where coordination logic lives -
+        in each application, or in shared infrastructure between them.</p>
+
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6; font-style: italic; margin-bottom: 15px;">"The
+            beauty of this all is that the object A need not be aware of the replication of B, but also the object
+            middleware need not have special components that deal with this replicated call."</p>
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6; font-style: italic; margin-bottom: 0;">"The bottom
+            line is that to accommodate dynamic changes to the software that makes up middleware, we need at least basic
+            support to load and unload components at runtime."</p>
+    </div>
+
+    <div
+        style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <h3 style="color: #1d4ed8; margin-top: 5px;">Think About</h3>
+        <ul style="color: #1e293b; font-size: 15px; line-height: 1.8;">
+            <li>If you can insert behavior (like replication, logging, or access control) into a system without changing
+                the application code, what does that mean for how systems evolve over time?</li>
+            <li>When the rules of how components communicate need to change, should every application be rewritten, or
+                should the communication layer handle it? What are the tradeoffs?</li>
+        </ul>
+    </div>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <!-- ============================================ -->
+    <!-- SECTION 2.3 -->
+    <!-- ============================================ -->
+
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Section 2.3:
+        Layered Architectures</h2>
+    <p style="color: #64748b; font-size: 14px;">Pages 87-88 (web architecture evolution)</p>
+
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">This section is about the internal structure of a
+        single system, not how systems relate to each other. That distinction matters.</p>
+
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6; font-style: italic; margin-bottom: 15px;">"Content
+            is stored in a database at the server's side, along with client-side scripts and such, to be composed
+            on-the-fly into a document which is then subsequently sent to the client's browser. Documents have thus
+            become completely dynamic."</p>
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6; font-style: italic; margin-bottom: 0;">"In other
+            words, the server does nothing but delegate the fetching of a document to an external program."</p>
+    </div>
+
+    <div
+        style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <h3 style="color: #1d4ed8; margin-top: 5px;">Think About</h3>
+        <ul style="color: #1e293b; font-size: 15px; line-height: 1.8;">
+            <li>What is the difference between how a system is structured internally (its layers) and how it relates to
+                other systems externally (its architecture)? Can you look at a diagram and tell which is which?</li>
+            <li>When a server delegates work to an external program, what does the server actually know about what
+                happens next? What does it not know?</li>
+        </ul>
+    </div>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <!-- ============================================ -->
+    <!-- SECTION 2.4 -->
+    <!-- ============================================ -->
+
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Section 2.4:
+        Peer-to-Peer and Discovery</h2>
+    <p style="color: #64748b; font-size: 14px;">Pages 97-98 (BitTorrent architecture and DHT)</p>
+
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">This section moves beyond client-server into systems
+        where nodes can be both. Pay attention to the discovery problem - how do nodes find each other?</p>
+
+    <div style="text-align: center; margin: 20px 0;">
+        <img style="max-width: 100%; height: auto; border: 1px solid #cbd5e1; border-radius: 8px;"
+            src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Centralised-decentralised-distributed.png?20161126174339"
+            alt="Paul Baran's 1964 diagram showing centralized, decentralized, and distributed network topologies" />
+        <p style="color: #64748b; font-size: 13px; margin-top: 10px;">Paul Baran's classic 1964 diagram. From left to
+            right: centralized (single point of failure), decentralized (regional hubs), and distributed (no single
+            point of control). Most real systems are somewhere in between. (Source: Wikimedia Commons, CC BY-SA 4.0)</p>
+    </div>
+
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6; font-style: italic; margin-bottom: 15px;">"A
+            torrent file contains the information that is needed to download a specific file. In particular, it contains
+            a link to what is known as a tracker, which is a server that is keeping an accurate account of active nodes
+            that have (chunks of) the requested file."</p>
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6; font-style: italic; margin-bottom: 0;">"As it turns
+            out, the bottleneck of the system is easily formed by the trackers."</p>
+    </div>
+
+    <h3 style="color: #1d4ed8; margin-top: 25px;">What a Torrent File Actually Looks Like</h3>
+
+    <div
+        style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 13px;">
+        <pre style="margin: 0;">{
+    "announce": "http://tracker.example.com/announce",
+    "info":
+    {
+        "files":
+        [
+            {"length": 111, "path": ["111.txt"]},
+            {"length": 222, "path": ["222.txt"]}
+        ],
+        "name": "directoryName",
+        "piece length": 262144,
+        "pieces": "&lt;binary SHA1 hashes&gt;"
+    }
+}</pre>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color: #f1f5f9;">
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Field</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">What It Tells
+                    You</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    announce</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">URL of the tracker - where to ask
+                    for peers</td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    files</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">What you are downloading, with
+                    sizes</td>
+            </tr>
+            <tr>
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    piece length</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">How big each chunk is (256 KB)
+                </td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    pieces</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">SHA1 hashes to verify each chunk
+                    is correct</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="text-align: center; margin: 20px 0;">
+        <img style="max-width: 100%; height: auto; border: 1px solid #cbd5e1; border-radius: 8px;"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/DHT_en.svg/640px-DHT_en.svg.png"
+            alt="Distributed Hash Table diagram showing how keys are distributed across nodes in a ring structure" />
+        <p style="color: #64748b; font-size: 13px; margin-top: 10px;">A Distributed Hash Table (DHT): instead of one
+            central tracker knowing everything, responsibility for tracking is split across participating nodes. Each
+            node handles a slice of the keyspace. (Source: Wikimedia Commons, CC BY-SA 3.0)</p>
+    </div>
+
+    <div
+        style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <h3 style="color: #1d4ed8; margin-top: 5px;">Think About</h3>
+        <ul style="color: #1e293b; font-size: 15px; line-height: 1.8;">
+            <li>If a system claims to be decentralized but relies on a central directory for discovery, is it actually
+                decentralized? Where is the real single point of failure?</li>
+            <li>The DHT solution distributes tracking across participants. What does each node give up in exchange for
+                removing the central bottleneck?</li>
+        </ul>
+    </div>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <!-- ============================================ -->
+    <!-- SECTION 2.5 -->
+    <!-- ============================================ -->
+
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Section 2.5:
+        Blockchains</h2>
+    <p style="color: #64748b; font-size: 14px;">Pages 107-108 (Figure 2.30 and the three blockchain types)</p>
+
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">This section shows why "decentralized" systems often
+        become centralized in practice.</p>
+
+    <div style="text-align: center; margin: 20px 0;">
+        <svg viewBox="0 0 700 340" style="max-width: 680px; width: 100%; height: auto; font-family: Arial, sans-serif;">
+            <!-- Block chain at top -->
+            <text x="350" y="20" text-anchor="middle" fill="#64748b" font-size="12">THE CHAIN</text>
+
+            <!-- Block 1 -->
+            <rect x="30" y="30" width="140" height="60" rx="6" fill="#1e293b" stroke="#334155" stroke-width="2" />
+            <text x="100" y="52" text-anchor="middle" fill="#93c5fd" font-size="10">Block 47</text>
+            <text x="100" y="68" text-anchor="middle" fill="#64748b" font-size="9">hash: 7a3f...</text>
+            <text x="100" y="82" text-anchor="middle" fill="#64748b" font-size="9">prev: 0000...</text>
+
+            <!-- Arrow -->
+            <line x1="170" y1="60" x2="195" y2="60" stroke="#475569" stroke-width="2" marker-end="url(#arrowBC)" />
+
+            <!-- Block 2 -->
+            <rect x="195" y="30" width="140" height="60" rx="6" fill="#1e293b" stroke="#334155" stroke-width="2" />
+            <text x="265" y="52" text-anchor="middle" fill="#93c5fd" font-size="10">Block 48</text>
+            <text x="265" y="68" text-anchor="middle" fill="#64748b" font-size="9">hash: b2e1...</text>
+            <text x="265" y="82" text-anchor="middle" fill="#64748b" font-size="9">prev: 7a3f...</text>
+
+            <!-- Arrow -->
+            <line x1="335" y1="60" x2="360" y2="60" stroke="#475569" stroke-width="2" marker-end="url(#arrowBC)" />
+
+            <!-- Block 3 -->
+            <rect x="360" y="30" width="140" height="60" rx="6" fill="#1e293b" stroke="#334155" stroke-width="2" />
+            <text x="430" y="52" text-anchor="middle" fill="#93c5fd" font-size="10">Block 49</text>
+            <text x="430" y="68" text-anchor="middle" fill="#64748b" font-size="9">hash: d4c9...</text>
+            <text x="430" y="82" text-anchor="middle" fill="#64748b" font-size="9">prev: b2e1...</text>
+
+            <!-- Arrow -->
+            <line x1="500" y1="60" x2="525" y2="60" stroke="#475569" stroke-width="2" marker-end="url(#arrowBC)" />
+
+            <!-- Block 4 (pending) -->
+            <rect x="525" y="30" width="140" height="60" rx="6" fill="none" stroke="#3b82f6" stroke-width="2"
+                stroke-dasharray="6,3" />
+            <text x="595" y="52" text-anchor="middle" fill="#3b82f6" font-size="10">Block 50</text>
+            <text x="595" y="68" text-anchor="middle" fill="#64748b" font-size="9">hash: ???</text>
+            <text x="595" y="82" text-anchor="middle" fill="#64748b" font-size="9">prev: d4c9...</text>
+
+            <!-- Divider -->
+            <line x1="50" y1="110" x2="650" y2="110" stroke="#e2e8f0" stroke-width="1" />
+            <text x="350" y="130" text-anchor="middle" fill="#64748b" font-size="12">THE NETWORK: who actually
+                validates?</text>
+
+            <!-- Validator nodes (3 - large, bold) -->
+            <circle cx="180" cy="200" r="30" fill="#dbeafe" stroke="#1e40af" stroke-width="3" />
+            <text x="180" y="196" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">Validator</text>
+            <text x="180" y="210" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">A</text>
+
+            <circle cx="350" cy="180" r="30" fill="#dbeafe" stroke="#1e40af" stroke-width="3" />
+            <text x="350" y="176" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">Validator</text>
+            <text x="350" y="190" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">B</text>
+
+            <circle cx="520" cy="210" r="30" fill="#dbeafe" stroke="#1e40af" stroke-width="3" />
+            <text x="520" y="206" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">Validator</text>
+            <text x="520" y="220" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">C</text>
+
+            <!-- Passive nodes (6 - small, faded) -->
+            <circle cx="100" cy="270" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+            <text x="100" y="274" text-anchor="middle" fill="#94a3b8" font-size="9">node</text>
+            <circle cx="220" cy="290" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+            <text x="220" y="294" text-anchor="middle" fill="#94a3b8" font-size="9">node</text>
+            <circle cx="310" cy="260" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+            <text x="310" y="264" text-anchor="middle" fill="#94a3b8" font-size="9">node</text>
+            <circle cx="420" cy="280" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+            <text x="420" y="284" text-anchor="middle" fill="#94a3b8" font-size="9">node</text>
+            <circle cx="550" cy="285" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+            <text x="550" y="289" text-anchor="middle" fill="#94a3b8" font-size="9">node</text>
+            <circle cx="620" cy="250" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+            <text x="620" y="254" text-anchor="middle" fill="#94a3b8" font-size="9">node</text>
+
+            <!-- Connection lines between validators (strong) -->
+            <line x1="210" y1="200" x2="320" y2="180" stroke="#3b82f6" stroke-width="1.5" opacity="0.5" />
+            <line x1="380" y1="180" x2="490" y2="210" stroke="#3b82f6" stroke-width="1.5" opacity="0.5" />
+            <line x1="210" y1="210" x2="490" y2="215" stroke="#3b82f6" stroke-width="1.5" opacity="0.3" />
+
+            <!-- Connection lines from passive to validators (faint) -->
+            <line x1="100" y1="254" x2="165" y2="220" stroke="#cbd5e1" stroke-width="1" opacity="0.4" />
+            <line x1="220" y1="274" x2="195" y2="220" stroke="#cbd5e1" stroke-width="1" opacity="0.4" />
+            <line x1="310" y1="244" x2="340" y2="200" stroke="#cbd5e1" stroke-width="1" opacity="0.4" />
+            <line x1="420" y1="264" x2="510" y2="230" stroke="#cbd5e1" stroke-width="1" opacity="0.4" />
+            <line x1="550" y1="269" x2="535" y2="230" stroke="#cbd5e1" stroke-width="1" opacity="0.4" />
+            <line x1="620" y1="234" x2="540" y2="225" stroke="#cbd5e1" stroke-width="1" opacity="0.4" />
+
+            <!-- Caption -->
+            <text x="350" y="330" text-anchor="middle" fill="#94a3b8" font-size="12" font-style="italic">"Anyone can
+                participate." In practice, only a few do the real work.</text>
+
+            <!-- Arrowhead marker -->
+            <defs>
+                <marker id="arrowBC" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#475569" />
+                </marker>
+            </defs>
+        </svg>
+        <p style="color: #64748b; font-size: 13px; margin-top: 10px;">The centralization paradox: a blockchain is open
+            to all participants, but validation concentrates in the hands of a few nodes with enough resources. The
+            architecture is permissionless. The reality is not.</p>
+    </div>
+
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6; font-style: italic; margin-bottom: 15px;">"None of
+            these nodes needs to be individually trusted beforehand, yet it may be argued that they form a centralized,
+            fault-tolerant distributed group."</p>
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6; font-style: italic; margin-bottom: 0;">"In
+            practice, not all participating nodes will want to act as validator, if only because the leader-election
+            algorithm is costly in terms of resources."</p>
+    </div>
+
+    <h3 style="color: #1d4ed8; margin-top: 25px;">How Does a Node Become a Validator?</h3>
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">A blockchain needs someone to decide which block gets
+        added next. That process is called <strong>leader election</strong> - a competition among willing nodes. The
+        winner gets to propose the next block. In Proof of Work, the competition is a computational puzzle that costs
+        electricity. In Proof of Stake, the competition is based on how much currency a node locks up as collateral.
+        Either way, the cost of competing is what filters out most participants. The textbook returns to leader election
+        algorithms in detail in Section 5.4.</p>
+
+    <div style="text-align: center; margin: 20px 0;">
+        <svg viewBox="0 0 700 280" style="max-width: 680px; width: 100%; height: auto; font-family: Arial, sans-serif;">
+            <text x="115" y="20" text-anchor="middle" fill="#64748b" font-size="12" font-weight="bold">Round 1:
+                Propose</text>
+            <text x="350" y="20" text-anchor="middle" fill="#64748b" font-size="12" font-weight="bold">Round 2:
+                Compete</text>
+            <text x="585" y="20" text-anchor="middle" fill="#64748b" font-size="12" font-weight="bold">Round 3:
+                Elected</text>
+            <line x1="233" y1="5" x2="233" y2="250" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4" />
+            <line x1="467" y1="5" x2="467" y2="250" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4" />
+            <circle cx="60" cy="70" r="18" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" />
+            <text x="60" y="74" text-anchor="middle" fill="#1e40af" font-size="10">N1</text>
+            <circle cx="170" cy="70" r="18" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" />
+            <text x="170" y="74" text-anchor="middle" fill="#1e40af" font-size="10">N2</text>
+            <circle cx="60" cy="130" r="18" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" />
+            <text x="60" y="134" text-anchor="middle" fill="#1e40af" font-size="10">N3</text>
+            <circle cx="170" cy="130" r="18" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" />
+            <text x="170" y="134" text-anchor="middle" fill="#1e40af" font-size="10">N4</text>
+            <circle cx="60" cy="190" r="18" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" />
+            <text x="60" y="194" text-anchor="middle" fill="#1e40af" font-size="10">N5</text>
+            <circle cx="170" cy="190" r="18" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" />
+            <text x="170" y="194" text-anchor="middle" fill="#1e40af" font-size="10">N6</text>
+            <text x="115" y="230" text-anchor="middle" fill="#94a3b8" font-size="10" font-style="italic">All willing
+                nodes</text>
+            <text x="115" y="243" text-anchor="middle" fill="#94a3b8" font-size="10" font-style="italic">announce
+                candidacy</text>
+            <line x1="188" y1="70" x2="265" y2="90" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowLE)" />
+            <line x1="188" y1="130" x2="265" y2="120" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowLE)" />
+            <line x1="78" y1="130" x2="265" y2="130" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3" />
+            <line x1="78" y1="70" x2="265" y2="115" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3" />
+            <line x1="78" y1="190" x2="265" y2="140" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3" />
+            <line x1="188" y1="190" x2="265" y2="145" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3" />
+            <rect x="268" y="72" width="165" height="90" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" />
+            <text x="350" y="98" text-anchor="middle" fill="#92400e" font-size="11"
+                font-weight="bold">Competition</text>
+            <text x="350" y="115" text-anchor="middle" fill="#92400e" font-size="10">PoW: solve puzzle</text>
+            <text x="350" y="130" text-anchor="middle" fill="#92400e" font-size="10">PoS: stake collateral</text>
+            <text x="350" y="148" text-anchor="middle" fill="#92400e" font-size="10">Cost filters most out</text>
+            <circle cx="290" cy="195" r="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+            <text x="290" y="199" text-anchor="middle" fill="#cbd5e1" font-size="9">N1</text>
+            <circle cx="325" cy="205" r="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+            <text x="325" y="209" text-anchor="middle" fill="#cbd5e1" font-size="9">N3</text>
+            <circle cx="360" cy="195" r="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+            <text x="360" y="199" text-anchor="middle" fill="#cbd5e1" font-size="9">N5</text>
+            <circle cx="395" cy="205" r="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+            <text x="395" y="209" text-anchor="middle" fill="#cbd5e1" font-size="9">N6</text>
+            <text x="350" y="240" text-anchor="middle" fill="#94a3b8" font-size="10" font-style="italic">Most nodes drop
+                out</text>
+            <line x1="433" y1="117" x2="505" y2="117" stroke="#1e40af" stroke-width="2" marker-end="url(#arrowLE)" />
+            <circle cx="565" cy="117" r="35" fill="#dbeafe" stroke="#1e40af" stroke-width="3" />
+            <text x="565" y="110" text-anchor="middle" fill="#1e40af" font-size="12" font-weight="bold">N2</text>
+            <text x="565" y="126" text-anchor="middle" fill="#1e40af" font-size="10">LEADER</text>
+            <rect x="520" y="170" width="90" height="45" rx="6" fill="#1e293b" stroke="#3b82f6" stroke-width="2" />
+            <text x="565" y="190" text-anchor="middle" fill="#93c5fd" font-size="10">Block 50</text>
+            <text x="565" y="204" text-anchor="middle" fill="#64748b" font-size="9">validated</text>
+            <line x1="565" y1="152" x2="565" y2="168" stroke="#1e40af" stroke-width="2" marker-end="url(#arrowLE)" />
+            <text x="565" y="240" text-anchor="middle" fill="#94a3b8" font-size="10" font-style="italic">Winner
+                proposes</text>
+            <text x="565" y="253" text-anchor="middle" fill="#94a3b8" font-size="10" font-style="italic">the next
+                block</text>
+            <text x="350" y="275" text-anchor="middle" fill="#94a3b8" font-size="11" font-style="italic">Leader
+                election: the cost of competing is what makes "decentralized" become "concentrated."</text>
+            <defs>
+                <marker id="arrowLE" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+                </marker>
+            </defs>
+        </svg>
+        <p style="color: #64748b; font-size: 13px; margin-top: 10px;">Leader election in blockchains: many nodes
+            announce candidacy, but competing costs real resources. In Proof of Work, the cost is electricity. In Proof
+            of Stake, it is locked-up capital. The winner proposes the next block. The losers spent resources for
+            nothing. This is why most nodes quietly opt out of validating.</p>
+    </div>
+
+    <div
+        style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <h3 style="color: #1d4ed8; margin-top: 5px;">Think About</h3>
+
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6; font-weight: bold; margin-bottom: 5px;">Why does
+            "anyone can participate" often lead to "only a few actually do" in practice?</p>
+        <ul style="color: #1e293b; font-size: 14px; line-height: 1.8; margin-top: 5px;">
+            <li>What does it actually cost a node to validate a block? Think hardware, electricity, time, bandwidth.
+            </li>
+            <li>If the reward for validating is smaller than the cost of competing, what is the rational thing for a
+                node to do?</li>
+            <li>What happens to the network when only the nodes with the most resources can afford to compete? Does
+                participation become more or less diverse over time?</li>
+        </ul>
+
+        <p
+            style="color: #1e293b; font-size: 15px; line-height: 1.6; font-weight: bold; margin-bottom: 5px; margin-top: 20px;">
+            If a system is designed to be fully open but only a handful of nodes do the real work, is it still
+            decentralized?</p>
+        <ul style="color: #1e293b; font-size: 14px; line-height: 1.8; margin-top: 5px;">
+            <li>What is the difference between "anyone <em>can</em> validate" and "anyone <em>does</em> validate"? Does
+                the first claim matter if the second is never true?</li>
+            <li>If three nodes validate 90% of all blocks, how is that different from having three central servers?
+                <br /><br />
+                <strong style="color: #1e40af;">The "it is the same" argument:</strong> The result is identical - a
+                small group controls what gets written to the ledger. Users have to trust those three nodes. If they
+                collude, the system fails. You just added complexity for the same outcome.
+                <br /><br />
+                <strong style="color: #1e40af;">The "it is different" argument:</strong> Those three validators can be
+                replaced at any time without shutting down the system. No one gave them permission to validate - they
+                earned it. If they misbehave, the protocol can penalize them and others can step in. The
+                <em>ability</em> to replace them changes the power dynamic, even if replacement rarely happens.
+                <br /><br />
+                Which argument do you find more convincing? Is the <em>option</em> to replace enough, or does it only
+                matter if replacement actually occurs?
+            </li>
+            <li>Does it matter that the three dominant validators could theoretically be replaced by anyone, even if in
+                practice they never are?</li>
+            <li>The textbook says permissionless blockchains are "fully decentralized" in theory. What word would you
+                use to describe what they are in practice?</li>
+        </ul>
+    </div>
+
+</body>
+
+</html>
