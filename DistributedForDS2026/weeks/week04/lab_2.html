@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4 Lab 2 - SQS: Code-First Pizza Ordering</title>
+</head>
+
+<body>
+
+    <div style="background-color:#dbeafe;border:1px solid #93c5fd;border-radius:8px;padding:20px;margin:20px 0;">
+        <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:10px;">Lab 2: SQS:
+            Code-First Pizza Ordering</h2>
+        <p style="color:#1e293b;font-size:16px;line-height:1.6;">In this lab, you will build a full asynchronous pizza
+            ordering system entirely in Python. You will use **Boto3** to provision an SQS Queue, act as a producer to
+            send orders, and simulate a worker to consume them. This demonstrates how to handle scaling and reliability
+            through code.</p>
+    </div>
+
+    <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Before You Start</h2>
+
+    <h3 style="color:#1d4ed8;margin-top:25px;">Prerequisites</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:20px 0;border:1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color:#f1f5f9;">
+                <th style="padding:12px;text-align:left;border:1px solid #cbd5e1;color:#1e40af;">Requirement</th>
+                <th style="padding:12px;text-align:left;border:1px solid #cbd5e1;color:#1e40af;">How to Check</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;"><strong>Python Environment</strong>
+                </td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">You should be using the workspace venv
+                    or Google Colab. Run <code
+                        style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">pip show boto3</code> to ensure
+                    the SDK is installed.</td>
+            </tr>
+            <tr style="background-color:#f8fafc;">
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;"><strong>AWS Credentials</strong></td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">If <code
+                        style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">aws sts get-caller-identity</code>
+                    works in your terminal, you are ready.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 style="color:#1d4ed8;margin-top:25px;">Step 1: Open the Notebook</h3>
+
+    <p style="color:#1e293b;font-size:15px;line-height:1.6;">Navigate to the <strong>sqs_hands_on.ipynb</strong>
+        notebook in your workspace or open it via the link below:</p>
+
+    <div style="text-align:center;margin:30px 0;">
+        <a href="https://colab.research.google.com/github/gsaluncf/publicfiles/blob/main/DistributedForDS2026/weeks/week04/sqs_hands_on.ipynb"
+            style="display:inline-block;background-color:#3b82f6;color:#ffffff;padding:12px 30px;border-radius:8px;text-decoration:none;font-size:16px;font-weight:bold;">Open
+            in Google Colab</a>
+    </div>
+
+    <!-- What You Will Do -->
+    <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">What You Will Do</h2>
+
+    <table style="width:100%;border-collapse:collapse;margin:20px 0;border:1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color:#f1f5f9;">
+                <th style="padding:12px;text-align:left;border:1px solid #cbd5e1;color:#1e40af;">Step</th>
+                <th style="padding:12px;text-align:left;border:1px solid #cbd5e1;color:#1e40af;">Operation</th>
+                <th style="padding:12px;text-align:left;border:1px solid #cbd5e1;color:#1e40af;">What You Will Learn
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">1</td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;"><strong>Create Queue</strong></td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">Using <code
+                        style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">sqs.create_queue()</code> to
+                    provision cloud infrastructure.</td>
+            </tr>
+            <tr style="background-color:#f8fafc;">
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">2</td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;"><strong>Produce Orders</strong></td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">Sending JSON pizza orders to the queue
+                    with message attributes.</td>
+            </tr>
+            <tr>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">3</td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;"><strong>Consume & Delete</strong></td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">Polling the queue, "cooking" the pizza,
+                    and deleting the message.</td>
+            </tr>
+            <tr style="background-color:#f8fafc;">
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">4</td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;"><strong>The Timeout Challenge</strong>
+                </td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">Observing how Visibility Timeouts
+                    prevent (or cause) duplicate processing.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr style="border:1px solid #cbd5e1;margin:30px 0;">
+
+    <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Step-by-Step Instructions
+    </h2>
+
+    <div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:20px;margin:20px 0;">
+        <h3 style="color:#1d4ed8;margin-top:5px;">1. Provision the Infrastructure</h3>
+        <p style="color:#1e293b;font-size:15px;line-height:1.6;">Follow the <strong>Setup</strong> and
+            <strong>Provisioning</strong> cells in the notebook. Verify that your queue URL appears and copy it for
+            later reference.
+        </p>
+    </div>
+
+    <div style="background-color:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:20px;margin:20px 0;">
+        <h3 style="color:#166534;margin-top:5px;">2. Simulate the Producer</h3>
+        <p style="color:#1e293b;font-size:15px;line-height:1.6;">Run the production loop. It will send a batch of random
+            pizza orders to SQS. Check the AWS Console to see the <strong>Messages Available</strong> count increase.
+        </p>
+    </div>
+
+    <div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
+        <h3 style="color:#1d4ed8;margin-top:5px;">3. Run the Worker Loop</h3>
+        <p style="color:#1e293b;font-size:15px;line-height:1.6;">Activate the consumer cell. You will see items being
+            "popped" off the queue and processed. Notice that if you stop the cell halfway through, the "invisible"
+            messages eventually come back for another try.</p>
+    </div>
+
+    <hr style="border:1px solid #cbd5e1;margin:30px 0;">
+
+    <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">The Notebook Challenge
+    </h2>
+
+    <div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
+        <h3 style="color:#1d4ed8;margin-top:5px;">Breaking the Loop</h3>
+        <p style="color:#1e293b;font-size:15px;line-height:1.6;">Modify your queue's <strong>Visibility Timeout</strong>
+            to just <strong>2 seconds</strong> using <code
+                style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">set_queue_attributes</code>. Then, make
+            your worker <code style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">time.sleep(5)</code> while
+            processing.</p>
+        <p style="color:#1e293b;font-size:15px;line-height:1.6;margin-top:10px;">Observe the chaotic output! SQS thinks
+            your worker died and keeps giving the same pizza to other "workers." This proves why correctly balancing
+            timeout vs processing time is critical.</p>
+    </div>
+
+    <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Cleanup Checklist</h2>
+
+    <div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
+        <h3 style="color:#1d4ed8;margin-top:5px;">Before You Go</h3>
+        <ul style="color:#1e293b;">
+            <li>Run the final <strong>Cleanup</strong> cell to delete the queue.</li>
+            <li>Confirm the SQS Queue is gone in the AWS Console.</li>
+            <li>Double-check that you haven't left any infinite loops running in your notebook.</li>
+        </ul>
+    </div>
+
+</body>
+
+</html>

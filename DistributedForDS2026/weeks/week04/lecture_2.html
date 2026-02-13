@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4 Lecture 2 - SQS and Scaling: The Pizza Order System</title>
+</head>
+
+<body>
+
+    <div style="background-color:#dbeafe;border:1px solid #93c5fd;border-radius:8px;padding:20px;margin:20px 0;">
+        <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:10px;">SQS and Scaling: The
+            Pizza Order System</h2>
+        <p style="color:#1e293b;font-size:16px;line-height:1.6;">In our previous lecture, we looked at how DynamoDB
+            provides a scalable data tier. Today, we address the <strong>coordination problem</strong>: how do you
+            handle thousands of orders per minute when your backend processes (like cooking a pizza or sending an SMS)
+            are slow?</p>
+        <p style="color:#1e293b;font-size:16px;line-height:1.6;margin-top:10px;">By the end of this lecture, you will
+            understand **Temporal Decoupling**, how **Amazon SQS** acts as a buffer for scale, and how to build a system
+            that responds instantly even when the "real work" takes minutes.</p>
+    </div>
+
+    <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Part 1: The Scaling Wall
+        - Throughput vs Latency</h2>
+
+    <p style="color:#1e293b;font-size:15px;line-height:1.6;">Imagine you are running a pizza shop. On Friday nights, you
+        get 100 orders every 10 minutes. </p>
+
+    <ul style="color:#1e293b;font-size:15px;line-height:1.6;">
+        <li><strong>Latency:</strong> The time it takes for *one* customer to get their pizza (e.g., 20 minutes).</li>
+        <li><strong>Throughput:</strong> How many pizzas you can put out per hour (e.g., 50 pizzas).</li>
+    </ul>
+
+    <p style="color:#1e293b;font-size:15px;line-height:1.6;">In a naive system, the customer waits at the counter (a
+        "blocked" thread) until the pizza is ready. If you have 100 customers and only 2 ovens, the 100th customer is
+        going to be waiting a very long time, and your server will eventually crash under the load of waiting
+        connections.</p>
+
+    <div style="background-color:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:15px;margin:20px 0;">
+        <h3 style="color:#1d4ed8;margin-top:5px;">Key Insight: Don't Make the User Wait</h3>
+        <p style="color:#1e293b;font-size:15px;line-height:1.6;">The solution is to **decouple** the intake from the
+            processing. You give the customer a receipt immediately (low latency) and put the order in a queue for the
+            kitchen to process as fast as they can (high throughput).</p>
+    </div>
+
+    <hr style="border:1px solid #cbd5e1;margin:30px 0;">
+
+    <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Part 2: Amazon SQS - The
+        Ultimate Buffer</h2>
+
+    <p style="color:#1e293b;font-size:15px;line-height:1.6;"><strong>Amazon SQS (Simple Queue Service)</strong> is a
+        hosted message queue. It allows you to send, store, and receive messages between software components. It is the
+        "ticket rack" in our pizza shop analogy.</p>
+
+    <!-- SQS Architecture SVG -->
+    <div style="text-align:center;margin:30px 0;">
+        <svg viewBox="0 0 800 250" style="max-width:800px;width:100%;font-family:Arial,sans-serif;">
+            <!-- Producer box -->
+            <rect x="10" y="60" width="160" height="100" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" />
+            <text x="90" y="95" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="bold">Producer</text>
+            <text x="90" y="120" text-anchor="middle" fill="#64748b" font-size="11">(Web API / Lambda)</text>
+            <text x="90" y="135" text-anchor="middle" fill="#64748b" font-size="11">"Fast" - 50ms</text>
+
+            <!-- Arrow 1 -->
+            <line x1="170" y1="110" x2="240" y2="110" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+            <text x="205" y="100" text-anchor="middle" fill="#64748b" font-size="10">Send Message</text>
+
+            <!-- Queue box -->
+            <rect x="240" y="40" width="300" height="140" rx="10" fill="#f8fafc" stroke="#64748b" stroke-width="2"
+                stroke-dasharray="5,5" />
+            <text x="390" y="30" text-anchor="middle" fill="#64748b" font-size="12" font-weight="bold">Amazon SQS (The
+                Buffer)</text>
+
+            <!-- Messages in Queue -->
+            <rect x="260" y="80" width="60" height="60" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" />
+            <text x="290" y="115" text-anchor="middle" fill="#92400e" font-size="10">Order 1</text>
+
+            <rect x="330" y="80" width="60" height="60" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" />
+            <text x="360" y="115" text-anchor="middle" fill="#92400e" font-size="10">Order 2</text>
+
+            <rect x="400" y="80" width="60" height="60" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" />
+            <text x="430" y="115" text-anchor="middle" fill="#92400e" font-size="10">Order 3</text>
+
+            <text x="490" y="115" text-anchor="middle" fill="#94a3b8" font-size="20">...</text>
+
+            <!-- Arrow 2 -->
+            <line x1="540" y1="110" x2="610" y2="110" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+            <text x="575" y="100" text-anchor="middle" fill="#64748b" font-size="10">Poll/Trigger</text>
+
+            <!-- Consumer box -->
+            <rect x="610" y="60" width="160" height="100" rx="10" fill="#d1fae5" stroke="#10b981" stroke-width="2" />
+            <text x="690" y="95" text-anchor="middle" fill="#065f46" font-size="14" font-weight="bold">Consumer</text>
+            <text x="690" y="120" text-anchor="middle" fill="#047857" font-size="11">(Worker Lambda)</text>
+            <text x="690" y="135" text-anchor="middle" fill="#047857" font-size="11">"Slow" - 20s/20min</text>
+
+            <!-- Arrowhead marker -->
+            <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6"
+                    orient="auto-start-auto">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
+                </marker>
+            </defs>
+        </svg>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;margin:20px 0;border:1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color:#f1f5f9;">
+                <th style="padding:12px;text-align:left;border:1px solid #cbd5e1;color:#1e40af;">Feature</th>
+                <th style="padding:12px;text-align:left;border:1px solid #cbd5e1;color:#1e40af;">Why it matters for Data
+                    Science</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;"><strong>Temporal Decoupling</strong>
+                </td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">Workers (like GPUs or Spark clusters)
+                    can process data at their own pace without crashing the ingest API.</td>
+            </tr>
+            <tr style="background-color:#f8fafc;">
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;"><strong>Visibility Timeout</strong>
+                </td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">If a worker crashes while processing a
+                    record, SQS automatically makes it visible again for someone else. <strong>No data lost.</strong>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;"><strong>Elastic Throughput</strong>
+                </td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">SQS can handle nearly infinite scaling.
+                    It acts as a shock absorber for your backend systems.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr style="border:1px solid #cbd5e1;margin:30px 0;">
+
+    <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Part 3: The Pizza Order
+        Demo - Step by Step</h2>
+
+    <p style="color:#1e293b;font-size:15px;line-height:1.6;">We are going to build a system where a customer submits a
+        "Pizza Request" and it flows through a serverless pipeline. Instead of using complex templates, we will use
+        <strong>Boto3</strong> to provision our infrastructure directly from Python.
+    </p>
+
+    <h3 style="color:#1d4ed8;margin-top:25px;">1. Provisioning the Queue (The Code-First Way)</h3>
+    <p style="color:#1e293b;font-size:15px;line-height:1.6;">In our Python code, we simply tell AWS to create a queue
+        with specific attributes like the <strong>Visibility Timeout</strong>.</p>
+
+    <div
+        style="background-color:#1e293b;color:#e2e8f0;padding:15px;border-radius:8px;margin:20px 0;font-family:monospace;font-size:13px;">
+        <pre style="margin:0;">import boto3
+
+sqs = boto3.client('sqs')
+
+# Create the queue programmatically
+response = sqs.create_queue(
+    QueueName='PizzaOrderQueue',
+    Attributes={
+        'VisibilityTimeout': '30',  # 30 seconds to process
+        'MessageRetentionPeriod': '86400' # 1 day
+    }
+)
+QUEUE_URL = response['QueueUrl']</pre>
+    </div>
+
+    <h3 style="color:#1d4ed8;margin-top:25px;">2. The Producer (Fast API)</h3>
+    <p style="color:#1e293b;font-size:15px;line-height:1.6;">Your API Lambda doesn't cook the pizza. It just validates
+        the order and drops it into SQS. This takes **milliseconds**.</p>
+
+    <div
+        style="background-color:#1e293b;color:#e2e8f0;padding:15px;border-radius:8px;margin:20px 0;font-family:monospace;font-size:13px;">
+        <pre style="margin:0;">import boto3
+sqs = boto3.client('sqs')
+
+def handler(event, context):
+    # 1. Accept order
+    # 2. Put order in queue
+    sqs.send_message(
+        QueueUrl=QUEUE_URL,
+        MessageBody=event['body']
+    )
+    # 3. Return success to user IMMEDIATELY
+    return {"statusCode": 200, "body": "Order Received!"}</pre>
+    </div>
+
+    <h3 style="color:#1d4ed8;margin-top:25px;">3. The Consumer (Slow Worker)</h3>
+    <p style="color:#1e293b;font-size:15px;line-height:1.6;">The worker only wakes up when there are messages in the
+        queue. It takes its time processing them one by one.</p>
+
+    <div
+        style="background-color:#1e293b;color:#e2e8f0;padding:15px;border-radius:8px;margin:20px 0;font-family:monospace;font-size:13px;">
+        <pre style="margin:0;">def handler(event, context):
+    for record in event['Records']:
+        order = record['body']
+        print(f"Cooking pizza for order: {order}")
+        time.sleep(10) # Simulating "real work"
+        print("Pizza ready!")</pre>
+    </div>
+
+    <div style="background-color:#eff6ff;border:1px solid #60a5fa;border-radius:8px;padding:15px;margin:20px 0;">
+        <h3 style="color:#1d4ed8;margin-top:5px;">Check your understanding</h3>
+        <ul>
+            <li>Why don't we just call the Worker Lambda directly from the API Lambda? (Hint: Think about what happens
+                if 1,000 people order at once).</li>
+            <li>What is the benefit of a <strong>BatchSize</strong> in SQS?</li>
+            <li>If the Worker Lambda fails halfway through, what happens to the message in SQS?</li>
+        </ul>
+    </div>
+
+    <hr style="border:1px solid #cbd5e1;margin:30px 0;">
+
+    <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Part 4: Retries and
+        Idempotency</h2>
+
+    <p style="color:#1e293b;font-size:15px;line-height:1.6;">Because SQS is a distributed system, it follows the
+        **At-Least-Once** delivery rule. This means, occasionally, your worker might receive the *same* message twice.
+    </p>
+
+    <p style="color:#1e293b;font-size:15px;line-height:1.6;">To handle this, your code must be **Idempotent**. If you
+        process the same order twice, you shouldn't charge the customer twice or cook two pizzas.</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:20px 0;border:1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color:#f1f5f9;">
+                <th style="padding:12px;text-align:left;border:1px solid #cbd5e1;color:#1e40af;">Operation</th>
+                <th style="padding:12px;text-align:left;border:1px solid #cbd5e1;color:#1e40af;">Is it Idempotent?</th>
+                <th style="padding:12px;text-align:left;border:1px solid #cbd5e1;color:#1e40af;">Improvement</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">Charge Credit Card $10</td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#ef4444;"><strong>No</strong> (double charge)
+                </td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">Include an <code
+                        style="background:#e2e8f0;padding:2px 4px;border-radius:3px;">idempotency_key</code> (Order ID)
+                    in the payment request.</td>
+            </tr>
+            <tr style="background-color:#f8fafc;">
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">Set Status to "SHIPPED"</td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#10b981;"><strong>Yes</strong></td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">No change needed. Setting a value twice
+                    has no side effect.</td>
+            </tr>
+            <tr>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">Add $5 to Balance</td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#ef4444;"><strong>No</strong></td>
+                <td style="padding:12px;border:1px solid #cbd5e1;color:#1e293b;">Use a conditional expression: "Update
+                    if transaction_id has not been processed."</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="background-color:#d1fae5;border:1px solid #10b981;border-radius:8px;padding:15px;margin:20px 0;">
+        <h3 style="color:#059669;margin-top:5px;">Summary: Scale with Confidence</h3>
+        <p style="color:#1e293b;font-size:15px;line-height:1.6;">By using SQS, you've transformed a fragile synchronous
+            system into a robust asynchronous one. You can now handle massive spikes in traffic without ever losing an
+            order or making a customer wait for a backend timeout.</p>
+        <p style="color:#1e293b;font-size:15px;line-height:1.6;margin-top:10px;">In today's lab, you will build and test
+            this exact Pizza Order system using raw Python!</p>
+    </div>
+
+    <hr style="border:1px solid #cbd5e1;margin:30px 0;">
+
+    <h2 style="color:#1e40af;border-left:4px solid #3b82f6;padding-left:15px;margin-top:30px;">Summary</h2>
+
+    <div style="background-color:#dbeafe;border:1px solid #93c5fd;border-radius:8px;padding:20px;margin:20px 0;">
+        <h3 style="color:#1d4ed8;margin-top:5px;">Key Takeaways</h3>
+        <table style="width:100%;border-collapse:collapse;margin-top:15px;">
+            <tbody>
+                <tr>
+                    <td style="padding:8px 0;color:#1e293b;"><strong>Temporal Decoupling</strong></td>
+                    <td style="padding:8px 0;color:#1e293b;">SQS separates producers from consumers, allowing them to
+                        scale independently.</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px 0;color:#1e293b;"><strong>Reliability</strong></td>
+                    <td style="padding:8px 0;color:#1e293b;">Visibility timeouts ensure that if a worker crashes, the
+                        message is never lost.</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px 0;color:#1e293b;"><strong>At-Least-Once Delivery</strong></td>
+                    <td style="padding:8px 0;color:#1e293b;">Messages are guaranteed to be delivered, but occasionally
+                        more than once.</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px 0;color:#1e293b;"><strong>Idempotency</strong></td>
+                    <td style="padding:8px 0;color:#1e293b;">Your code must handle duplicate messages gracefully (e.g.,
+                        check for processed order IDs).</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px 0;color:#1e293b;"><strong>Serverless Scaling</strong></td>
+                    <td style="padding:8px 0;color:#1e293b;">By pairing Lambda with SQS, you only pay for processing
+                        time - zero cost when idle.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p style="color:#1e293b;font-size:15px;line-height:1.6;margin-top:15px;"><strong>Next:</strong> Open the <a
+            href="lab_2.html" style="color:#3b82f6;font-weight:bold;">SQS Pizza Order Lab</a> to build and test this
+        system yourself in Python.</p>
+
+    <div style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:15px;margin:20px 0;">
+        <h3 style="color:#1d4ed8;margin-top:5px;">References</h3>
+        <ul>
+            <li><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+                    style="color:#3b82f6;">SQS Developer Guide</a></li>
+            <li><a href="https://aws.amazon.com/blogs/compute/operating-lambda-with-sqs/" style="color:#3b82f6;">AWS
+                    Blog: Best practices for Lambda and SQS</a></li>
+            <li><a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html" style="color:#3b82f6;">Integrating
+                    Lambda with SQS</a></li>
+        </ul>
+    </div>
+
+</body>
+
+
+</html>
