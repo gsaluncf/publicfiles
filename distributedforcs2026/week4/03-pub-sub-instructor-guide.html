@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Guide: Week 4 Lab Management</title>
+</head>
+
+<body
+    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; color: #1e293b; line-height: 1.6;">
+
+    <div
+        style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <h1 style="color: #92400e; margin-top: 5px; margin-bottom: 10px;">Instructor Guide: Lab Management</h1>
+        <p style="color: #92400e; font-size: 15px; margin-bottom: 0;">
+            This page is for you. It tells you what to run and when so the student
+            labs work correctly. The instructor Colab notebook has all the tools --
+            this page is the playbook.
+        </p>
+    </div>
+
+    <div style="text-align: center; margin: 20px 0;">
+        <a href="https://colab.research.google.com/github/gsaluncf/publicfiles/blob/main/distributedforcs2026/week4/instructor_pubsub_lab.ipynb"
+            target="_blank"
+            style="display: inline-block; background-color: #92400e; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: bold;">
+            Open Instructor Notebook in Colab
+        </a>
+    </div>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <!-- Timeline -->
+    <h2 style="color: #92400e; border-left: 4px solid #f59e0b; padding-left: 15px;">When to Run What</h2>
+
+    <p style="font-size: 15px;">
+        The student notebook has 7 sections. Sections 1-4 are self-contained --
+        students can run them on their own at any time. Sections 5-7 depend on
+        you seeding the environment first.
+    </p>
+
+    <!-- Phase 1 -->
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #10b981; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <h3 style="color: #065f46; margin-top: 5px;">Before Students Start (one-time setup)</h3>
+        <p style="font-size: 14px; color: #64748b;">Do this once at the beginning of the week.</p>
+        <ol style="font-size: 15px; line-height: 2;">
+            <li>Open the instructor notebook in Colab</li>
+            <li>Run the <strong>Setup</strong> cell (paste your AWS credentials)</li>
+            <li>Run the <strong>Configuration</strong> cell</li>
+            <li>Run the <strong>Reset / Drain All Queues</strong> cell to start clean</li>
+            <li>Run <strong>Monitoring</strong> to confirm all queues show 0 messages</li>
+        </ol>
+        <p style="font-size: 14px; color: #065f46; font-weight: bold;">
+            After this, students can start Sections 1-4 on their own.
+        </p>
+    </div>
+
+    <!-- Phase 2 -->
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <h3 style="color: #1e40af; margin-top: 5px;">Before Section 5: "I Am Not Alone"</h3>
+        <p style="font-size: 14px; color: #64748b;">
+            Run this when students are approaching Section 5, or at the start of
+            a class session where you want them to work on Sections 5-7.
+        </p>
+        <ol style="font-size: 15px; line-height: 2;">
+            <li>In the instructor notebook, go to the <strong>Simulator</strong> section</li>
+            <li>Set the configuration:
+                <ul style="line-height: 1.8;">
+                    <li><code>NUM_HOSTS = 3</code> (or more for a busier environment)</li>
+                    <li><code>NUM_EVENTS = 30</code> (enough for students to see patterns)</li>
+                    <li><code>RATE = "fast"</code></li>
+                </ul>
+            </li>
+            <li>Run the simulator cell</li>
+            <li>Run <strong>Monitoring</strong> to confirm messages are in the student queues</li>
+        </ol>
+        <p style="font-size: 14px; color: #1e40af; font-weight: bold;">
+            Students will now see multi-host traffic when they run Section 5.
+        </p>
+    </div>
+
+    <!-- Phase 3 -->
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #ef4444; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <h3 style="color: #991b1b; margin-top: 5px;">Before Section 6: "Something Is Wrong"</h3>
+        <p style="font-size: 14px; color: #64748b;">
+            Run this right before students start Section 6. The chaos events go
+            to the standard (non-FIFO) queue, so timing matters less -- but fresher
+            is better for the late-event detection to work clearly.
+        </p>
+        <ol style="font-size: 15px; line-height: 2;">
+            <li>In the instructor notebook, go to the <strong>Chaos Injection</strong> section</li>
+            <li>Run the <strong>Duplicate Events</strong> cell (injects ~20 events, some with repeated IDs)</li>
+            <li>Run the <strong>Volume Spike</strong> cell (floods 50 events from "host-SUSPICIOUS")</li>
+            <li>Run the <strong>Late Events</strong> cell (injects 10 events with timestamps 30 min in the past)</li>
+        </ol>
+        <p style="font-size: 14px; color: #991b1b; font-weight: bold;">
+            Students will detect duplicates, the traffic spike, late timestamps,
+            and out-of-order arrivals when they run Section 6.
+        </p>
+    </div>
+
+    <!-- Phase 4 -->
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #8b5cf6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <h3 style="color: #5b21b6; margin-top: 5px;">Section 7: "Multiple Auditors"</h3>
+        <p style="font-size: 14px; color: #64748b;">
+            No special action needed. Section 7 reads from the three auditor queues
+            (auditor-a, auditor-b, auditor-c), which accumulate events from all
+            previous sections. The natural variation in what each queue received
+            creates the disagreement students will observe.
+        </p>
+        <p style="font-size: 14px; color: #5b21b6; font-weight: bold;">
+            If you want stronger disagreement: drain one auditor queue before
+            students reach Section 7 but leave the other two untouched.
+        </p>
+    </div>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <!-- Quick reference -->
+    <h2 style="color: #92400e; border-left: 4px solid #f59e0b; padding-left: 15px;">Quick Reference</h2>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color: #f1f5f9;">
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #92400e;">Student Section
+                </th>
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #92400e;">Instructor
+                    Action</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #92400e;">When</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">1-4 (Basics through Guarantees)</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">None -- self-contained</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">N/A</td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">5 (I Am Not Alone)</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">Run Simulator</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">Before students start Section 5</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">6 (Something Is Wrong)</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">Run all 3 Chaos cells</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">Right before Section 6</td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">7 (Multiple Auditors)</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">Optional: drain one auditor queue</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1;">Optional</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <!-- Troubleshooting -->
+    <h2 style="color: #92400e; border-left: 4px solid #f59e0b; padding-left: 15px;">Troubleshooting</h2>
+
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 15px 0;">
+        <p style="font-size: 15px; font-weight: bold; margin-top: 5px;">"Students see 0 messages in their queue"</p>
+        <p style="font-size: 14px; color: #64748b; margin-bottom: 5px;">
+            Either the queue was drained by a previous read, or the simulator has not been run yet.
+            Run Monitoring to check queue depths. Re-run the Simulator if needed.
+        </p>
+    </div>
+
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 15px 0;">
+        <p style="font-size: 15px; font-weight: bold; margin-top: 5px;">"Section 6 shows 0 late events"</p>
+        <p style="font-size: 14px; color: #64748b; margin-bottom: 5px;">
+            The chaos events may have been consumed by a previous run of Section 6.
+            Re-run the Late Events chaos cell in the instructor notebook. The late
+            events are published directly to the chaos SQS queue (not through SNS)
+            so they should appear immediately.
+        </p>
+    </div>
+
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 15px 0;">
+        <p style="font-size: 15px; font-weight: bold; margin-top: 5px;">"Students see each other's events in Sections
+            1-3"</p>
+        <p style="font-size: 14px; color: #64748b; margin-bottom: 5px;">
+            This is expected. All students publish to the same SNS topic, and each
+            student's queue is subscribed to that topic. In Sections 1-3, messages
+            are tagged with the student's name so they can filter. This is by design --
+            it foreshadows Section 5 where mixed traffic becomes the lesson.
+        </p>
+    </div>
+
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 15px 0;">
+        <p style="font-size: 15px; font-weight: bold; margin-top: 5px;">"Need to start fresh"</p>
+        <p style="font-size: 14px; color: #64748b; margin-bottom: 5px;">
+            Run the Drain All Queues cell in the instructor notebook. This empties
+            every queue (student + auditor + chaos). Then re-run the Simulator
+            and Chaos cells as needed.
+        </p>
+    </div>
+
+    <hr style="border: 1px solid #e2e8f0; margin: 40px 0 15px 0;">
+
+    <p style="color: #94a3b8; font-size: 12px; text-align: center;">
+        Week 4 Instructor Guide -- Pub/Sub Lab
+    </p>
+
+</body>
+
+</html>
