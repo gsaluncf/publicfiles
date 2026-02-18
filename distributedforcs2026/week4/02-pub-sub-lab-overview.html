@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4 Labs: Messaging, Pub/Sub, and Peer-to-Peer</title>
+</head>
+
+<body
+    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; color: #1e293b; line-height: 1.6;">
+
+    <!-- Header -->
+    <div
+        style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <h1 style="color: #1e40af; margin-top: 5px; margin-bottom: 10px;">Time to Code</h1>
+        <p style="color: #1e293b; font-size: 16px; line-height: 1.6; margin-bottom: 0;">
+            We have read about architectures, communication models, and the tradeoffs
+            between centralized and decentralized systems. Now we build them.
+        </p>
+    </div>
+
+    <p style="font-size: 15px;">
+        The labs for this week are hands-on Google Colab notebooks that run real code
+        against real cloud infrastructure. You will write Python, send actual messages
+        through AWS, and observe what happens when distributed systems behave -- and
+        when they do not.
+    </p>
+
+    <p style="font-size: 15px;">
+        There are two tracks. You will do them in order.
+    </p>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <!-- Track 1: Pub/Sub -->
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">
+        Track 1: Queues and Pub/Sub
+    </h2>
+
+    <p style="font-size: 15px;">
+        Start here. This notebook walks you through message queues
+        (Amazon SQS), publish-subscribe messaging (Amazon SNS), and what happens
+        when you try to count things in a distributed system.
+    </p>
+
+    <p style="font-size: 15px;">
+        You will go from sending your first message to detecting duplicates,
+        traffic spikes, and timestamp fraud -- and then see what happens when
+        three independent auditors try to agree on a number.
+    </p>
+
+    <div
+        style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <p style="margin: 0 0 10px 0; font-size: 15px; font-weight: bold; color: #1d4ed8;">
+            Sections covered:
+        </p>
+        <ol style="font-size: 15px; color: #1e293b; margin: 0; padding-left: 20px; line-height: 2;">
+            <li>I Can Talk Using Queues -- SQS basics, FIFO ordering, visibility timeout</li>
+            <li>Pub/Sub Concepts -- SNS topics, fan-out, decoupling</li>
+            <li>I Am a Host -- defining and publishing ViewEvents in the 2032 system</li>
+            <li>Guarantees and Their Limits -- idempotent processing, FIFO vs. standard</li>
+            <li>I Am Not Alone -- multi-host traffic, filtering, observation</li>
+            <li>Something Is Wrong -- detecting duplicates, spikes, late events</li>
+            <li>Multiple Auditors -- comparing independent counts, majority voting</li>
+        </ol>
+    </div>
+
+    <div style="text-align: center; margin: 25px 0;">
+        <a href="https://colab.research.google.com/github/gsaluncf/publicfiles/blob/main/distributedforcs2026/week4/student_pubsub_lab.ipynb"
+            target="_blank"
+            style="display: inline-block; background-color: #1e40af; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: bold;">
+            Open Pub/Sub Lab in Colab
+        </a>
+    </div>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <!-- Track 2: P2P -->
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">
+        Track 2: Peer-to-Peer
+    </h2>
+
+    <p style="font-size: 15px;">
+        After you finish the pub/sub lab, you will have seen the limits of centralized
+        messaging firsthand. The auditors could not talk to each other. Nobody checked
+        for consensus. There was no way to discover who else was in the network.
+    </p>
+
+    <p style="font-size: 15px;">
+        The peer-to-peer track changes that. You will learn -- and implement -- the
+        real algorithms that power systems like BitTorrent, Cassandra, and Ethereum:
+        gossip protocols for discovery, heartbeats for liveness, choking for fairness,
+        Chord for distributed lookup, and reputation scoring for trust.
+    </p>
+
+    <p style="font-size: 15px;">
+        By the end, each of you will have built a working P2P node. Every node in
+        the class will be part of a single live network. Your nodes will discover
+        each other, communicate directly, publish events, audit each other, and agree
+        on view counts -- with no central server, no broker, no authority.
+    </p>
+
+    <div
+        style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <p style="margin: 0 0 10px 0; font-size: 15px; font-weight: bold; color: #1d4ed8;">
+            Two notebooks for this track:
+        </p>
+        <ul style="font-size: 15px; color: #1e293b; margin: 0; padding-left: 20px; line-height: 2;">
+            <li><strong>P2P Algorithms Lab</strong> -- learn and implement each algorithm in isolation
+                (gossip, heartbeat, choking, Chord, reputation)</li>
+            <li><strong>P2P Protocol Lab</strong> -- wire the algorithms together into a working
+                node that joins a real network</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center; margin: 25px 0;">
+        <a href="https://colab.research.google.com/github/gsaluncf/publicfiles/blob/main/distributedforcs2026/week4/p2p_algorithm_labs.ipynb"
+            target="_blank"
+            style="display: inline-block; background-color: #1e40af; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: bold; margin-right: 10px;">
+            P2P Algorithms Lab
+        </a>
+        <a href="https://colab.research.google.com/github/gsaluncf/publicfiles/blob/main/distributedforcs2026/week4/p2p_protocol_lab.ipynb"
+            target="_blank"
+            style="display: inline-block; background-color: #1e40af; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: bold;">
+            P2P Protocol Lab
+        </a>
+    </div>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <!-- What you need -->
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">
+        What You Need
+    </h2>
+
+    <ul style="font-size: 15px; line-height: 2.2;">
+        <li>A Google account (for Colab)</li>
+        <li>The AWS credentials I will provide in class</li>
+        <li>Basic Python -- functions, dicts, loops. No prior AWS experience needed.</li>
+        <li>The notebooks walk you through everything step by step.</li>
+    </ul>
+
+    <!-- Footer -->
+    <hr style="border: 1px solid #e2e8f0; margin: 40px 0 15px 0;">
+
+    <p style="color: #94a3b8; font-size: 12px; text-align: center;">
+        <a href="https://colab.research.google.com/github/gsaluncf/publicfiles/blob/main/distributedforcs2026/week4/instructor_pubsub_lab.ipynb"
+            target="_blank" style="color: #94a3b8; text-decoration: none;">*</a>
+    </p>
+
+</body>
+
+</html>
