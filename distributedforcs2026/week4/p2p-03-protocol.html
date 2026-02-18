@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Message Protocol Reference</title>
+</head>
+
+<body>
+
+    <div
+        style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 10px;">P2P Message
+            Protocol Reference</h2>
+        <p style="color: #1e293b; font-size: 16px; line-height: 1.6;">Every message in the P2P network is a JSON object
+            sent as an SQS message body. This page documents all 8 message types, their fields, and when each type is
+            used.</p>
+    </div>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Common Fields</h2>
+
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">Every message includes these three fields:</p>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color: #f1f5f9;">
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Field</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Type</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    type</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">string</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">One of the 8 message types listed
+                    below</td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    sender</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">string</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">The node_id of the sender</td>
+            </tr>
+            <tr>
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    timestamp</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">string</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">ISO 8601 UTC timestamp</td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    msg_id</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">string</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Short unique identifier (first 8
+                    chars of a UUID)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Layer 1: Discovery
+        Messages</h2>
+
+    <h3 style="color: #1d4ed8; margin-top: 25px;">HELLO</h3>
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">Sent when a node starts up to announce itself to a
+        bootstrap node.</p>
+
+    <div
+        style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 13px;">
+        <pre style="margin: 0;">{
+  "type": "HELLO",
+  "sender": "hugo",
+  "timestamp": "2032-03-15T14:30:00+00:00",
+  "msg_id": "a1b2c3d4",
+  "queue_url": "https://sqs.us-east-1.amazonaws.com/194722398367/ds2032-node-hugo-p2p"
+}</pre>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color: #f1f5f9;">
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Field</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    queue_url</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">The sender's SQS queue URL, so the
+                    recipient knows where to send messages back</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 style="color: #1d4ed8; margin-top: 25px;">PEER_LIST</h3>
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">Gossip exchange. Shares the sender's known peers with
+        another node. Sent in response to HELLO and periodically to a random peer.</p>
+
+    <div
+        style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 13px;">
+        <pre style="margin: 0;">{
+  "type": "PEER_LIST",
+  "sender": "hugo",
+  "timestamp": "2032-03-15T14:30:05+00:00",
+  "msg_id": "e5f6g7h8",
+  "peers": [
+    {"node_id": "sam", "queue_url": "https://sqs.../ds2032-node-sam-p2p"},
+    {"node_id": "phin", "queue_url": "https://sqs.../ds2032-node-phin-p2p"}
+  ]
+}</pre>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color: #f1f5f9;">
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Field</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    peers</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Array of objects, each with <code
+                        style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">node_id</code>
+                    and <code
+                        style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">queue_url</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Layer 2: Liveness
+        Messages</h2>
+
+    <h3 style="color: #1d4ed8; margin-top: 25px;">PING</h3>
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">Heartbeat probe. Sent periodically to check if a peer
+        is alive.</p>
+
+    <div
+        style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 13px;">
+        <pre style="margin: 0;">{
+  "type": "PING",
+  "sender": "hugo",
+  "timestamp": "2032-03-15T14:30:10+00:00",
+  "msg_id": "i9j0k1l2",
+  "seq": 42
+}</pre>
+    </div>
+
+    <h3 style="color: #1d4ed8; margin-top: 25px;">PONG</h3>
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">Heartbeat response. Echoes the sequence number from
+        the PING.</p>
+
+    <div
+        style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 13px;">
+        <pre style="margin: 0;">{
+  "type": "PONG",
+  "sender": "sam",
+  "timestamp": "2032-03-15T14:30:10+00:00",
+  "msg_id": "m3n4o5p6",
+  "seq": 42
+}</pre>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color: #f1f5f9;">
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Field</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    seq</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Sequence number for matching
+                    PING/PONG pairs</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Layer 3: Incentive
+        Messages</h2>
+
+    <h3 style="color: #1d4ed8; margin-top: 25px;">CHOKE</h3>
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">Sent to notify a peer that you are no longer serving
+        them (they are not contributing enough).</p>
+
+    <div
+        style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 13px;">
+        <pre style="margin: 0;">{
+  "type": "CHOKE",
+  "sender": "hugo",
+  "timestamp": "2032-03-15T14:31:00+00:00",
+  "msg_id": "q7r8s9t0"
+}</pre>
+    </div>
+
+    <h3 style="color: #1d4ed8; margin-top: 25px;">UNCHOKE</h3>
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">Sent to notify a peer that service has been resumed
+        (they are now being served again).</p>
+
+    <div
+        style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 13px;">
+        <pre style="margin: 0;">{
+  "type": "UNCHOKE",
+  "sender": "hugo",
+  "timestamp": "2032-03-15T14:31:30+00:00",
+  "msg_id": "u1v2w3x4"
+}</pre>
+    </div>
+
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">Neither CHOKE nor UNCHOKE carry additional fields
+        beyond the common ones. The message itself is the signal.</p>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Layer 5:
+        Application Messages</h2>
+
+    <h3 style="color: #1d4ed8; margin-top: 25px;">VIEW_EVENT</h3>
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">The core 2032 data message. A host reports how many
+        views a piece of content has received.</p>
+
+    <div
+        style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 13px;">
+        <pre style="margin: 0;">{
+  "type": "VIEW_EVENT",
+  "sender": "hugo",
+  "timestamp": "2032-03-15T14:32:00+00:00",
+  "msg_id": "y5z6a7b8",
+  "event_id": "evt-a1b2c3d4",
+  "content_id": "show:midnight-run",
+  "count": 150,
+  "ad_id": "ad-7"
+}</pre>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color: #f1f5f9;">
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Field</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    event_id</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Unique identifier for this view
+                    event</td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    content_id</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Which content was viewed</td>
+            </tr>
+            <tr>
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    count</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">The host's reported view count for
+                    this content</td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    ad_id</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Optional: associated advertisement
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 style="color: #1d4ed8; margin-top: 25px;">AUDIT_RESULT</h3>
+    <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">A node's conclusion after auditing a content piece.
+        Published after collecting VIEW_EVENTs and computing a reputation-weighted majority vote.</p>
+
+    <div
+        style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 13px;">
+        <pre style="margin: 0;">{
+  "type": "AUDIT_RESULT",
+  "sender": "hugo",
+  "timestamp": "2032-03-15T14:33:00+00:00",
+  "msg_id": "c9d0e1f2",
+  "content_id": "show:midnight-run",
+  "agreed_count": 150,
+  "confidence": 0.92,
+  "voters": ["hugo", "sam", "phin", "bot-alpha"]
+}</pre>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid #cbd5e1;">
+        <thead>
+            <tr style="background-color: #f1f5f9;">
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Field</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    content_id</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Which content was audited</td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    agreed_count</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">The reputation-weighted majority
+                    count</td>
+            </tr>
+            <tr>
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    confidence</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Confidence level (0.0 to 1.0),
+                    reflecting how strongly voters agreed</td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
+                <td
+                    style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                    voters</td>
+                <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">List of node_ids that participated
+                    in the audit</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr style="border: 1px solid #cbd5e1; margin: 30px 0;">
+
+    <h2 style="color: #1e40af; border-left: 4px solid #3b82f6; padding-left: 15px; margin-top: 30px;">Message Flow
+        Summary</h2>
+
+    <div
+        style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <table style="width: 100%; border-collapse: collapse; border: 1px solid #cbd5e1;">
+            <thead>
+                <tr style="background-color: #f1f5f9;">
+                    <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Type</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Layer</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Direction
+                    </th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #cbd5e1; color: #1e40af;">Trigger</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td
+                        style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                        HELLO</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Discovery</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Node to bootstrap</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">On startup</td>
+                </tr>
+                <tr style="background-color: #f8fafc;">
+                    <td
+                        style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                        PEER_LIST</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Discovery</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Reply or periodic</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">On HELLO receive, or every
+                        ~15s</td>
+                </tr>
+                <tr>
+                    <td
+                        style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                        PING</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Liveness</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">To all known peers</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Every ~10s</td>
+                </tr>
+                <tr style="background-color: #f8fafc;">
+                    <td
+                        style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                        PONG</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Liveness</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Reply to sender</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">On PING receive</td>
+                </tr>
+                <tr>
+                    <td
+                        style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                        CHOKE</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Incentives</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">To specific peer</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">After choking round</td>
+                </tr>
+                <tr style="background-color: #f8fafc;">
+                    <td
+                        style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                        UNCHOKE</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Incentives</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">To specific peer</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">After choking round</td>
+                </tr>
+                <tr>
+                    <td
+                        style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                        VIEW_EVENT</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Application</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Broadcast to peers</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Every ~15s (configurable)</td>
+                </tr>
+                <tr style="background-color: #f8fafc;">
+                    <td
+                        style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b; font-family: monospace; font-size: 13px;">
+                        AUDIT_RESULT</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Application</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Broadcast to peers</td>
+                    <td style="padding: 12px; border: 1px solid #cbd5e1; color: #1e293b;">Every ~45s (configurable)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div
+        style="background-color: #eff6ff; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+        <h3 style="color: #1d4ed8; margin-top: 5px;">Implementation Note</h3>
+        <p style="color: #1e293b; font-size: 15px; line-height: 1.6;">The <code
+                style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">protocol.py</code>
+            module provides builder functions for all 8 message types. Use <code
+                style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">protocol.hello()</code>,
+            <code
+                style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">protocol.ping()</code>,
+            etc. to build messages, and <code
+                style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">protocol.encode()</code>
+            / <code
+                style="background-color: #e2e8f0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace;">protocol.decode()</code>
+            for JSON serialization.</p>
+    </div>
+
+</body>
+
+</html>
