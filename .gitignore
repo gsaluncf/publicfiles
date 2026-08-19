@@ -35,3 +35,7 @@
 # Allow db2026 Colab notebooks
 !db2026/
 !db2026/**
+
+# Allow the knee-mri-kaggle course notebooks
+!knee-mri-kaggle/
+!knee-mri-kaggle/**
