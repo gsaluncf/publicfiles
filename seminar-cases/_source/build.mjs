@@ -28,12 +28,12 @@ function header(active) {
     return `<a class="direct-case-link" href="/${esc(c.slug)}/"${current}>${esc(caseLabel(c))}</a>`;
   }).join('');
   return `<header class="site-header">
-    <a class="brand" href="/" aria-label="New College of Florida, Data Communication home"><img class="ncf-logo" src="/assets/ncf-logo.svg" alt="New College of Florida" width="377" height="83">Data Communication</a>
+    <a class="brand" href="/" aria-label="New College of Florida Data Science, Data Communication home"><span class="program-brand"><img src="/assets/Nnoshield.svg" alt="" width="26" height="26"><span>New College of Florida<br>Data Science</span></span><span class="course-name">Data Communication</span></a>
     <nav aria-label="Course materials"><a href="/#all-cases">All cases</a>${caseLinks}<a href="/#business-value">Business value</a></nav>
     <span class="course-term">Spring 2027</span>
   </header><div class="reading-progress" aria-hidden="true"></div>`;
 }
-const footer=()=>`<footer class="site-footer"><div><a class="brand" href="/">Data Communication</a><p>Communications and Applied Domains in Data Science<br>New College of Florida · Spring 2027</p></div><p>Seminar prompts adapted from Chip and Dan Heath’s <a href="https://heathbrothers.com/wp-content/uploads/resources/mts-made-to-stick-model.pdf" target="_blank" rel="noopener">Made to Stick framework</a>.</p></footer><dialog id="image-viewer"><button class="close-viewer" aria-label="Close enlarged image">Close <span aria-hidden="true">×</span></button><img alt="Enlarged image"><p></p></dialog>`;
+const footer=()=>`<footer class="site-footer"><div><a class="brand" href="/">Data Communication</a><p>Communications and Applied Domains in Data Science<br>New College of Florida · Spring 2027</p><a href="https://ds.ncf.edu/">NCF Data Science (ds.ncf.edu)</a></div><p>Seminar prompts adapted from Chip and Dan Heath’s <a href="https://heathbrothers.com/wp-content/uploads/resources/mts-made-to-stick-model.pdf" target="_blank" rel="noopener">Made to Stick framework</a>.</p></footer><dialog id="image-viewer"><button class="close-viewer" aria-label="Close enlarged image">Close <span aria-hidden="true">×</span></button><img alt="Enlarged image"><p></p></dialog>`;
 const pageHtml=(title,desc,body,slug='')=>`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="${esc(desc)}"><meta name="theme-color" content="#163450"><title>${esc(title)} | Data Communication</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head><body class="${slug?'case-page '+slug:'home-page'}" ${slug?`style="--accent:${caseColors(slug)[0]};--tint:${caseColors(slug)[1]}"`:''}><a class="skip" href="#main">Skip to content</a>${header(slug)}${body}${footer()}</body></html>`;
 function layout(title, description, body, slug = '') {
   const root = slug ? '../' : './';
@@ -90,7 +90,10 @@ function caseCard(c, heading = 'h2') {
 const snowMap = cover(originalCases[0]);
 const home = `<main id="main">
   <section class="home-hero"><div class="hero-title"><p class="intro-label">Seminar cases</p>
-    <h1>Communicating data<br>in practice.</h1><p>Each case includes source material and a student activity.</p>
+    <h1>Communicating data<br>in practice.</h1>
+    <p>AI tools can help analysts build models, prepare charts, and draft reports. A manager deciding whether to renew an advertising campaign still needs someone to explain how many sales the ads generated and how that number was estimated. Across six fields, this seminar examines how analysts make those judgments and explain them to the people who use their work.</p>
+    <p>Each case begins with a decision. A short video introduces the setting. The numbered sections describe the records people collected, the measures they chose, and what they learned. Students use the original figures to check a result, then write a recommendation for someone involved in the decision.</p>
+    <p>The cases offer guest speakers ideas for seminars based on their own experience. A box office manager, for example, might describe how the orchestra estimates how many people attended a concert for the first time. A ticket order identifies the buyer, but one buyer can bring three guests. Students can learn from hearing how the manager explained what the orchestra knew about its buyers and what it still needed to learn about its audience.</p>
     </div><div class="hero-montage"><img src="/assets/${esc(snowMap.filename)}" alt="${esc(snowMap.alt)}">
       <div class="montage-caption"><span>London, 1854</span><b>John Snow’s investigation</b></div></div>
   </section>
