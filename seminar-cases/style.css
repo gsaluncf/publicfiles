@@ -26,7 +26,36 @@
   font-size: clamp(30px, 3vw, 44px);
   overflow-wrap: break-word;
 }
-@media (max-width: 550px) {
+.course-reading-link {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 20px 0;
+  border-block: 1px solid var(--line);
+}
+.course-reading-link span { color: var(--muted); font-size: 14px; }
+.course-reading-link a { font-size: 20px; font-weight: 550; }
+.chapter-heading { display: block; }
+.chapter-heading h1 { max-width: 900px; }
+.chapter-heading .hero-description { max-width: 72ch; }
+.chapter-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  font-size: 15px;
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1280px) {
+  .course-reading-link { margin-inline: 30px; }
+}
+@media (max-width: 760px) {
+  .course-reading-link { margin-inline: 24px; }
+}
+@media (max-width: 650px) {
   .site-header {
     height: 103px;
     justify-content: center;
@@ -39,16 +68,17 @@
     justify-content: center;
   }
   .site-header nav {
-    width: min(100%, 360px);
+    width: min(100%, 420px);
     height: 40px;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
   }
-  .site-header nav a {
-    padding: 9px 0;
-  }
+  .site-header nav a { padding: 9px 0; white-space: nowrap; }
   .reading-progress { top: 102px; }
   html { scroll-padding-top: 115px; }
   .case-section { scroll-margin-top: 115px; }
+}
+@media (max-width: 360px) {
+  .site-header { padding-inline: 12px; }
 }
