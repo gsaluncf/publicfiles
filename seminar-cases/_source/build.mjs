@@ -28,7 +28,7 @@ function header(active) {
     return `<a class="direct-case-link" href="/${esc(c.slug)}/"${current}>${esc(caseLabel(c))}</a>`;
   }).join('');
   return `<header class="site-header">
-    <a class="brand" href="/" aria-label="Data Communication home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Data Communication</a>
+    <a class="brand" href="/" aria-label="New College of Florida, Data Communication home"><img class="ncf-logo" src="/assets/ncf-logo.svg" alt="New College of Florida" width="377" height="83">Data Communication</a>
     <nav aria-label="Course materials"><a href="/#all-cases">All cases</a>${caseLinks}<a href="/#business-value">Business value</a></nav>
     <span class="course-term">Spring 2027</span>
   </header><div class="reading-progress" aria-hidden="true"></div>`;
