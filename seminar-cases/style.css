@@ -26,36 +26,44 @@
   font-size: clamp(30px, 3vw, 44px);
   overflow-wrap: break-word;
 }
-.course-reading-link {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 8px 24px;
-  max-width: 1220px;
-  margin: 0 auto;
-  padding: 20px 0;
-  border-block: 1px solid var(--line);
+.case-group { border-top: 1px solid var(--line); }
+.case-group > h2 {
+  max-width: 800px;
+  margin: 6px 0 10px;
+  font-size: clamp(40px, 5vw, 72px);
 }
-.course-reading-link span { color: var(--muted); font-size: 14px; }
-.course-reading-link a { font-size: 20px; font-weight: 550; }
-.chapter-heading { display: block; }
-.chapter-heading h1 { max-width: 900px; }
-.chapter-heading .hero-description { max-width: 72ch; }
-.chapter-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 24px;
+.index-copy .case-card-title {
+  font-family: var(--display);
+  line-height: 1.05;
+  font-weight: 400;
+  font-size: clamp(42px, 5vw, 65px);
+  letter-spacing: -.025em;
+  margin-bottom: 22px;
+}
+.case-card-title a { text-decoration: none; }
+.case-hero .reading-attribution, .index-copy .reading-attribution {
   font-size: 15px;
+  line-height: 1.55;
+  margin: 0 0 16px;
   color: var(--accent);
-  overflow-wrap: anywhere;
 }
-@media (max-width: 1280px) {
-  .course-reading-link { margin-inline: 30px; }
+.metric-art {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
 }
-@media (max-width: 760px) {
-  .course-reading-link { margin-inline: 24px; }
+.metric-art .hero-data {
+  width: 100%;
+  background: transparent;
+  margin: 0;
+  align-self: center;
+  padding-bottom: 70px;
 }
+#all-cases, #business-value { scroll-margin-top: 100px; }
 @media (max-width: 650px) {
+  .site-header nav .direct-case-link { display: none; }
+  .case-group > h2 { margin-top: 22px; }
   .site-header {
     height: 103px;
     justify-content: center;
@@ -71,8 +79,8 @@
     width: min(100%, 420px);
     height: 40px;
     align-items: center;
-    justify-content: space-between;
-    gap: 6px;
+    justify-content: center;
+    gap: 32px;
   }
   .site-header nav a { padding: 9px 0; white-space: nowrap; }
   .reading-progress { top: 102px; }
@@ -81,4 +89,10 @@
 }
 @media (max-width: 360px) {
   .site-header { padding-inline: 12px; }
+  .hero-title h1 { font-size: clamp(36px, 11vw, 40px); }
+}
+@media (max-width: 760px) {
+  .hero-title, .case-hero > div, .index-copy { min-width: 0; }
+  .home-hero { grid-template-columns: minmax(0, 1fr); }
+  .hero-title h1, .case-hero h1, .section-heading h2, .case-card-title { overflow-wrap: anywhere; }
 }

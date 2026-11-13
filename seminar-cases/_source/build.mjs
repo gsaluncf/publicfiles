@@ -5,29 +5,36 @@ import { fileURLToPath } from 'node:url';
 // Emit paths relative to each page so the site works under a project directory.
 const siteDirectory = fileURLToPath(new URL('../', import.meta.url));
 process.chdir(siteDirectory);
-const cases=JSON.parse(fs.readFileSync('_source/cases.json','utf8').replace(/^\uFEFF/,''));
-const businessValue = JSON.parse(fs.readFileSync('_source/business-value.json', 'utf8'));
-const manifest=JSON.parse(fs.readFileSync('assets/media-manifest.json','utf8').replace(/^\uFEFF/,''));
-const media=Array.isArray(manifest)?manifest:manifest.items||manifest.assets;
+const originalCases = JSON.parse(fs.readFileSync('_source/cases.json', 'utf8').replace(/^\uFEFF/, ''));
+const valueCases = JSON.parse(fs.readFileSync('_source/value-cases.json', 'utf8').replace(/^\uFEFF/, ''))
+  .map((c, index) => ({ ...c, number: originalCases.length + index + 1 }));
+const cases = [...originalCases, ...valueCases];
+const manifest = JSON.parse(fs.readFileSync('assets/media-manifest.json', 'utf8').replace(/^\uFEFF/, ''));
+const sharedMedia = Array.isArray(manifest) ? manifest : manifest.items || manifest.assets;
+const media = [...sharedMedia, ...valueCases.flatMap(c => c.images ?? [])];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=n=>String(n).padStart(2,'0');
-const palette={snow:['#156c87','#e6f0f4'],moneyball:['#17664f','#e8f1eb'],ebay:['#91472e','#f6ece6'],plymouth:['#673e73','#f3ebf5'],'business-value':['#24548a','#e9eff8']};
+const palette={snow:['#156c87','#e6f0f4'],moneyball:['#17664f','#e8f1eb'],ebay:['#91472e','#f6ece6'],plymouth:['#673e73','#f3ebf5']};
+const caseColors = slug => palette[slug] ?? ['#24548a', '#e9eff8'];
 const labels={snow:'John Snow',moneyball:'Moneyball',ebay:'eBay',plymouth:'Plymouth'};
+const caseLabel = c => c.shortTitle || labels[c.slug] || c.title;
 const artKeys={snow:'snow-map',moneyball:'moneyball-payroll',ebay:'ebay-figure'};
 const findMedia=key=>media.find(m=>m.key===({'moneyball-payroll':'moneyball-figure'}[key]||key))||media.find(m=>m.key?.includes(key));
 const cover=c=>findMedia(c.coverMediaKey ?? artKeys[c.slug])||media.find(m=>m.key?.startsWith(c.slug));
 const fig=(m,cls='')=>m?`<figure class="evidence ${cls}"><button class="image-button" data-image="/assets/${esc(m.filename)}" data-caption="${esc(m.caption)}" aria-label="Enlarge ${esc(m.alt)}"><img src="/assets/${esc(m.filename)}" alt="${esc(m.alt)}" loading="lazy" decoding="async"><span class="enlarge">Enlarge image <span aria-hidden="true">↗</span></span></button><figcaption>${esc(m.caption)} <a href="${esc(m.sourceUrl)}" target="_blank" rel="noopener">${esc(m.sourceLabel||'Original source')}</a></figcaption></figure>`:'';
 function header(active) {
-  const links = [{ slug: 'business-value', label: 'Business value' }];
-  for (const c of cases) links.push({ slug: c.slug, label: labels[c.slug] });
-  const navigation = links.map(({ slug, label }) => {
-    const current = active === slug ? ' aria-current="page"' : '';
-    return `<a href="/${esc(slug)}/"${current}>${esc(label)}</a>`;
+  const caseLinks = originalCases.map(c => {
+    const current = active === c.slug ? ' aria-current="page"' : '';
+    return `<a class="direct-case-link" href="/${esc(c.slug)}/"${current}>${esc(caseLabel(c))}</a>`;
   }).join('');
-  return `<header class="site-header"><a class="brand" href="/" aria-label="Data Communication home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Data Communication</a><nav aria-label="Course materials">${navigation}</nav><span class="course-term">Spring 2027</span></header><div class="reading-progress" aria-hidden="true"></div>`;
+  return `<header class="site-header">
+    <a class="brand" href="/" aria-label="Data Communication home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Data Communication</a>
+    <nav aria-label="Course materials"><a href="/#all-cases">All cases</a>${caseLinks}<a href="/#business-value">Business value</a></nav>
+    <span class="course-term">Spring 2027</span>
+  </header><div class="reading-progress" aria-hidden="true"></div>`;
 }
 const footer=()=>`<footer class="site-footer"><div><a class="brand" href="/">Data Communication</a><p>Communications and Applied Domains in Data Science<br>New College of Florida · Spring 2027</p></div><p>Seminar prompts adapted from Chip and Dan Heath’s <a href="https://heathbrothers.com/wp-content/uploads/resources/mts-made-to-stick-model.pdf" target="_blank" rel="noopener">Made to Stick framework</a>.</p></footer><dialog id="image-viewer"><button class="close-viewer" aria-label="Close enlarged image">Close <span aria-hidden="true">×</span></button><img alt="Enlarged image"><p></p></dialog>`;
-const pageHtml=(title,desc,body,slug='')=>`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="${esc(desc)}"><meta name="theme-color" content="#163450"><title>${esc(title)} | Data Communication</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head><body class="${slug?'case-page '+slug:'home-page'}" ${slug?`style="--accent:${palette[slug][0]};--tint:${palette[slug][1]}"`:''}><a class="skip" href="#main">Skip to content</a>${header(slug)}${body}${footer()}</body></html>`;
+const pageHtml=(title,desc,body,slug='')=>`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="${esc(desc)}"><meta name="theme-color" content="#163450"><title>${esc(title)} | Data Communication</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head><body class="${slug?'case-page '+slug:'home-page'}" ${slug?`style="--accent:${caseColors(slug)[0]};--tint:${caseColors(slug)[1]}"`:''}><a class="skip" href="#main">Skip to content</a>${header(slug)}${body}${footer()}</body></html>`;
 function layout(title, description, body, slug = '') {
   const root = slug ? '../' : './';
   const html = pageHtml(title, description, body, slug).replace(/[ \t]+$/gm, '');
@@ -55,12 +62,49 @@ function mini(c) {
   };
   return existing[c.slug] ?? '';
 }
-const home=`<main id="main"><section class="home-hero"><div class="hero-title"><p class="intro-label">Seminar cases</p><h1>Communicating data<br>in practice.</h1><p>Use records of cholera deaths, batting statistics, sales after ad clicks, and theatre ticket purchases to make recommendations. Each case includes a video, the original data or figures, and a calculation.</p><a class="button primary" href="/snow/">Start with John Snow <span aria-hidden="true">↗</span></a></div><div class="hero-montage"><img src="/assets/${esc(cover(cases[0]).filename)}" alt="${esc(cover(cases[0]).alt)}"><div class="montage-caption"><span>London, 1854</span><b>John Snow’s investigation</b><a href="/snow/">Read the case</a></div></div></section><div class="course-reading-link"><span>Course reading</span><a href="/business-value/">${esc(businessValue.title)}</a></div><div class="case-index">${cases.map(c=>`<article class="case-entry" style="--accent:${palette[c.slug][0]};--tint:${palette[c.slug][1]}"><a href="/${c.slug}/" class="index-art" aria-label="Open ${labels[c.slug]} case"><img src="/assets/${esc(cover(c).filename)}" alt="${esc(cover(c).alt)}" loading="lazy"><span class="case-counter">${num(c.number)}</span></a><div class="index-copy"><p class="case-domain">${esc(c.domain)}</p><h2><a href="/${c.slug}/">${labels[c.slug]}</a></h2><p>${esc(c.subtitle)}</p><div class="case-meta"><span>Video length: ${esc(c.video.duration)}</span></div><a class="text-link" href="/${c.slug}/">Read the case <span aria-hidden="true">↗</span></a></div></article>`).join('')}</div></main>`;
-fs.writeFileSync('index.html',layout('Communicating data in practice','Seminar cases on cholera death rates, player salaries, paid search advertising, and theatre membership offers.',home));
+function readingLabel(c, displayedTitle) {
+  const name = c.readingLabel?.trim();
+  if (!name || displayedTitle.trim().toLowerCase() === name.toLowerCase()) return '';
+  return `<p class="reading-attribution">${esc(name)}</p>`;
+}
+function caseCard(c, heading = 'h2') {
+  const [accent, tint] = caseColors(c.slug);
+  const image = cover(c);
+  const title = esc(caseLabel(c));
+  const href = `/${esc(c.slug)}/`;
+  const art = image
+    ? `<img src="/assets/${esc(image.filename)}" alt="${esc(image.alt)}" loading="lazy">`
+    : mini(c);
+  const duration = c.video?.duration
+    ? `<div class="case-meta"><span>Video length: ${esc(c.video.duration)}</span></div>`
+    : '';
+  return `<article class="case-entry" data-case="${esc(c.slug)}" style="--accent:${accent};--tint:${tint}">
+    <a href="${href}" class="index-art${image ? '' : ' metric-art'}" aria-label="Open ${title} case">${art}<span class="case-counter">${num(c.number)}</span></a>
+    <div class="index-copy"><p class="case-domain">${esc(c.domain)}</p>
+      <${heading} class="case-card-title"><a href="${href}">${title}</a></${heading}>${readingLabel(c, caseLabel(c))}
+      <p>${esc(c.subtitle)}</p>${duration}
+      <a class="text-link" href="${href}">Read the case <span aria-hidden="true">↗</span></a>
+    </div>
+  </article>`;
+}
+const snowMap = cover(originalCases[0]);
+const home = `<main id="main">
+  <section class="home-hero"><div class="hero-title"><p class="intro-label">Seminar cases</p>
+    <h1>Communicating data<br>in practice.</h1><p>Each case includes source material and a student activity.</p>
+    </div><div class="hero-montage"><img src="/assets/${esc(snowMap.filename)}" alt="${esc(snowMap.alt)}">
+      <div class="montage-caption"><span>London, 1854</span><b>John Snow’s investigation</b></div></div>
+  </section>
+  <div id="all-cases" class="case-index">${originalCases.map(c => caseCard(c)).join('')}</div>
+  <section id="business-value" class="case-index case-group" aria-labelledby="business-value-heading">
+    <h2 id="business-value-heading">The business value of data</h2>
+    ${valueCases.map(c => caseCard(c, 'h3')).join('')}
+  </section>
+</main>`;
+fs.writeFileSync('index.html', layout('Communicating data in practice', 'Seminar cases in data communication and the business value of data.', home));
 function renderVideo(video, heading) {
   return `<div class="video-block">
     <div class="video-heading"><span>${esc(heading)}</span><span>${esc(video.duration)}</span></div>
-    <div class="video-frame"><iframe src="${esc(video.embedUrl)}" title="${esc(video.title)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe></div>
+    ${video.embedUrl ? `<div class="video-frame"><iframe src="${esc(video.embedUrl)}" title="${esc(video.title)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe></div>` : ''}
     <div class="video-caption">
       <div><b>${esc(video.title)}</b><p>${esc(video.presenter)}</p></div>
       <a href="${esc(video.url)}" target="_blank" rel="noopener">Open video <span aria-hidden="true">↗</span></a>
@@ -69,7 +113,7 @@ function renderVideo(video, heading) {
   </div>`;
 }
 for(const c of cases){
-const video = renderVideo(c.video, 'Case video');
+const video = c.video ? renderVideo(c.video, 'Case video') : '';
 const relatedVideo = c.relatedVideo
   ? `<details class="related-video">
        <summary>${esc(c.relatedVideo.label)}</summary>
@@ -79,37 +123,21 @@ const relatedVideo = c.relatedVideo
 const table=c.activity.table;
 const activity=`<div class="practice" id="activity"><div class="practice-heading"><span class="practice-mark" aria-hidden="true">✓</span><div><p>Student activity</p><h3>${esc(c.activity.title)}</h3></div></div><ol>${c.activity.instructions.map(t=>`<li>${t}</li>`).join('')}</ol>${table?`<div class="table-scroll"><table><thead><tr>${table.headers.map(t=>`<th scope="col">${t}</th>`).join('')}</tr></thead><tbody>${table.rows.map(row=>`<tr>${row.map((v,i)=>i===0?`<th scope="row">${v}</th>`:`<td>${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:''}${c.activity.formulas.map(f=>`<div class="formula">${esc(f)}</div>`).join('')}<details class="answer"><summary>Check the calculation <span aria-hidden="true">+</span></summary><div>${c.activity.answer}</div></details><div class="communication"><b>Written recommendation</b><p>${c.activity.communication}</p></div></div>`;
 const sections=c.sections.map(s=>`<section class="case-section" id="section-${s.number}"><div class="section-heading"><span>${num(s.number)}</span><h2>${esc(s.title.replace(/^\d+[.\s]+/,''))}</h2></div><div class="section-copy">${s.paragraphs.map(p=>`<p>${p}</p>`).join('')}${s.number===1?video:''}${s.mediaKey?fig(findMedia(s.mediaKey)):''}${s.number===3?relatedVideo:''}${s.number===4?activity:''}</div></section>`).join('');
-const next=cases.find(k=>k.slug===c.nextSlug);
-const body=`<main id="main"><div class="case-hero"><div><a class="back-link" href="/">All cases</a><p class="intro-label">Case ${num(c.number)} / ${esc(c.domain)}</p><h1>${esc(c.title)}</h1><p class="hero-description">${esc(c.intro)}</p></div>${mini(c)}</div><div class="reading-layout"><aside class="contents"><p>Contents</p><nav aria-label="Case sections">${c.sections.map(s=>`<a href="#section-${s.number}"><span>${num(s.number)}</span>${esc(s.title.replace(/^\d+[.\s]+/,''))}</a>`).join('')}</nav><a class="activity-link" href="#activity">Open the activity</a></aside><article class="case-body">${sections}<section class="speaker"><span>Question for the guest speaker</span><p>${esc(c.speakerQuestion)}</p></section><section class="reading"><h2>Case sources</h2><div>${c.reading.map((r,i)=>`<a href="${esc(r.url)}" target="_blank" rel="noopener"><span>${num(i+1)}</span><div><b>${esc(r.title)}</b><p>${esc(r.note)}</p></div><span aria-hidden="true">↗</span></a>`).join('')}</div></section></article></div>${next?`<section class="next-case"><div><p>Continue to case ${num(next.number)}</p><h2>${labels[next.slug]}</h2><p>${esc(c.transition)}</p></div><a class="button" href="/${next.slug}/">Read ${labels[next.slug]} <span aria-hidden="true">↗</span></a></section>`:`<section class="next-case"><div><h2>All cases</h2></div><a class="button" href="/">View all cases</a></section>`}</main>`;
+const next = cases[cases.indexOf(c) + 1];
+const body=`<main id="main"><div class="case-hero"><div><a class="back-link" href="/#all-cases">All cases</a><p class="intro-label">Case ${num(c.number)} / ${esc(c.domain)}</p><h1>${esc(c.title)}</h1>${readingLabel(c, c.title)}<p class="hero-description">${esc(c.intro)}</p></div>${mini(c)}</div><div class="reading-layout"><aside class="contents"><p>Contents</p><nav aria-label="Case sections">${c.sections.map(s=>`<a href="#section-${s.number}"><span>${num(s.number)}</span>${esc(s.title.replace(/^\d+[.\s]+/,''))}</a>`).join('')}</nav><a class="activity-link" href="#activity">Open the activity</a></aside><article class="case-body">${sections}<section class="speaker"><span>Question for the guest speaker</span><p>${esc(c.speakerQuestion)}</p></section><section class="reading"><h2>Case sources</h2><div>${c.reading.map((r,i)=>`<a href="${esc(r.url)}" target="_blank" rel="noopener"><span>${num(i+1)}</span><div><b>${esc(r.title)}</b><p>${esc(r.note)}</p></div><span aria-hidden="true">↗</span></a>`).join('')}</div></section></article></div>${next?`<section class="next-case"><div><p>Continue to case ${num(next.number)}</p><h2>${esc(caseLabel(next))}</h2>${c.transition ? `<p>${esc(c.transition)}</p>` : ''}</div><a class="button" href="/${next.slug}/">${next.shortTitle ? `Read case ${num(next.number)}` : `Read ${esc(caseLabel(next))}`} <span aria-hidden="true">↗</span></a></section>`:`<section class="next-case"><div><h2>All cases</h2></div><a class="button" href="/#all-cases">View all cases</a></section>`}</main>`;
 fs.mkdirSync(path.join(siteDirectory,c.slug),{recursive:true});fs.writeFileSync(path.join(siteDirectory,c.slug,'index.html'),layout(c.title,c.subtitle,body,c.slug));
 }
-const readingSections = businessValue.sections.map((s, index) => {
-  const paragraphs = s.paragraphs.map(p => `<p>${esc(p)}</p>`).join('');
-  const source = `<a href="${esc(s.source.url)}">${esc(s.source.label)}</a>`;
-  const caseLink = s.caseLink
-    ? `<a href="/${esc(s.caseLink.slug)}/">${esc(s.caseLink.label)}</a>`
-    : '';
-  return `<section class="case-section" id="${esc(s.id)}">
-    <div class="section-heading"><span>${num(index + 1)}</span><h2>${esc(s.title)}</h2></div>
-    <div class="section-copy">${paragraphs}</div>
-    <div class="chapter-links">${source}${caseLink}</div>
-  </section>`;
-}).join('');
-const chapterContents = businessValue.sections.map((s, index) =>
-  `<a href="#${esc(s.id)}"><span>${num(index + 1)}</span>${esc(s.title)}</a>`
-).join('');
-const readingPage = `<main id="main">
-  <div class="case-hero chapter-heading"><a class="back-link" href="/">All cases</a>
-    <p class="intro-label">Course reading</p><h1>${esc(businessValue.title)}</h1>
-    <p class="hero-description">${esc(businessValue.intro)}</p>
-  </div>
-  <div class="reading-layout">
-    <aside class="contents"><p>Contents</p><nav aria-label="Reading sections">${chapterContents}</nav></aside>
-    <article class="case-body">${readingSections}
-      <section class="speaker"><span>Question for the guest speaker</span><p>${esc(businessValue.speakerQuestion)}</p></section>
-    </article>
-  </div>
-</main>`;
+// Old links identified each topic with a fragment on the shared reading page.
+const legacyTopics = Object.fromEntries(valueCases.map(c => [c.legacyId, c.slug]));
+const legacyPage = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>The business value of data</title>
+  <script>
+    const topics = ${JSON.stringify(legacyTopics).replace(/</g, '\\u003c')};
+    const key = location.hash.slice(1);
+    location.replace(Object.hasOwn(topics, key) ? '../' + topics[key] + '/' : '../#business-value');
+  </script>
+  <noscript><meta http-equiv="refresh" content="0;url=../#business-value"></noscript>
+</head><body><a href="../#business-value">The business value of data</a></body></html>`;
 fs.mkdirSync('business-value', { recursive: true });
-fs.writeFileSync('business-value/index.html', layout(businessValue.title, businessValue.intro, readingPage, 'business-value'));
-console.log(`Built ${cases.length + 2} pages.`);
+fs.writeFileSync('business-value/index.html', legacyPage);
+console.log(`Built the overview, ${cases.length} cases, and the business value redirect.`);

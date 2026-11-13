@@ -1,0 +1,636 @@
+[
+  {
+    "slug": "competing-on-analytics",
+    "number": 5,
+    "title": "Competing on Analytics",
+    "shortTitle": "Competing on Analytics",
+    "legacyId": "business-priorities",
+    "subtitle": "Netflix asked researchers to predict the star ratings that DVD subscribers would give movies.",
+    "domain": "Movie recommendations",
+    "year": "2006 to 2009",
+    "readMinutes": 5,
+    "accent": "#874435",
+    "coverMediaKey": "netflix-prize-error",
+    "hero": {
+      "title": "Netflix Prize",
+      "metrics": [
+        {
+          "label": "Prize",
+          "value": "$1 million"
+        },
+        {
+          "label": "Required reduction in error",
+          "value": "10%"
+        }
+      ],
+      "note": "Netflix awarded the prize in 2009."
+    },
+    "intro": "Netflix subscribers chose DVDs from a catalog. The company recommended movies by predicting which titles each subscriber would enjoy. In 2006, Netflix offered a prize for a more accurate way to predict movie ratings.",
+    "video": {
+      "title": "Netflix Quick Guide: How Does Netflix Make TV Show and Movie Suggestions? | Netflix",
+      "presenter": "Netflix",
+      "duration": "1 minute 44 seconds",
+      "url": "https://www.youtube.com/watch?v=hqFHAnkSP2U",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/hqFHAnkSP2U",
+      "prompt": "Netflix explains how it personalized suggestions for streaming subscribers in 2013. The earlier prize competition used star ratings from DVD subscribers."
+    },
+    "sections": [
+      {
+        "number": 1,
+        "title": "Movie recommendations",
+        "paragraphs": [
+          "Thomas Davenport and Jeanne Harris describe how companies select an activity central to their business and invest in the analysis that supports it. Netflix chose movie recommendations. A subscriber could rate a movie from one to five stars. Netflix’s recommendation software, Cinematch, used earlier ratings to predict how the subscriber would rate another movie. <a href=\"https://www.computerworld.com/article/1687923/competing-on-analytics.html\">Davenport and Harris’s book excerpt</a>."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 2,
+        "title": "Ratings withheld for testing",
+        "paragraphs": [
+          "Netflix released more than 100 million movie ratings to participants in the Netflix Prize. It withheld some ratings so it could evaluate predictions. Each team submitted a predicted rating for each subscriber and movie in the test. Netflix compared those predictions with the stars the subscribers had given. <a href=\"https://netflixtechblog.com/netflix-recommendations-beyond-the-5-stars-part-1-55838468f429\">Netflix’s account of the competition</a>.",
+          "Netflix measured prediction error in stars. For each prediction, it squared the difference between the predicted rating and the subscriber’s rating. It averaged the squared differences and took the square root. A lower root mean squared error indicated more accurate predictions."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 3,
+        "title": "The winning score",
+        "paragraphs": [
+          "Cinematch scored 0.9525 on the final test. BellKor’s Pragmatic Chaos scored 0.8567 and won the $1 million prize. The competitors saw scores for a separate set of ratings during the contest. Netflix used the final test scores to award the prize. <a href=\"https://calteches.library.caltech.edu/4333/1/Netflix.pdf\">A competitor’s account of the final scores</a>."
+        ],
+        "mediaKey": "netflix-prize-error"
+      },
+      {
+        "number": 4,
+        "title": "The engineering decision",
+        "paragraphs": [
+          "Netflix engineers used two methods from an earlier stage of the contest in the recommendation service. They also tested techniques from the final winning entry. The engineers judged the additional improvement too small to justify the work required to put those techniques into service. <a href=\"https://netflixtechblog.com/netflix-recommendations-beyond-the-5-stars-part-1-55838468f429\">Netflix engineers’ explanation</a>."
+        ],
+        "mediaKey": null
+      }
+    ],
+    "activity": {
+      "title": "Check the prize result",
+      "instructions": [
+        "Calculate the percentage reduction in prediction error from Cinematch to the winning entry.",
+        "Check the result against the award announcement. Identify one customer outcome that Netflix would need to measure before estimating a financial return."
+      ],
+      "table": {
+        "headers": [
+          "System",
+          "Root mean squared error in stars"
+        ],
+        "rows": [
+          [
+            "Cinematch",
+            "0.9525"
+          ],
+          [
+            "BellKor’s Pragmatic Chaos",
+            "0.8567"
+          ]
+        ]
+      },
+      "formulas": [
+        "Percentage reduction in error = (Cinematch error − winning error) ÷ Cinematch error × 100"
+      ],
+      "answer": "The error fell by <strong>0.0958 stars</strong>, a reduction of about <strong>10.06%</strong>. To estimate the effect on subscription revenue, Netflix could compare renewals among subscribers who received the two sets of recommendations.",
+      "communication": "Write two sentences for a product manager. Report the improvement in prediction error and name the evidence the manager would need to justify the engineering cost."
+    },
+    "reading": [
+      {
+        "title": "Thomas H. Davenport and Jeanne G. Harris, Competing on Analytics: The New Science of Winning",
+        "url": "https://www.computerworld.com/article/1687923/competing-on-analytics.html",
+        "note": "The authors identify recommendations as one way Netflix used customer data in its DVD rental business."
+      },
+      {
+        "title": "The Netflix Prize results",
+        "url": "https://calteches.library.caltech.edu/4333/1/Netflix.pdf",
+        "note": "A competitor describes the ratings data and reproduces the scores for Cinematch and the winning team."
+      },
+      {
+        "title": "Netflix Recommendations: Beyond the 5 stars (Part 1)",
+        "url": "https://netflixtechblog.com/netflix-recommendations-beyond-the-5-stars-part-1-55838468f429",
+        "note": "Netflix engineers describe which competition methods they put into service."
+      },
+      {
+        "title": "The Netflix Prize award",
+        "url": "https://www.niss.org/news/bell-and-volinsky-part-att-team-won-1million-netflix-prize-contest",
+        "note": "The National Institute of Statistical Sciences reports the winning score and the percentage improvement."
+      }
+    ],
+    "speakerQuestion": "When has a more accurate prediction justified changing a service, and how did the team measure the benefit to customers?",
+    "transition": "Nest used thermostat settings to schedule heating and utility bills to estimate how much gas households saved.",
+    "nextSlug": "value-of-big-data",
+    "readingLabel": "Davenport and Harris · Netflix movie recommendations"
+  },
+  {
+    "slug": "value-of-big-data",
+    "number": 6,
+    "title": "The value of Big Data",
+    "shortTitle": "The value of Big Data",
+    "legacyId": "cost-of-analysis",
+    "subtitle": "Nest used thermostat settings to schedule heating and utility bills to estimate how much gas households saved.",
+    "domain": "Home energy",
+    "year": "2013 to 2015",
+    "readMinutes": 5,
+    "accent": "#166251",
+    "coverMediaKey": "nest-gas-use",
+    "hero": {
+      "title": "Annual gas use per home",
+      "metrics": [
+        {
+          "label": "Heating before installation",
+          "value": "584 therms"
+        },
+        {
+          "label": "Estimated savings",
+          "value": "56 therms"
+        }
+      ],
+      "note": "Nest’s 2015 analysis of 735 homes with gas heating."
+    },
+    "intro": "Each time a resident adjusted a Nest Learning Thermostat, the thermostat recorded the temperature setting and the time. Nest used those adjustments to schedule heating. To find out whether customers saved energy, researchers needed household utility bills.",
+    "video": {
+      "title": "Energy-saving features on your thermostat",
+      "presenter": "Google Help",
+      "duration": "6 minutes 6 seconds",
+      "url": "https://www.youtube.com/watch?v=g2RSAqu4Ja4",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/g2RSAqu4Ja4",
+      "prompt": "Google demonstrates how a Nest thermostat uses temperature adjustments to update a heating schedule."
+    },
+    "sections": [
+      {
+        "number": 1,
+        "title": "Temperature settings",
+        "paragraphs": [
+          "Rasmus Wegener and Velu Sinha use Nest to explain what a company funds when it invests in analytics. They describe the need for reliable data, analytical tools, people with the skills to use them, and management practices that put results into use. Nest engineers combined temperature adjustments with information about the weather and the home to improve thermostat settings. <a href=\"https://www.bain.com/insights/the-value-of-big-data/\">Bain’s account of Nest</a>."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 2,
+        "title": "A household heating schedule",
+        "paragraphs": [
+          "On early Nest Learning Thermostats, a resident could turn the dial to set a temperature. With Auto-Schedule enabled, the thermostat used repeated adjustments to update the heating schedule. For example, a similar change on two successive weekdays could set the temperature for that time on all five weekdays. The resident could change the setting again. <a href=\"https://support.google.com/googlehome/answer/9247510?hl=en\">Google Nest’s description of Auto-Schedule</a>."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 3,
+        "title": "Gas bills before and after installation",
+        "paragraphs": [
+          "In 2015, Nest researchers published an analysis of gas use in 735 homes. They matched utility records to the installation date and accounted for changes in outdoor temperature. They also examined bills from households without a Nest thermostat to account for changes in gas use over the same period. <a href=\"https://efiling.energy.ca.gov/GetDocument.aspx?tn=206563#page=33\">Nest’s study methods</a>.",
+          "Before installation, each home used an average of 774 therms of natural gas per year. A therm is a unit of energy. The researchers estimated that heating accounted for 584 of those therms. They estimated average annual savings of 56 therms per home after installation."
+        ],
+        "mediaKey": "nest-gas-use"
+      },
+      {
+        "number": 4,
+        "title": "The percentage saved",
+        "paragraphs": [
+          "A homeowner may ask how much gas the household saved on heating. A utility may also want the savings as a share of all gas used in the home. Table 1 contains the figures for both calculations. <a href=\"https://efiling.energy.ca.gov/GetDocument.aspx?tn=206563#page=34\">Nest’s gas and electricity savings table</a>."
+        ],
+        "mediaKey": null
+      }
+    ],
+    "activity": {
+      "title": "Calculate both savings percentages",
+      "instructions": [
+        "Divide the estimated annual gas savings by the gas used for heating before installation. Repeat the calculation using total gas use before installation.",
+        "Check the heating percentage against Table 1. Label the denominator for each percentage."
+      ],
+      "table": {
+        "headers": [
+          "Average annual gas use per home",
+          "Therms"
+        ],
+        "rows": [
+          [
+            "Total gas use before installation",
+            "774"
+          ],
+          [
+            "Gas used for heating before installation",
+            "584"
+          ],
+          [
+            "Estimated gas savings after installation",
+            "56"
+          ]
+        ]
+      },
+      "formulas": [
+        "Savings percentage = estimated annual gas savings ÷ annual gas use before installation × 100"
+      ],
+      "answer": "The estimated savings were <strong>9.6% of gas used for heating</strong> and <strong>7.2% of total gas use</strong>. Both percentages describe the same estimated saving of 56 therms per year.",
+      "communication": "Write one sentence for a homeowner that reports the heating result. In a second sentence, explain what price information the homeowner needs to convert 56 therms into an estimate of annual dollar savings."
+    },
+    "reading": [
+      {
+        "title": "Rasmus Wegener and Velu Sinha, The value of Big Data: How analytics differentiates winners",
+        "url": "https://www.bain.com/insights/the-value-of-big-data/",
+        "note": "The authors describe how Nest collected temperature adjustments and used them in its products."
+      },
+      {
+        "title": "How Nest thermostats learn",
+        "url": "https://support.google.com/googlehome/answer/9247510?hl=en",
+        "note": "Google documents Auto-Schedule for the first three generations of the Nest Learning Thermostat and for the Nest Thermostat E."
+      },
+      {
+        "title": "Energy Savings from the Nest Learning Thermostat: Energy Bill Analysis Results",
+        "url": "https://efiling.energy.ca.gov/GetDocument.aspx?tn=206563#page=34",
+        "note": "Table 1 on page 34 of the California Energy Commission filing reports the sample sizes, prior usage and estimated savings."
+      }
+    ],
+    "speakerQuestion": "Which records let a product team measure savings for customers, and what costs should the team compare with those savings?",
+    "transition": "Two MIT students worked with Pfizer’s manufacturing staff to schedule deliveries. Their project shows who prepares the records, evaluates a schedule, and explains it to a planner.",
+    "nextSlug": "analytics-team",
+    "readingLabel": "Bain · Nest thermostat savings"
+  },
+  {
+    "slug": "analytics-team",
+    "number": 7,
+    "legacyId": "staffing",
+    "shortTitle": "How to build a data analytics dream team",
+    "title": "How to build a data analytics dream team",
+    "subtitle": "Two MIT students worked with Pfizer’s manufacturing staff to schedule deliveries. Their project shows who prepares the records, evaluates a schedule, and explains it to a planner.",
+    "domain": "Analytics staffing",
+    "year": "2025",
+    "readMinutes": 5,
+    "accent": "#37664b",
+    "coverMediaKey": "pfizer-results",
+    "hero": {
+      "title": "Orders and shipments",
+      "metrics": [
+        {
+          "label": "Batches available to ship",
+          "value": "~1,500"
+        },
+        {
+          "label": "Orders per week",
+          "value": "~15"
+        }
+      ],
+      "note": "Beal and Whitworth, project poster, 2025"
+    },
+    "intro": "Sara Brown’s MIT Sloan article describes the work of data engineers, data scientists, and data translators. A later project at Pfizer shows why even a small team needs these skills. Shipping planners needed a schedule that assigned each available batch of medicine to a truck.",
+    "video": {
+      "title": "MIT Sloan: MBAn Capstone Project | 2017",
+      "presenter": "MIT Sloan School of Management Admissions",
+      "duration": "3 minutes",
+      "url": "https://www.youtube.com/watch?v=9TcSA-3Z_vU",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/9TcSA-3Z_vU",
+      "prompt": "MIT Sloan describes how graduate students and company staff work together on a capstone project. Emma Beal and Amelia Whitworth completed the Pfizer project in 2025."
+    },
+    "sections": [
+      {
+        "number": 1,
+        "title": "The shipping decision",
+        "paragraphs": [
+          "Pfizer planners used spreadsheets to assign batches of medicine to trucks. Each assignment needed a destination and shipping date. Some destinations accepted deliveries only on certain days. Some products required a truck equipped for dry ice.",
+          "Emma Beal and Amelia Whitworth worked with Pfizer’s digital manufacturing team to build a scheduling tool. Their project poster names both students, a faculty advisor, and three company advisors. <a href=\"https://mitsloan.mit.edu/sites/default/files/inline-files/Pfizer_Emma_Beal_Amelia_Whitworth.pdf\">Project poster</a>."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 2,
+        "title": "Preparing the records",
+        "paragraphs": [
+          "A batch record tells a planner what the plant has produced. An order tells the planner what a customer needs. A batch could appear in the production records while staff were still checking its quality.",
+          "The team filtered the batch records for medicine ready to ship and the order records for demand due that week. Brown describes preparing data for use by others as part of a data engineer’s work. A generalist can do this work alongside the analysis. <a href=\"https://mitsloan.mit.edu/ideas-made-to-matter/how-to-build-a-data-analytics-dream-team\">Sara Brown on analytics roles</a>."
+        ],
+        "mediaKey": "pfizer-records"
+      },
+      {
+        "number": 3,
+        "title": "Testing the schedule",
+        "paragraphs": [
+          "Beal and Whitworth used three weeks of historical orders to compare their proposed schedules with the original plans. They measured how much demand each schedule met, how much shipping cost, and how evenly the work was distributed.",
+          "A shipping planner also needed to see which truck would carry a particular order. The team designed a display that grouped batches by order and vehicle. Brown calls explaining analytical results in terms that business staff can use the work of a data translator. <a href=\"https://mitsloan.mit.edu/programs/master-business-analytics/mban-teams-win-honors-projects-pearlx-and-pfizer\">MIT Sloan’s project account</a>."
+        ],
+        "mediaKey": "pfizer-results"
+      },
+      {
+        "number": 4,
+        "title": "Explaining the difference",
+        "paragraphs": [
+          "Meeting more demand can change the workload on the shipping floor. In the second week, the proposed schedule met more demand. It also increased the variation in workload. A planner needs both figures to decide whether to use that schedule."
+        ],
+        "mediaKey": null
+      }
+    ],
+    "activity": {
+      "title": "Compare two shipping schedules",
+      "instructions": [
+        "Check the percentages in the students’ poster. For each week, subtract the original demand fulfillment rate from the model’s rate.",
+        "Find the workload chart on the poster. Identify the week with the largest increase in demand fulfillment and check how workload variation changed that week."
+      ],
+      "table": {
+        "headers": [
+          "Week",
+          "Original plan: demand fulfilled",
+          "Model: demand fulfilled"
+        ],
+        "rows": [
+          [
+            "1",
+            "50%",
+            "100%"
+          ],
+          [
+            "2",
+            "52%",
+            "75%"
+          ],
+          [
+            "3",
+            "17%",
+            "100%"
+          ]
+        ]
+      },
+      "formulas": [
+        "Change in percentage points = model percentage − original percentage"
+      ],
+      "answer": "Demand fulfillment rose by <strong>50, 23, and 83 percentage points</strong> in weeks 1, 2, and 3. Week 3 had the largest gain. Its workload variation increased by about <strong>5%</strong> relative to the original plan.",
+      "communication": "Write two sentences for the shipping planner about the week 3 comparison. Identify one check a graduate analyst should make with plant staff before recommending that schedule."
+    },
+    "reading": [
+      {
+        "title": "How to build a data analytics dream team",
+        "url": "https://mitsloan.mit.edu/ideas-made-to-matter/how-to-build-a-data-analytics-dream-team",
+        "note": "Sara Brown, MIT Sloan, 2020. Brown distinguishes the responsibilities of engineers, scientists, and translators."
+      },
+      {
+        "title": "Shipping schedule optimization",
+        "url": "https://mitsloan.mit.edu/sites/default/files/inline-files/Pfizer_Emma_Beal_Amelia_Whitworth.pdf",
+        "note": "Beal and Whitworth’s 2025 project poster includes the data filters, three weekly comparisons, and the proposed scheduling display."
+      },
+      {
+        "title": "MIT Sloan’s account of the Pfizer capstone",
+        "url": "https://mitsloan.mit.edu/programs/master-business-analytics/mban-teams-win-honors-projects-pearlx-and-pfizer",
+        "note": "The Pfizer section identifies the student team, its manufacturing partner, and the proposed pilot in Ireland."
+      }
+    ],
+    "speakerQuestion": "Which parts of a project can one graduate analyst carry out, and when does that analyst need help from staff who use the result?",
+    "transition": "A central data science team and an Arizona mill crew used operating records to test a change in copper production.",
+    "nextSlug": "analytics-organization",
+    "readingLabel": "MIT Sloan · Pfizer shipping schedules"
+  },
+  {
+    "slug": "analytics-organization",
+    "number": 8,
+    "legacyId": "responsibilities",
+    "shortTitle": "Building an effective analytics organization",
+    "title": "Building an effective analytics organization",
+    "subtitle": "A central data science team and an Arizona mill crew used operating records to test a change in copper production.",
+    "domain": "Analytics management",
+    "year": "2018",
+    "readMinutes": 5,
+    "accent": "#925424",
+    "coverMediaKey": "bagdad-site",
+    "hero": {
+      "title": "Bagdad mill, third to fourth quarter of 2018",
+      "metrics": [
+        {
+          "label": "Ore processed per day",
+          "value": "+10%"
+        },
+        {
+          "label": "Copper recovery rate",
+          "value": "+1 point"
+        }
+      ],
+      "note": "McKinsey’s Bagdad case, 2020"
+    },
+    "intro": "McKinsey’s article on analytics organizations describes how a central team can share responsibility with an operating department. At Freeport-McMoRan’s copper mine in Bagdad, Arizona, the data scientists could recommend a change. The people who ran the mill had to decide whether to try it.",
+    "video": {
+      "title": "Freeport-McMoran Bagdad mining operation",
+      "presenter": "Courier Video",
+      "duration": "1 minute 36 seconds",
+      "url": "https://www.youtube.com/watch?v=8U484dMvmd0",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/8U484dMvmd0",
+      "prompt": "The local newspaper filmed the Bagdad mining operation and the surrounding community. The mill processes ore from this mine."
+    },
+    "relatedVideo": {
+      "label": "Freeport-McMoRan’s analytics program",
+      "title": "Freeport-McMoran Copper and Gold Inc. and the AI Journey",
+      "presenter": "Robert Catron, Freeport-McMoRan, and Jamie Milne, World Wide Technology",
+      "duration": "26 minutes 6 seconds",
+      "url": "https://www.youtube.com/watch?v=1Yi-NhQqzx4",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/1Yi-NhQqzx4",
+      "prompt": "Catron discusses the company’s investments in people, technology, and operating practices with Milne."
+    },
+    "sections": [
+      {
+        "number": 1,
+        "title": "Copper production at Bagdad",
+        "paragraphs": [
+          "The Bagdad mill grinds ore and separates copper from the surrounding rock. Its managers wanted to increase copper production with the equipment they already had. General manager Justin Cross brought people from the mine, the mill, and the company’s central data science group onto the same project. <a href=\"https://www.mckinsey.com/industries/metals-and-mining/how-we-help-clients/inside-a-mining-companys-ai-transformation\">Freeport-McMoRan and McKinsey’s case account</a>."
+        ],
+        "mediaKey": "bagdad-site"
+      },
+      {
+        "number": 2,
+        "title": "Operating data and local knowledge",
+        "paragraphs": [
+          "The company had standardized its performance measurements across sites. At Bagdad, the team analyzed three years of mill records. Staff had used one set of operating limits for incoming ore. The team identified seven groups of ore that behaved differently during processing.",
+          "McKinsey describes an arrangement in which a central group provides analytical expertise and staff in each business unit work directly on local decisions. At Bagdad, mill specialists could check whether a proposed setting made sense for the ore they were processing. <a href=\"https://www.mckinsey.com/industries/financial-services/our-insights/building-an-effective-analytics-organization\">Building an effective analytics organization</a>."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 3,
+        "title": "Approval on each shift",
+        "paragraphs": [
+          "The model initially recommended settings twice a day. Metallurgists reviewed them and passed approved changes to shift supervisors and operators. When metallurgists declined a recommendation, they recorded the reason. The team checked those notes against the sensor readings.",
+          "One recommendation called for a higher rate of ore processing. Operators had kept a minimum stockpile so the mill would have enough ore to continue running. Executives approved a trial. Mine and crusher staff coordinated the supply while the mill crew increased the processing rate. <a href=\"https://www.mckinsey.com/industries/metals-and-mining/how-we-help-clients/inside-a-mining-companys-ai-transformation\">The October 2018 trial</a>."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 4,
+        "title": "Reporting mill performance",
+        "paragraphs": [
+          "Throughput measures how much ore the mill processes per day. The recovery rate measures the share of copper in that ore that the mill extracts. Managers used both measurements to assess the trial. Increasing the amount of ore processed could also change the fraction of copper recovered."
+        ],
+        "mediaKey": "bagdad-throughput"
+      }
+    ],
+    "activity": {
+      "title": "Read the production figures",
+      "instructions": [
+        "Compare the daily throughput values for the third and fourth quarters in McKinsey’s exhibit. Express the fourth quarter as an index with the third quarter equal to 100.",
+        "Report the change in recovery rate in percentage points. Identify which workers approved individual recommendations and which workers changed the equipment settings."
+      ],
+      "table": {
+        "headers": [
+          "Measure",
+          "Fourth quarter compared with third quarter, 2018"
+        ],
+        "rows": [
+          [
+            "Ore processed per day",
+            "10% higher"
+          ],
+          [
+            "Copper recovery rate",
+            "1 percentage point higher"
+          ]
+        ]
+      },
+      "formulas": [
+        "Throughput index = 100 × (1 + percentage increase ÷ 100)"
+      ],
+      "answer": "The throughput index increased from <strong>100 to 110</strong>. The copper recovery rate rose by <strong>one percentage point</strong>. Metallurgists selected the recommendations to use. Shift supervisors and operators put the approved settings into practice.",
+      "communication": "Write two sentences for the general manager. Report what happened to throughput and recovery, then identify the operating decision the mill crew made."
+    },
+    "reading": [
+      {
+        "title": "Building an effective analytics organization",
+        "url": "https://www.mckinsey.com/industries/financial-services/our-insights/building-an-effective-analytics-organization",
+        "note": "McKinsey, 2018. The organizational examples explain how central teams and operating departments divide responsibility."
+      },
+      {
+        "title": "Inside a mining company’s AI transformation",
+        "url": "https://www.mckinsey.com/industries/metals-and-mining/how-we-help-clients/inside-a-mining-companys-ai-transformation",
+        "note": "The 2020 case names the Bagdad team and reports quarterly throughput and recovery in its exhibit."
+      },
+      {
+        "title": "Freeport-McMoRan’s Bagdad operation",
+        "url": "https://www.fcx.com/operations/united-states#bagdad",
+        "note": "The company describes the open pit and ore concentrator in its Bagdad overview."
+      }
+    ],
+    "speakerQuestion": "Who can change an operating procedure after an analyst recommends it, and how does the analyst learn what happened?",
+    "transition": "A wireless provider called customers to recommend a different plan. The researchers tracked who switched plans and who left the provider.",
+    "nextSlug": "decision-driven-analytics",
+    "readingLabel": "McKinsey · Freeport-McMoRan’s Bagdad mill"
+  },
+  {
+    "slug": "decision-driven-analytics",
+    "number": 9,
+    "legacyId": "comparing-actions",
+    "shortTitle": "Decisions, not data, should drive analytics programs",
+    "title": "Decisions, not data, should drive analytics programs",
+    "domain": "Customer retention",
+    "readingLabel": "MIT Sloan · Wireless plan recommendations",
+    "subtitle": "A wireless provider called customers to recommend a different plan. The researchers tracked who switched plans and who left the provider.",
+    "intro": "A South American wireless provider could identify customers who regularly spent more than their monthly plans covered. Its managers wanted to know whether recommending a better-fitting plan would persuade those customers to stay.",
+    "coverMediaKey": "value-wireless-churn",
+    "hero": {
+      "title": "Customers who left within three months",
+      "metrics": [
+        {
+          "label": "Usual service",
+          "value": "6.4%"
+        },
+        {
+          "label": "Assigned a recommendation",
+          "value": "10.0%"
+        }
+      ],
+      "note": "Ascarza, Iyengar, and Schleicher, Table 3"
+    },
+    "video": {
+      "title": "Retention Plans: Why Offering Rewards to Stay Can Drive Customers Away",
+      "presenter": "Raghuram Iyengar · Knowledge at Wharton",
+      "duration": "7 minutes 47 seconds",
+      "url": "https://www.youtube.com/watch?v=NJJoyxavj74",
+      "embedUrl": "https://www.youtube.com/embed/NJJoyxavj74",
+      "prompt": "Raghuram Iyengar explains how the provider selected customers for a call and how the researchers measured cancellations."
+    },
+    "sections": [
+      {
+        "number": 1,
+        "title": "The retention decision",
+        "paragraphs": [
+          "Beth Stackpole’s MIT Sloan article describes how to choose data for a decision. Managers first identify the actions available to them. Then they decide which outcome would favor one action over another.",
+          "Researchers Eva Ascarza, Raghuram Iyengar, and Martin Schleicher studied that decision at a wireless provider. Staff could call customers to recommend a different plan or continue their usual service. The provider wanted to retain customers. The researchers therefore needed to measure how many customers left after the campaign."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 2,
+        "title": "Monthly bills and plan changes",
+        "paragraphs": [
+          "The researchers used three months of billing records to identify customers who could have spent less under one of the recommended plans. They randomly assigned eligible customers to a recommendation group or a control group. Customers in the control group continued with their usual service.",
+          "A customer could switch to another plan with the same provider. Table 2 reports those switches for both groups. Each percentage uses the total number of customers assigned to that group."
+        ],
+        "mediaKey": "value-wireless-plans"
+      },
+      {
+        "number": 3,
+        "title": "Customers who left",
+        "paragraphs": [
+          "The researchers separately recorded customers who left the provider within three months. They called this outcome churn. Customers assigned to receive a recommendation changed plans more often. They also left the provider more often.",
+          "The comparison includes everyone assigned to receive a recommendation, including customers who declined the offer. Customers who accepted made that choice themselves. Comparing only those customers with the control group would lose the benefit of random assignment."
+        ],
+        "mediaKey": "value-wireless-churn"
+      },
+      {
+        "number": 4,
+        "title": "The campaign recommendation",
+        "paragraphs": [
+          "A campaign manager could see an increase in plan changes and recommend more calls. A manager responsible for retention needs the cancellation rates for the same groups and the same period."
+        ],
+        "mediaKey": null
+      }
+    ],
+    "activity": {
+      "title": "Compare the two outcomes",
+      "instructions": [
+        "Use the counts to calculate the percentage of customers who switched plans in each group. Check the results against Table 2.",
+        "Subtract the control group’s cancellation rate from the recommendation group’s rate. Use Table 3 to check the two rates and name the group with more cancellations per 100 customers."
+      ],
+      "table": {
+        "headers": [
+          "Campaign assignment",
+          "Customers",
+          "Switched plans",
+          "Left the provider"
+        ],
+        "rows": [
+          [
+            "Usual service",
+            "10,058",
+            "658",
+            "6.4%"
+          ],
+          [
+            "Plan recommendation",
+            "54,089",
+            "5,186",
+            "10.0%"
+          ]
+        ]
+      },
+      "formulas": [
+        "Plan switching rate = customers who switched plans ÷ customers assigned × 100"
+      ],
+      "answer": "Within three months, <strong>9.59%</strong> of the recommendation group and <strong>6.54%</strong> of the control group switched plans. The cancellation rate was <strong>3.6 percentage points higher</strong> in the recommendation group.",
+      "communication": "Write two sentences for the manager responsible for retention. Recommend whether to expand these calls to similar customers and support the decision with the outcome that measures retention."
+    },
+    "reading": [
+      {
+        "title": "Decisions, not data, should drive analytics programs",
+        "url": "https://mitsloan.mit.edu/ideas-made-to-matter/decisions-not-data-should-drive-analytics-programs",
+        "note": "Beth Stackpole reports Bart de Langhe and Stefano Puntoni’s approach to choosing data for a business decision."
+      },
+      {
+        "title": "The Perils of Proactive Churn Prevention",
+        "url": "https://www.hbs.edu/ris/Publication%20Files/ascarza_iyengar_schleicher_jmr_16_5af73070-c916-49ce-8be6-bfc78320823e.pdf#page=5",
+        "note": "Ascarza, Iyengar, and Schleicher report plan changes in Table 2 and cancellations in Table 3."
+      },
+      {
+        "title": "Wharton interview with Raghuram Iyengar",
+        "url": "https://knowledge.wharton.upenn.edu/article/why-retention-plans-dont-work/",
+        "note": "Iyengar describes the recommendation customers received and the results of the field experiment."
+      }
+    ],
+    "speakerQuestion": "When a customer accepts an offer, what do you measure afterward to decide whether to offer it again?",
+    "nextSlug": null,
+    "transition": ""
+  }
+]

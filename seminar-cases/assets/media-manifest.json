@@ -78,5 +78,69 @@
     "caption": "Each percentage compares average annual ticket spending by members at one level with average spending by nonmembers.",
     "sourceUrl": "https://trgarts.com/hubfs/Imported_Blog_Media/trp-member-annual-spend.jpg",
     "sourceLabel": "TRG Arts ticket spending chart"
+  },
+  {
+    "key": "netflix-prize-error",
+    "filename": "netflix-prize-error.png",
+    "alt": "Root mean squared error was 0.9525 stars for Cinematch and 0.8567 stars for the winning entry.",
+    "caption": "Both scores refer to the final set of ratings that Netflix withheld for testing.",
+    "sourceUrl": "https://calteches.library.caltech.edu/4333/1/Netflix.pdf",
+    "sourceLabel": "Netflix Prize scores reproduced in Engineering & Science"
+  },
+  {
+    "key": "nest-gas-use",
+    "filename": "nest-gas-use.png",
+    "alt": "Households used an average of 774 therms a year before installation, including 584 therms for heating. Estimated annual savings were 56 therms per home.",
+    "caption": "The 584 therms used for heating are part of the 774 therms of total gas use. Nest estimated annual savings after accounting for weather and changes in households without a Nest thermostat.",
+    "sourceUrl": "https://efiling.energy.ca.gov/GetDocument.aspx?tn=206563#page=34",
+    "sourceLabel": "Nest Labs, Table 1, California Energy Commission filing"
+  },
+  {
+    "key": "pfizer-records",
+    "filename": "pfizer-batch-records.png",
+    "alt": "The poster traces batch records and orders through eligibility checks to approximately 1,500 available batches and 15 orders per week.",
+    "caption": "Beal and Whitworth documented which batches and orders qualified for their model.",
+    "sourceLabel": "Beal and Whitworth, shipping project poster",
+    "sourceUrl": "https://mitsloan.mit.edu/sites/default/files/inline-files/Pfizer_Emma_Beal_Amelia_Whitworth.pdf"
+  },
+  {
+    "key": "pfizer-results",
+    "filename": "pfizer-weekly-results.png",
+    "alt": "The poster compares demand fulfillment, transit costs, and workload variation for three weeks. Demand fulfillment increased by 50, 23, and 83 percentage points.",
+    "caption": "The authors compared the modeled schedule with historical plans for three weeks in June and July 2025.",
+    "sourceLabel": "Beal and Whitworth, shipping project poster",
+    "sourceUrl": "https://mitsloan.mit.edu/sites/default/files/inline-files/Pfizer_Emma_Beal_Amelia_Whitworth.pdf"
+  },
+  {
+    "key": "bagdad-site",
+    "filename": "bagdad-mine.jpg",
+    "alt": "Terraced benches follow the sides of the open pit at the Bagdad copper mine in Arizona.",
+    "caption": "Freeport-McMoRan’s photograph of the open pit at Bagdad, Arizona.",
+    "sourceLabel": "Freeport-McMoRan, United States operations",
+    "sourceUrl": "https://www.fcx.com/operations/united-states#bagdad"
+  },
+  {
+    "key": "bagdad-throughput",
+    "filename": "bagdad-throughput.png",
+    "alt": "Bar chart of ore processed per day with the third quarter equal to 100 and the fourth quarter equal to 110.",
+    "caption": "The chart expresses the reported 10% increase in daily throughput as an index. The third quarter of 2018 equals 100.",
+    "sourceLabel": "Source data: Freeport-McMoRan and McKinsey",
+    "sourceUrl": "https://www.mckinsey.com/industries/metals-and-mining/how-we-help-clients/inside-a-mining-companys-ai-transformation"
+  },
+  {
+    "key": "value-wireless-plans",
+    "filename": "wireless-plan-switching.png",
+    "alt": "Of 54,089 customers assigned to the campaign, 5,186 switched plans. Of 10,058 control customers, 658 switched.",
+    "caption": "Of 54,089 customers assigned to the campaign, 5,186 switched plans. Of 10,058 control customers, 658 switched.",
+    "sourceUrl": "https://www.hbs.edu/ris/Publication%20Files/ascarza_iyengar_schleicher_jmr_16_5af73070-c916-49ce-8be6-bfc78320823e.pdf#page=5",
+    "sourceLabel": "Ascarza, Iyengar, and Schleicher (2016), Table 2"
+  },
+  {
+    "key": "value-wireless-churn",
+    "filename": "wireless-cancellations.png",
+    "alt": "In three months, 10.0% of the recommendation group and 6.4% of the control group left the provider.",
+    "caption": "In three months, 10.0% of the recommendation group and 6.4% of the control group left the provider.",
+    "sourceUrl": "https://www.hbs.edu/ris/Publication%20Files/ascarza_iyengar_schleicher_jmr_16_5af73070-c916-49ce-8be6-bfc78320823e.pdf#page=6",
+    "sourceLabel": "Ascarza, Iyengar, and Schleicher (2016), Table 3"
   }
 ]
