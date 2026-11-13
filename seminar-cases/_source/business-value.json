@@ -54,8 +54,8 @@
       "id": "staffing",
       "title": "Generalists and specialists",
       "paragraphs": [
-        "Sara Brown describes how organizations divide analytical work. A generalist analyst can prepare data, perform an analysis, and explain the results. On a team of specialists, a data engineer might maintain the records that a data scientist uses to estimate the effect of a campaign.",
-        "One data science graduate at an orchestra could check the ticket records, calculate what percentage of buyers in each group bought another ticket, and discuss the results with the box office manager. If several departments need the same records each week, a data engineer could automate the updates. The analyst would then have more time to investigate differences in attendance."
+        "Sara Brown describes how organizations divide analytical work. A generalist analyst can prepare and analyze the data, then explain the results. On a team of specialists, a data engineer might maintain the records that a data scientist uses to estimate the effect of a campaign.",
+        "One data science graduate at an orchestra could check the ticket records and calculate the percentage of buyers who returned in each group. The graduate could discuss the results with the box office manager. If several departments need the same records each week, a data engineer could automate the updates. The analyst would then have more time to investigate differences in attendance."
       ],
       "source": {
         "label": "Sara Brown, MIT Sloan, How to build a data analytics dream team (2020)",
