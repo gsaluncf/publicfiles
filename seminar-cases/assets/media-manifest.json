@@ -1,0 +1,82 @@
+[
+  {
+    "key": "snow-map",
+    "filename": "snow-original-map-2.jpg",
+    "alt": "Snow’s map shows where the Lambeth Water Company and the Southwark and Vauxhall Water Company served the same neighborhoods.",
+    "caption": "Snow mapped the neighborhoods where the two water companies supplied homes.",
+    "sourceUrl": "https://epi-snow.ph.ucla.edu/Stream3_GrandExperiment_a.html",
+    "sourceLabel": "John Snow, Map 2 (1855), UCLA John Snow Archive"
+  },
+  {
+    "key": "snow-map-modified",
+    "filename": "snow-water-supply-map.jpg",
+    "alt": "Purple marks the neighborhoods where both companies supplied homes on UCLA’s version of Snow’s map.",
+    "caption": "UCLA marked the neighborhoods with both suppliers in purple.",
+    "sourceUrl": "https://epi-snow.ph.ucla.edu/Stream3_GrandExperiment_d.html",
+    "sourceLabel": "UCLA John Snow Archive, modified Map 2"
+  },
+  {
+    "key": "snow-table",
+    "filename": "snow-table-ix.jpg",
+    "alt": "Snow counted 1,263 cholera deaths among the occupants of 40,046 houses supplied by Southwark and Vauxhall. He counted 98 deaths among the occupants of 26,107 houses supplied by Lambeth. UCLA shows the corrected rates in red.",
+    "caption": "UCLA added the red column to show the corrected death rates per 10,000 houses.",
+    "sourceUrl": "https://epi-snow.ph.ucla.edu/graphics/Table9_Grand_Experiment_correction.jpg",
+    "sourceLabel": "John Snow, Table IX (1855), UCLA John Snow Archive"
+  },
+  {
+    "key": "moneyball-figure",
+    "filename": "moneyball-payroll-wins-figure-2.png",
+    "alt": "The chart covers five seasons from 1999 to 2003. Each point represents one team in one season. Oakland’s five points show above-average winning percentages and below-average payrolls.",
+    "caption": "Team payrolls and winning percentages from 1999 to 2003.",
+    "sourceUrl": "https://m-almagro.github.io/case_and_reading_guide_wk1-combined.pdf#page=22",
+    "sourceLabel": "Hakes and Sauer (2006), Figure 2, p. 181"
+  },
+  {
+    "key": "moneyball-table",
+    "filename": "moneyball-salary-table-3.png",
+    "alt": "Table 3 reports the estimated association between salary and each batting statistic from 2000 to 2004. The researchers also accounted for eligibility for free agency and salary arbitration.",
+    "caption": "Hakes and Sauer estimated how player salaries varied with batting performance and contract eligibility.",
+    "sourceUrl": "https://m-almagro.github.io/case_and_reading_guide_wk1-combined.pdf#page=20",
+    "sourceLabel": "Hakes and Sauer (2006), Table 3, p. 179"
+  },
+  {
+    "key": "ebay-figure",
+    "filename": "ebay-nonbrand-figure-3.png",
+    "alt": "Panel A shows that attributed sales fell in the markets where the ads stopped. Panel B shows that the difference in total sales between markets changed little.",
+    "caption": "Sales attributed to ad clicks and differences in total sales between markets.",
+    "sourceUrl": "https://faculty.haas.berkeley.edu/stadelis/BNT_ECMA_rev.pdf#page=10",
+    "sourceLabel": "Blake, Nosko and Tadelis, Figure 3, printed p. 9 / PDF p. 10"
+  },
+  {
+    "key": "ebay-table",
+    "filename": "ebay-roi-table-1.png",
+    "alt": "Table 1 compares estimates of the return on paid search advertising. Column 5 gives the experimental estimate of −63%.",
+    "caption": "Table 1 lists five estimates of the return on paid search advertising.",
+    "sourceUrl": "https://faculty.haas.berkeley.edu/stadelis/BNT_ECMA_rev.pdf#page=11",
+    "sourceLabel": "Blake, Nosko and Tadelis, Table 1, printed p. 10 / PDF p. 11"
+  },
+  {
+    "key": "plymouth-badge",
+    "filename": "plymouth-member-badge.jpg",
+    "alt": "A green enamel membership badge with the theatre’s initials, TRP.",
+    "caption": "The theatre gave pin badges to members during the relaunch.",
+    "sourceUrl": "https://trgarts.com/blog/theatre-royal-plymouths-stunning-membership-success",
+    "sourceLabel": "Campaign photograph published by TRG Arts"
+  },
+  {
+    "key": "plymouth-tiers",
+    "filename": "plymouth-membership-tiers.jpg",
+    "alt": "Annual membership fees ranged from £20 for Supporter to £1,000 or more for Executive. Friend cost £50 and offered a discount on two tickets per show.",
+    "caption": "The theatre listed the annual fee, booking priority, and ticket benefits for each of its six membership levels.",
+    "sourceUrl": "https://trgarts.com/hubfs/Imported_Blog_Media/theatre-royal-plymouth-member-levels.jpg",
+    "sourceLabel": "Theatre Royal Plymouth membership benefits, published by TRG Arts"
+  },
+  {
+    "key": "plymouth-spending",
+    "filename": "plymouth-ticket-spending.jpg",
+    "alt": "Average annual ticket spending above the nonmember average was 134% for Supporter, 210% for Friend, 270% for Associate, 269% for Ambassador, 264% for Director, and 185% for Executive.",
+    "caption": "Each percentage compares average annual ticket spending by members at one level with average spending by nonmembers.",
+    "sourceUrl": "https://trgarts.com/hubfs/Imported_Blog_Media/trp-member-annual-spend.jpg",
+    "sourceLabel": "TRG Arts ticket spending chart"
+  }
+]

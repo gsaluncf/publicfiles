@@ -1,0 +1,456 @@
+[
+  {
+    "slug": "snow",
+    "number": 1,
+    "title": "John Snow’s cholera investigation",
+    "subtitle": "John Snow identified which water company supplied the households he investigated.",
+    "domain": "Public health",
+    "year": "1854",
+    "readMinutes": 5,
+    "accent": "#14665e",
+    "video": {
+      "title": "How the “ghost map” helped end a killer disease",
+      "presenter": "Steven Johnson · TED",
+      "duration": "About 10 minutes",
+      "url": "https://www.ted.com/talks/steven_johnson_how_the_ghost_map_helped_end_a_killer_disease",
+      "embedUrl": "https://embed.ted.com/talks/steven_johnson_how_the_ghost_map_helped_end_a_killer_disease",
+      "prompt": "Steven Johnson describes Snow’s investigation of the Broad Street pump. Snow conducted a separate investigation of the two water companies in South London."
+    },
+    "intro": "John Snow investigated a cholera outbreak in South London in 1854. He compared death rates among households that received water from two different companies.",
+    "sections": [
+      {
+        "number": 1,
+        "title": "London’s water suppliers",
+        "paragraphs": [
+          "The Lambeth Water Company moved its intake upstream to a cleaner part of the Thames in 1852. The Southwark and Vauxhall Water Company continued to draw water from a part of the river polluted by sewage. One house could receive water from Lambeth and the house next door from Southwark and Vauxhall. <a href=\"https://epi-snow.ph.ucla.edu/Stream3_GrandExperiment_d.html\">UCLA’s Snow archive</a>."
+        ],
+        "mediaKey": "snow-map"
+      },
+      {
+        "number": 2,
+        "title": "Identifying the water supplier",
+        "paragraphs": [
+          "Snow visited the addresses in the death records. He asked residents which company supplied their water. He checked their answers against receipts for water payments. He also tested water samples. Water from Southwark and Vauxhall contained more salt than water from Lambeth.",
+          "Some houses had no number. Others shared a number or had been renumbered. When a patient fell ill at home and died in an institution, Snow needed the address where the illness began. <a href=\"https://www.gutenberg.org/cache/epub/66507/pg66507-images.html\">Snow’s 1856 account</a>."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 3,
+        "title": "Cholera deaths per 10,000 houses",
+        "paragraphs": [
+          "Snow counted cholera deaths among each company’s customers during the first seven weeks of the outbreak. Southwark and Vauxhall supplied more houses than Lambeth. Snow calculated deaths per 10,000 houses so he could compare the two groups. <a href=\"https://epi-snow.ph.ucla.edu/graphics/Table9_Grand_Experiment_correction.jpg\">Table IX</a>."
+        ],
+        "mediaKey": "snow-table"
+      },
+      {
+        "number": 4,
+        "title": "Comparing death rates",
+        "paragraphs": [],
+        "mediaKey": null
+      }
+    ],
+    "activity": {
+      "title": "Compare the two suppliers",
+      "instructions": [
+        "Calculate deaths per 10,000 houses for each supplier. Divide the Southwark and Vauxhall rate by the Lambeth rate.",
+        "Create a bar chart with one bar per supplier. Label it “Cholera deaths per 10,000 houses, first seven weeks of the 1854 epidemic.”",
+        "Check the counts against Table IX. Identify one way Snow verified which company supplied a home."
+      ],
+      "table": {
+        "headers": [
+          "Water supplier",
+          "Houses supplied",
+          "Cholera deaths in the first seven weeks"
+        ],
+        "rows": [
+          [
+            "Southwark and Vauxhall",
+            "40,046",
+            "1,263"
+          ],
+          [
+            "Lambeth",
+            "26,107",
+            "98"
+          ]
+        ]
+      },
+      "formulas": [
+        "Rate = deaths ÷ houses × 10,000",
+        "Rate ratio = Southwark and Vauxhall rate ÷ Lambeth rate"
+      ],
+      "answer": "Southwark and Vauxhall had <strong>315.4 cholera deaths per 10,000 houses</strong>. Lambeth had <strong>37.5 per 10,000 houses</strong>. The death rate among Southwark and Vauxhall households was <strong>8.4 times</strong> the rate among Lambeth households.",
+      "communication": "Write two sentences for a public health committee. Identify which households should receive a safer water supply first. Use the death rates to explain why."
+    },
+    "reading": [
+      {
+        "title": "Snow’s account of the household investigation",
+        "url": "https://www.gutenberg.org/cache/epub/66507/pg66507-images.html",
+        "note": "Read the passage beginning “I took great care” and the following paragraphs."
+      },
+      {
+        "title": "The South London comparison and Table IX",
+        "url": "https://epi-snow.ph.ucla.edu/Stream3_GrandExperiment_d.html",
+        "note": "UCLA reproduces Snow’s table and identifies a rounding correction."
+      }
+    ],
+    "speakerQuestion": "How do analysts check whether records from different organizations refer to the same person, place, or event?",
+    "transition": "Miguel Tejada had a higher batting average than Scott Hatteberg. Hatteberg had the higher on-base percentage.",
+    "nextSlug": "moneyball"
+  },
+  {
+    "slug": "moneyball",
+    "number": 2,
+    "title": "Moneyball and player salaries",
+    "subtitle": "Oakland’s managers used batting records to find players they could afford to sign.",
+    "domain": "Sports analytics",
+    "year": "2002",
+    "readMinutes": 5,
+    "accent": "#a45b25",
+    "video": {
+      "title": "Video 1: The Story of Moneyball",
+      "presenter": "Dimitris Bertsimas · MIT OpenCourseWare",
+      "duration": "7 minutes 30 seconds",
+      "url": "https://learn.mit.edu/video/8308/video-1-the-story-of-moneyball?playlist=8277",
+      "embedUrl": "https://www.youtube.com/embed/WacNWdXhvVM",
+      "prompt": "Dimitris Bertsimas explains how Oakland’s managers evaluated hitters on a limited budget."
+    },
+    "intro": "The Oakland Athletics had a limited budget for player salaries. The team’s managers looked for affordable hitters who reached base often.",
+    "sections": [
+      {
+        "number": 1,
+        "title": "Batting records and team payrolls",
+        "paragraphs": [
+          "Oakland’s managers used on-base percentage to measure how often a hitter reached base. A batter who walks reaches first base. Oakland’s coaches encouraged hitters to let pitches outside the strike zone go by. Economists Jahn Hakes and Raymond Sauer compared payrolls and winning percentages across teams. From 1999 to 2003, Oakland won a higher share of its games than many teams with larger payrolls. <a href=\"https://m-almagro.github.io/case_and_reading_guide_wk1-combined.pdf#page=22\">Hakes and Sauer, pp. 181 to 182</a>."
+        ],
+        "mediaKey": "moneyball-payroll"
+      },
+      {
+        "number": 2,
+        "title": "Salary negotiations",
+        "paragraphs": [
+          "A player and his team generally agree on a salary before the season begins. Hakes and Sauer compared each player’s salary with his batting statistics from the previous season. They also accounted for whether he could negotiate with other teams as a free agent or seek salary arbitration. <a href=\"https://m-almagro.github.io/case_and_reading_guide_wk1-combined.pdf#page=18\">Salary analysis, pp. 177 to 178</a>."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 3,
+        "title": "Batting average and on-base percentage",
+        "paragraphs": [
+          "Batting average measures hits per at-bat. On-base percentage (OBP) counts three ways a batter can reach base. Its numerator includes hits, walks, and hit-by-pitches. Its denominator includes at-bats, walks, hit-by-pitches, and sacrifice flies.",
+          "The 2002 records for Scott Hatteberg and Miguel Tejada list at-bats (AB), hits (H), walks (BB), hit-by-pitches (HBP), and sacrifice flies (SF). <a href=\"https://www.mlb.com/glossary/standard-stats/on-base-percentage\">Major League Baseball’s definition of on-base percentage</a>."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 4,
+        "title": "On-base percentage and salary",
+        "paragraphs": [
+          "Hakes and Sauer found a statistically significant association between higher on-base percentages and higher salaries in 2004. The annual estimates for 2000 through 2003 were not statistically significant. <a href=\"https://m-almagro.github.io/case_and_reading_guide_wk1-combined.pdf#page=20\">Table 3 and explanation, pp. 179 to 180</a>."
+        ],
+        "mediaKey": "moneyball-table"
+      }
+    ],
+    "activity": {
+      "title": "Compare Hatteberg and Tejada",
+      "instructions": [
+        "Calculate each player’s batting average and on-base percentage for the 2002 regular season.",
+        "Name the player with the higher batting average and the player with the higher on-base percentage. Use the batting records to explain the difference.",
+        "Check both results against the 2002 statistics published by Major League Baseball (MLB)."
+      ],
+      "table": {
+        "headers": [
+          "Player",
+          "AB",
+          "H",
+          "BB",
+          "HBP",
+          "SF"
+        ],
+        "rows": [
+          [
+            "Scott Hatteberg",
+            "492",
+            "138",
+            "68",
+            "6",
+            "1"
+          ],
+          [
+            "Miguel Tejada",
+            "662",
+            "204",
+            "38",
+            "11",
+            "4"
+          ]
+        ]
+      },
+      "formulas": [
+        "Batting average = H ÷ AB",
+        "On-base percentage = (H + BB + HBP) ÷ (AB + BB + HBP + SF)"
+      ],
+      "answer": "Tejada had the higher batting average (<strong>.308</strong> compared with Hatteberg’s <strong>.280</strong>). Hatteberg had the higher on-base percentage (<strong>.374</strong> compared with Tejada’s <strong>.354</strong>).",
+      "communication": "Explain to a player in one sentence how a walk affects the two statistics. Write two sentences for a general manager about what else to check before signing a player. Address the player’s salary, contract terms, and fielding position."
+    },
+    "reading": [
+      {
+        "title": "An Economic Evaluation of the Moneyball Hypothesis",
+        "url": "https://m-almagro.github.io/case_and_reading_guide_wk1-combined.pdf#page=20",
+        "note": "Hakes and Sauer discuss salaries on printed pages 179 and 180 and coaching on page 182 (PDF pages 20, 21, and 23)."
+      },
+      {
+        "title": "Scott Hatteberg · MLB player record",
+        "url": "https://www.mlb.com/player/scott-hatteberg-115608",
+        "note": "The Stats tab lists Hatteberg’s batting record by season."
+      },
+      {
+        "title": "Miguel Tejada · MLB player record",
+        "url": "https://www.mlb.com/player/miguel-tejada-123173",
+        "note": "The Stats tab lists Tejada’s batting record by season."
+      }
+    ],
+    "speakerQuestion": "How would a baseball analyst explain the same on-base percentage to a hitter, a coach, and a general manager?",
+    "transition": "A shopper might click a search ad even after deciding to buy. Researchers at eBay tested how many additional sales the ads generated.",
+    "nextSlug": "ebay"
+  },
+  {
+    "slug": "ebay",
+    "number": 3,
+    "title": "eBay and paid search advertising",
+    "subtitle": "Researchers at eBay compared sales in markets where search ads ran with sales in markets where the ads stopped.",
+    "domain": "Marketing analytics",
+    "year": "2014",
+    "readMinutes": 5,
+    "accent": "#5655a5",
+    "video": {
+      "title": "Study Finds Paid Search Ads Don’t Always Pay Off",
+      "presenter": "Steven Tadelis · UC Berkeley Haas",
+      "duration": "5 minutes 29 seconds",
+      "url": "https://www.youtube.com/watch?v=rneZwbvvmcg",
+      "embedUrl": "https://www.youtube.com/embed/rneZwbvvmcg",
+      "prompt": "Steven Tadelis explains what happened when eBay stopped paying for some search advertisements."
+    },
+    "intro": "eBay paid Google when a shopper clicked one of its search ads. Researchers wanted to know how much the ads increased total sales.",
+    "sections": [
+      {
+        "number": 1,
+        "title": "Sales after an ad click",
+        "paragraphs": [
+          "The researchers counted a purchase as an attributed sale if the shopper bought something within 24 hours of clicking a Google search ad. The researchers called search terms without the name “eBay” non-brand keywords. They stopped the ads in 68 markets and kept them running in 142 comparison markets. <a href=\"https://faculty.haas.berkeley.edu/stadelis/BNT_ECMA_rev.pdf#page=9\">Blake, Nosko, and Tadelis, pp. 8 to 10</a>."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 2,
+        "title": "Searches for eBay",
+        "paragraphs": [
+          "The researchers ran a separate test for shoppers who included “eBay” in their search. When the paid ads stopped, shoppers reached eBay through unpaid search results instead. The increase in visits from unpaid search results accounted for nearly all the visits lost when the ads stopped. A shopper who already planned to buy could click an ad and make a purchase that counted as an attributed sale. <a href=\"https://newsroom.haas.berkeley.edu/research/study-finds-paid-search-ads-dont-always-pay-4/\">Berkeley Haas account</a>."
+        ],
+        "mediaKey": null
+      },
+      {
+        "number": 3,
+        "title": "Attributed sales and total sales",
+        "paragraphs": [
+          "Figure 3 shows the results for non-brand keywords. In Panel A, sales attributed to ad clicks fell by more than 72% in markets where the ads stopped. Panel B shows how total sales differed between markets with and without the ads. The researchers estimated that the ads increased total sales by 0.66%. The 95% confidence interval ranged from −0.42% to 1.74%. <a href=\"https://faculty.haas.berkeley.edu/stadelis/BNT_ECMA_rev.pdf#page=10\">Figure 3 and results</a>."
+        ],
+        "mediaKey": "ebay-figure"
+      },
+      {
+        "number": 4,
+        "title": "Return on investment",
+        "paragraphs": [
+          "The researchers compared the additional revenue from the ads with the cost of running them. They estimated a return on investment (ROI) of 1,632% using observational data with statistical controls. They estimated a return of −63% using the market experiment. <a href=\"https://faculty.haas.berkeley.edu/stadelis/BNT_ECMA_rev.pdf#page=11\">Table 1</a>.",
+          "The ads attracted new customers and increased purchases among people who shopped at eBay infrequently. The researchers found no statistically significant change in purchases among frequent customers. <a href=\"https://lilienpracticeprizevideos.org/ebay/\">ISMS case summary</a>."
+        ],
+        "mediaKey": "ebay-table"
+      }
+    ],
+    "activity": {
+      "title": "Calculate the return on investment",
+      "instructions": [
+        "Mark the test period in Figure 3. Describe what happened to attributed sales and total sales during that period.",
+        "Use the values from column 5 of Table 1 to calculate ROI. Calculate the additional revenue per dollar spent on ads."
+      ],
+      "table": {
+        "headers": [
+          "Input",
+          "Published value"
+        ],
+        "rows": [
+          [
+            "Estimated sales effect",
+            "0.00659"
+          ],
+          [
+            "Revenue",
+            "$2,880.64 million"
+          ],
+          [
+            "Advertising costs",
+            "$51 million"
+          ]
+        ]
+      },
+      "formulas": [
+        "ROI = [0.00659 ÷ (1 + 0.00659)] × (2,880.64 ÷ 51) − 1"
+      ],
+      "answer": "The estimated ROI was <strong>−63%</strong>. The researchers estimated that each dollar spent on ads generated about <strong>$0.37 in additional revenue</strong>.",
+      "communication": "Recommend how the marketing director and finance manager should change the search advertising budget. Use the estimated revenue per dollar spent to explain which ads, if any, they should continue to buy."
+    },
+    "reading": [
+      {
+        "title": "Consumer Heterogeneity and Paid Search Effectiveness",
+        "url": "https://faculty.haas.berkeley.edu/stadelis/BNT_ECMA_rev.pdf#page=9",
+        "note": "Blake, Nosko, and Tadelis define attributed sales and report the results in Figure 3 and Table 1 (printed pages 8 to 10, PDF pages 9 to 11)."
+      },
+      {
+        "title": "eBay · ISMS Practice Prize case",
+        "url": "https://lilienpracticeprizevideos.org/ebay/",
+        "note": "The researchers compare purchases by new, infrequent, and frequent customers."
+      }
+    ],
+    "speakerQuestion": "A campaign report shows a positive return. What would the marketing director and finance manager check before increasing the budget?",
+    "transition": "Theatre Royal Plymouth used ticket purchases to select customers for a membership offer. The theatre’s consultant, TRG Arts, compared ticket spending by members and nonmembers.",
+    "nextSlug": "plymouth"
+  },
+  {
+    "slug": "plymouth",
+    "number": 4,
+    "title": "Theatre Royal Plymouth’s membership campaign",
+    "subtitle": "Theatre staff used each customer’s ticket purchases to choose a membership offer.",
+    "domain": "Performing arts marketing",
+    "year": "2021",
+    "readMinutes": 5,
+    "coverMediaKey": "plymouth-badge",
+    "hero": {
+      "title": "Membership relaunch",
+      "metrics": [
+        {
+          "label": "New members",
+          "value": "1,106"
+        },
+        {
+          "label": "Revenue during the relaunch",
+          "value": "£61,662"
+        }
+      ],
+      "note": "July 5 to August 31, 2021 · TRG Arts"
+    },
+    "intro": "The membership staff at Theatre Royal Plymouth wanted more ticket buyers to join. They used each customer’s booking history to choose a membership level and explain its benefits.",
+    "video": {
+      "title": "TRP Stories: Joan Lucas",
+      "presenter": "Theatre Royal Plymouth",
+      "duration": "30 seconds",
+      "url": "https://www.youtube.com/watch?v=ePwMBLHse5k",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/ePwMBLHse5k",
+      "prompt": "Joan Lucas is a theatre member who pays for local children to attend performances. She explains why she gives."
+    },
+    "relatedVideo": {
+      "label": "Seattle Symphony audience research",
+      "title": "Can the City's Boom Mean New Audiences for the Seattle Symphony?",
+      "presenter": "The Wallace Foundation",
+      "duration": "9 minutes 47 seconds",
+      "url": "https://www.youtube.com/watch?v=uoYBCsvEmjI",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/uoYBCsvEmjI",
+      "prompt": "Seattle Symphony staff offered tickets through local employers, residential buildings, and hotels. The Wallace Foundation reported $177,000 in sales to new buyers and people who had last bought a ticket more than a year earlier. Which purchase records would show whether those buyers returned?"
+    },
+    "sections": [
+      {
+        "number": 1,
+        "title": "Ticket buyers and donors",
+        "paragraphs": [
+          "Theatre staff recorded ticket purchases, attendance, and donations in Tessitura, the theatre’s customer database. Membership support officer Quinn Corvyn and colleagues grouped customers by how often they attended, how much they spent on tickets, and whether they donated. Staff used those groups to select people for a membership offer. <a href=\"https://www.tessitura.com/items/articles/success-stories/theatre-royal-plymouth-triples-memberships\">Tessitura’s interview with Corvyn</a>."
+        ],
+        "mediaKey": "plymouth-badge"
+      },
+      {
+        "number": 2,
+        "title": "The membership offer",
+        "paragraphs": [
+          "Staff showed each customer two amounts in the invitation. One was the customer’s ticket spending over the previous year. The other was the annual fee for the membership level staff recommended. <a href=\"https://www.tessitura.com/items/articles/success-stories/theatre-royal-plymouth-triples-memberships\">Tessitura’s account of the offer</a>.",
+          "The benefits table lists a £20 Supporter membership and a £50 Friend membership. Both offered early booking. Friend members could also get a discount on two tickets per show. A customer could compare the £50 fee with the discounts available on the tickets they usually bought. <a href=\"https://trgarts.com/blog/theatre-royal-plymouths-stunning-membership-success\">Theatre membership benefits published by TRG Arts</a>."
+        ],
+        "mediaKey": "plymouth-tiers"
+      },
+      {
+        "number": 3,
+        "title": "Members’ ticket spending",
+        "paragraphs": [
+          "Development manager Erica Vitai led the 2021 relaunch. The theatre invited customers to join by mail and included a reply slip. From July 5 to August 31, 1,106 people joined. The theatre recorded £61,662 in revenue during that period. <a href=\"https://trgarts.com/blog/theatre-royal-plymouths-stunning-membership-success\">TRG Arts’ account of the relaunch</a>.",
+          "TRG Arts also compared average annual ticket spending across membership levels. Friend members spent 210% more than nonmembers. Staff had used earlier ticket purchases to choose whom to contact. To estimate whether invitations led to additional purchases, staff could compare similar customers who received an invitation with customers who did not."
+        ],
+        "mediaKey": "plymouth-spending"
+      },
+      {
+        "number": 4,
+        "title": "Reporting campaign results",
+        "paragraphs": [
+          "Tessitura published Corvyn’s account of membership growth in March 2026. Membership started at about 1,500, peaked at 5,650, and stood at about 4,800 when he spoke. Each figure counts everyone who held a membership at the time. The 2021 relaunch figure counts only the 1,106 people who joined between July 5 and August 31. <a href=\"https://www.tessitura.com/items/articles/success-stories/theatre-royal-plymouth-triples-memberships\">Corvyn’s membership figures</a>.",
+          "The theatre spent about £8,000 on the relaunch campaign. TRG Arts reported this amount separately from the cost of redesigning the program and buying materials. <a href=\"https://trgarts.com/blog/theatre-royal-plymouths-stunning-membership-success\">TRG Arts’ campaign figures</a>."
+        ],
+        "mediaKey": null
+      }
+    ],
+    "activity": {
+      "title": "Campaign costs and ticket spending",
+      "instructions": [
+        "Divide the reported campaign cost by the number of new members. State which costs the calculation excludes.",
+        "Find the Friend membership level in the ticket spending chart. Express average spending by Friend members as a multiple of the nonmember average."
+      ],
+      "table": {
+        "headers": [
+          "Measure",
+          "Published figure"
+        ],
+        "rows": [
+          [
+            "Reported campaign cost",
+            "About £8,000"
+          ],
+          [
+            "New members during the relaunch",
+            "1,106"
+          ],
+          [
+            "Friend members’ average ticket spending compared with nonmembers",
+            "210% higher"
+          ]
+        ]
+      },
+      "formulas": [
+        "Campaign cost per new member = reported campaign cost ÷ new members",
+        "Spending multiple = 1 + percentage difference ÷ 100"
+      ],
+      "answer": "The reported campaign cost was about <strong>£7.23 per new member</strong>, excluding redesign and materials. Friend members spent <strong>3.1 times</strong> the nonmember average on tickets.",
+      "communication": "Write two sentences for the marketing director. Report one measured result. Recommend how staff could test whether sending an invitation increases ticket purchases among frequent buyers."
+    },
+    "reading": [
+      {
+        "title": "The membership campaign",
+        "url": "https://www.tessitura.com/items/articles/success-stories/theatre-royal-plymouth-triples-memberships",
+        "note": "Quinn Corvyn describes how staff selected customers and what each customer saw in the offer."
+      },
+      {
+        "title": "Membership fees, ticket spending, and campaign costs",
+        "url": "https://trgarts.com/blog/theatre-royal-plymouths-stunning-membership-success",
+        "note": "TRG Arts published the membership benefits, the spending chart, and the figures for July and August 2021."
+      },
+      {
+        "title": "TRP Stories: Joan Lucas",
+        "url": "https://theatreroyal.com/press/stories/joan/",
+        "note": "Lucas describes the fund she set up to pay for children’s tickets."
+      },
+      {
+        "title": "Seattle Symphony audience research",
+        "url": "https://wallacefoundation.org/resource/article/can-citys-boom-mean-new-audiences-seattle-symphony",
+        "note": "The Wallace Foundation reports ticket sales from outreach to local employers and compares renewal rates among new subscribers."
+      }
+    ],
+    "speakerQuestion": "How would an orchestra check whether a follow-up invitation brought first-time ticket buyers back for a second concert?",
+    "transition": "",
+    "nextSlug": null
+  }
+]

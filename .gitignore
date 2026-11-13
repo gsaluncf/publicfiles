@@ -39,3 +39,7 @@
 # Allow the knee-mri-kaggle course notebooks
 !knee-mri-kaggle/
 !knee-mri-kaggle/**
+
+# Data communication seminar cases
+!seminar-cases/
+!seminar-cases/**
