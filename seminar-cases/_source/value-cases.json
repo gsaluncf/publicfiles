@@ -64,7 +64,7 @@
         "number": 4,
         "title": "The engineering decision",
         "paragraphs": [
-          "Netflix engineers used two methods from an earlier stage of the contest in the recommendation service. They also tested techniques from the final winning entry. The engineers judged the additional improvement too small to justify the work required to put those techniques into service. <a href=\"https://netflixtechblog.com/netflix-recommendations-beyond-the-5-stars-part-1-55838468f429\">Netflix engineers’ explanation</a>."
+          "Netflix engineers put two methods from an earlier stage of the contest into the recommendation service. They also tested techniques from the final winning entry. The engineers judged the additional improvement too small to justify the work required to put those techniques into service. <a href=\"https://netflixtechblog.com/netflix-recommendations-beyond-the-5-stars-part-1-55838468f429\">Netflix engineers’ explanation</a>."
         ],
         "mediaKey": null
       }
@@ -94,7 +94,7 @@
       "formulas": [
         "Percentage reduction in error = (Cinematch error − winning error) ÷ Cinematch error × 100"
       ],
-      "answer": "The error fell by <strong>0.0958 stars</strong>, a reduction of about <strong>10.06%</strong>. To estimate the effect on subscription revenue, Netflix could compare renewals among subscribers who received the two sets of recommendations.",
+      "answer": "The error fell by <strong>0.0958 stars</strong>, a reduction of about <strong>10.06%</strong>. Netflix could randomly assign subscribers to receive recommendations from Cinematch or the winning model. It could then compare subscription revenue per subscriber.",
       "communication": "Write two sentences for a product manager. Report the improvement in prediction error and name the evidence the manager would need to justify the engineering cost."
     },
     "reading": [
@@ -120,7 +120,7 @@
       }
     ],
     "speakerQuestion": "When has a more accurate prediction justified changing a service, and how did the team measure the benefit to customers?",
-    "transition": "Nest used thermostat settings to schedule heating and utility bills to estimate how much gas households saved.",
+    "transition": "The Nest thermostat used temperature adjustments to schedule heating. Nest researchers examined utility bills to estimate household gas savings.",
     "nextSlug": "value-of-big-data",
     "readingLabel": "Davenport and Harris · Netflix movie recommendations"
   },
@@ -130,7 +130,7 @@
     "title": "The value of Big Data",
     "shortTitle": "The value of Big Data",
     "legacyId": "cost-of-analysis",
-    "subtitle": "Nest used thermostat settings to schedule heating and utility bills to estimate how much gas households saved.",
+    "subtitle": "The Nest thermostat used temperature adjustments to schedule heating. Nest researchers examined utility bills to estimate household gas savings.",
     "domain": "Home energy",
     "year": "2013 to 2015",
     "readMinutes": 5,
@@ -150,7 +150,7 @@
       ],
       "note": "Nest’s 2015 analysis of 735 homes with gas heating."
     },
-    "intro": "Each time a resident adjusted a Nest Learning Thermostat, the thermostat recorded the temperature setting and the time. Nest used those adjustments to schedule heating. To find out whether customers saved energy, researchers needed household utility bills.",
+    "intro": "Each time a resident adjusted a Nest Learning Thermostat, the thermostat recorded the temperature setting and the time. Nest used those adjustments to schedule heating. To find out whether customers saved energy, Nest researchers needed household utility bills.",
     "video": {
       "title": "Energy-saving features on your thermostat",
       "presenter": "Google Help",
@@ -164,7 +164,7 @@
         "number": 1,
         "title": "Temperature settings",
         "paragraphs": [
-          "Rasmus Wegener and Velu Sinha use Nest to explain what a company funds when it invests in analytics. They describe the need for reliable data, analytical tools, people with the skills to use them, and management practices that put results into use. Nest engineers combined temperature adjustments with information about the weather and the home to improve thermostat settings. <a href=\"https://www.bain.com/insights/the-value-of-big-data/\">Bain’s account of Nest</a>."
+          "Rasmus Wegener and Velu Sinha use Nest to explain what a company needs when it invests in analytics. They describe the need for reliable data, analytical tools, people with the skills to use them, and management practices that put results to use. Nest engineers combined temperature adjustments with information about the weather and the home to improve thermostat settings. <a href=\"https://www.bain.com/insights/the-value-of-big-data/\">Bain’s account of Nest</a>."
         ],
         "mediaKey": null
       },
@@ -172,7 +172,7 @@
         "number": 2,
         "title": "A household heating schedule",
         "paragraphs": [
-          "On early Nest Learning Thermostats, a resident could turn the dial to set a temperature. With Auto-Schedule enabled, the thermostat used repeated adjustments to update the heating schedule. For example, a similar change on two successive weekdays could set the temperature for that time on all five weekdays. The resident could change the setting again. <a href=\"https://support.google.com/googlehome/answer/9247510?hl=en\">Google Nest’s description of Auto-Schedule</a>."
+          "On early Nest Learning Thermostats, a resident could turn the dial to set a temperature. With Auto-Schedule enabled, the thermostat used repeated adjustments to update the heating schedule. For example, the thermostat could use similar adjustments on two successive weekdays to set the temperature for that time on all five weekdays. The resident could change the setting again. <a href=\"https://support.google.com/googlehome/answer/9247510?hl=en\">Google Nest’s description of Auto-Schedule</a>."
         ],
         "mediaKey": null
       },
@@ -181,7 +181,7 @@
         "title": "Gas bills before and after installation",
         "paragraphs": [
           "In 2015, Nest researchers published an analysis of gas use in 735 homes. They matched utility records to the installation date and accounted for changes in outdoor temperature. They also examined bills from households without a Nest thermostat to account for changes in gas use over the same period. <a href=\"https://efiling.energy.ca.gov/GetDocument.aspx?tn=206563#page=33\">Nest’s study methods</a>.",
-          "Before installation, each home used an average of 774 therms of natural gas per year. A therm is a unit of energy. The researchers estimated that heating accounted for 584 of those therms. They estimated average annual savings of 56 therms per home after installation."
+          "A therm is a unit of energy. Before installation, each home used an average of 774 therms of natural gas per year. The researchers estimated that heating accounted for 584 of those therms. They estimated average annual savings of 56 therms per home after installation."
         ],
         "mediaKey": "nest-gas-use"
       },
@@ -223,8 +223,8 @@
       "formulas": [
         "Savings percentage = estimated annual gas savings ÷ annual gas use before installation × 100"
       ],
-      "answer": "The estimated savings were <strong>9.6% of gas used for heating</strong> and <strong>7.2% of total gas use</strong>. Both percentages describe the same estimated saving of 56 therms per year.",
-      "communication": "Write one sentence for a homeowner that reports the heating result. In a second sentence, explain what price information the homeowner needs to convert 56 therms into an estimate of annual dollar savings."
+      "answer": "The estimated savings were <strong>9.6% of gas used for heating</strong> and <strong>7.2% of total gas use</strong>. Both percentages describe the same estimated savings of 56 therms per year.",
+      "communication": "Write one sentence that reports the heating result for a homeowner. In a second sentence, explain what price information the homeowner needs to convert 56 therms into an estimate of annual dollar savings."
     },
     "reading": [
       {
@@ -274,7 +274,7 @@
       ],
       "note": "Beal and Whitworth, project poster, 2025"
     },
-    "intro": "Sara Brown’s MIT Sloan article describes the work of data engineers, data scientists, and data translators. A later project at Pfizer shows why even a small team needs these skills. Shipping planners needed a schedule that assigned each available batch of medicine to a truck.",
+    "intro": "Sara Brown’s MIT Sloan article describes the work of data engineers, data scientists, and data translators. Two MIT students later worked with Pfizer shipping planners to prepare records, test schedules, and explain the results. Shipping planners needed a schedule that assigned each available batch of medicine to a truck.",
     "video": {
       "title": "MIT Sloan: MBAn Capstone Project | 2017",
       "presenter": "MIT Sloan School of Management Admissions",
@@ -288,7 +288,7 @@
         "number": 1,
         "title": "The shipping decision",
         "paragraphs": [
-          "Pfizer planners used spreadsheets to assign batches of medicine to trucks. Each assignment needed a destination and shipping date. Some destinations accepted deliveries only on certain days. Some products required a truck equipped for dry ice.",
+          "Shipping planners used spreadsheets to assign batches of medicine to trucks. Each assignment needed a destination and shipping date. Some destinations accepted deliveries only on certain days. Some products required a truck equipped for dry ice.",
           "Emma Beal and Amelia Whitworth worked with Pfizer’s digital manufacturing team to build a scheduling tool. Their project poster names both students, a faculty advisor, and three company advisors. <a href=\"https://mitsloan.mit.edu/sites/default/files/inline-files/Pfizer_Emma_Beal_Amelia_Whitworth.pdf\">Project poster</a>."
         ],
         "mediaKey": null
@@ -298,7 +298,7 @@
         "title": "Preparing the records",
         "paragraphs": [
           "A batch record tells a planner what the plant has produced. An order tells the planner what a customer needs. A batch could appear in the production records while staff were still checking its quality.",
-          "The team filtered the batch records for medicine ready to ship and the order records for demand due that week. Brown describes preparing data for use by others as part of a data engineer’s work. A generalist can do this work alongside the analysis. <a href=\"https://mitsloan.mit.edu/ideas-made-to-matter/how-to-build-a-data-analytics-dream-team\">Sara Brown on analytics roles</a>."
+          "The team filtered the batch records for medicine ready to ship and the order records for demand due that week. Brown describes preparing data for use by others as part of a data engineer’s work. A generalist analyst can prepare the records and analyze them. <a href=\"https://mitsloan.mit.edu/ideas-made-to-matter/how-to-build-a-data-analytics-dream-team\">Sara Brown on analytics roles</a>."
         ],
         "mediaKey": "pfizer-records"
       },
@@ -307,7 +307,7 @@
         "title": "Testing the schedule",
         "paragraphs": [
           "Beal and Whitworth used three weeks of historical orders to compare their proposed schedules with the original plans. They measured how much demand each schedule met, how much shipping cost, and how evenly the work was distributed.",
-          "A shipping planner also needed to see which truck would carry a particular order. The team designed a display that grouped batches by order and vehicle. Brown calls explaining analytical results in terms that business staff can use the work of a data translator. <a href=\"https://mitsloan.mit.edu/programs/master-business-analytics/mban-teams-win-honors-projects-pearlx-and-pfizer\">MIT Sloan’s project account</a>."
+          "A shipping planner also needed to see which truck would carry a particular order. The team designed a display that grouped batches by order and vehicle. Brown says a data translator explains analytical results in terms that business staff can use. <a href=\"https://mitsloan.mit.edu/programs/master-business-analytics/mban-teams-win-honors-projects-pearlx-and-pfizer\">MIT Sloan’s project account</a>."
         ],
         "mediaKey": "pfizer-results"
       },
@@ -370,7 +370,7 @@
       {
         "title": "MIT Sloan’s account of the Pfizer capstone",
         "url": "https://mitsloan.mit.edu/programs/master-business-analytics/mban-teams-win-honors-projects-pearlx-and-pfizer",
-        "note": "The Pfizer section identifies the student team, its manufacturing partner, and the proposed pilot in Ireland."
+        "note": "The Pfizer section identifies the student team, the manufacturing partner, and the proposed pilot in Ireland."
       }
     ],
     "speakerQuestion": "Which parts of a project can one graduate analyst carry out, and when does that analyst need help from staff who use the result?",
@@ -427,7 +427,7 @@
         "number": 1,
         "title": "Copper production at Bagdad",
         "paragraphs": [
-          "The Bagdad mill grinds ore and separates copper from the surrounding rock. Its managers wanted to increase copper production with the equipment they already had. General manager Justin Cross brought people from the mine, the mill, and the company’s central data science group onto the same project. <a href=\"https://www.mckinsey.com/industries/metals-and-mining/how-we-help-clients/inside-a-mining-companys-ai-transformation\">Freeport-McMoRan and McKinsey’s case account</a>."
+          "The Bagdad mill grinds ore and separates copper from the surrounding rock. Its managers wanted to increase copper production with the equipment they already had. General manager Justin Cross brought people from the mine, the mill, and the company’s central data science team onto the same project. <a href=\"https://www.mckinsey.com/industries/metals-and-mining/how-we-help-clients/inside-a-mining-companys-ai-transformation\">Freeport-McMoRan and McKinsey’s case account</a>."
         ],
         "mediaKey": "bagdad-site"
       },
@@ -435,8 +435,8 @@
         "number": 2,
         "title": "Operating data and local knowledge",
         "paragraphs": [
-          "The company had standardized its performance measurements across sites. At Bagdad, the team analyzed three years of mill records. Staff had used one set of operating limits for incoming ore. The team identified seven groups of ore that behaved differently during processing.",
-          "McKinsey describes an arrangement in which a central group provides analytical expertise and staff in each business unit work directly on local decisions. At Bagdad, mill specialists could check whether a proposed setting made sense for the ore they were processing. <a href=\"https://www.mckinsey.com/industries/financial-services/our-insights/building-an-effective-analytics-organization\">Building an effective analytics organization</a>."
+          "The company had standardized its performance measurements across sites. At Bagdad, the team analyzed three years of mill records. The mill had used one set of operating limits for incoming ore. The team identified seven groups of ore that behaved differently during processing.",
+          "McKinsey describes an arrangement in which a central team provides analytical expertise. Staff in each business unit work directly on local decisions. At Bagdad, mill specialists could check whether a proposed setting made sense for the ore they were processing. <a href=\"https://www.mckinsey.com/industries/financial-services/our-insights/building-an-effective-analytics-organization\">Building an effective analytics organization</a>."
         ],
         "mediaKey": null
       },
@@ -444,7 +444,7 @@
         "number": 3,
         "title": "Approval on each shift",
         "paragraphs": [
-          "The model initially recommended settings twice a day. Metallurgists reviewed them and passed approved changes to shift supervisors and operators. When metallurgists declined a recommendation, they recorded the reason. The team checked those notes against the sensor readings.",
+          "The data scientists’ model initially recommended settings twice a day. Metallurgists reviewed them and passed approved changes to shift supervisors and operators. When metallurgists declined a recommendation, they recorded the reason. The team checked those notes against the sensor readings.",
           "One recommendation called for a higher rate of ore processing. Operators had kept a minimum stockpile so the mill would have enough ore to continue running. Executives approved a trial. Mine and crusher staff coordinated the supply while the mill crew increased the processing rate. <a href=\"https://www.mckinsey.com/industries/metals-and-mining/how-we-help-clients/inside-a-mining-companys-ai-transformation\">The October 2018 trial</a>."
         ],
         "mediaKey": null
@@ -490,7 +490,7 @@
       {
         "title": "Building an effective analytics organization",
         "url": "https://www.mckinsey.com/industries/financial-services/our-insights/building-an-effective-analytics-organization",
-        "note": "McKinsey, 2018. The organizational examples explain how central teams and operating departments divide responsibility."
+        "note": "McKinsey, 2018. The article explains how central teams and operating departments divide responsibility."
       },
       {
         "title": "Inside a mining company’s AI transformation",
@@ -504,7 +504,7 @@
       }
     ],
     "speakerQuestion": "Who can change an operating procedure after an analyst recommends it, and how does the analyst learn what happened?",
-    "transition": "A wireless provider called customers to recommend a different plan. The researchers tracked who switched plans and who left the provider.",
+    "transition": "A wireless provider called customers to recommend a different plan. Researchers tracked who switched plans and who left the provider.",
     "nextSlug": "decision-driven-analytics",
     "readingLabel": "McKinsey · Freeport-McMoRan’s Bagdad mill"
   },
@@ -516,7 +516,7 @@
     "title": "Decisions, not data, should drive analytics programs",
     "domain": "Customer retention",
     "readingLabel": "MIT Sloan · Wireless plan recommendations",
-    "subtitle": "A wireless provider called customers to recommend a different plan. The researchers tracked who switched plans and who left the provider.",
+    "subtitle": "A wireless provider called customers to recommend a different plan. Researchers tracked who switched plans and who left the provider.",
     "intro": "A South American wireless provider could identify customers who regularly spent more than their monthly plans covered. Its managers wanted to know whether recommending a better-fitting plan would persuade those customers to stay.",
     "coverMediaKey": "value-wireless-churn",
     "hero": {
@@ -539,7 +539,7 @@
       "duration": "7 minutes 47 seconds",
       "url": "https://www.youtube.com/watch?v=NJJoyxavj74",
       "embedUrl": "https://www.youtube.com/embed/NJJoyxavj74",
-      "prompt": "Raghuram Iyengar explains how the provider selected customers for a call and how the researchers measured cancellations."
+      "prompt": "Raghuram Iyengar explains how the provider selected which customers to call and how the researchers measured cancellations."
     },
     "sections": [
       {
@@ -547,7 +547,7 @@
         "title": "The retention decision",
         "paragraphs": [
           "Beth Stackpole’s MIT Sloan article describes how to choose data for a decision. Managers first identify the actions available to them. Then they decide which outcome would favor one action over another.",
-          "Researchers Eva Ascarza, Raghuram Iyengar, and Martin Schleicher studied that decision at a wireless provider. Staff could call customers to recommend a different plan or continue their usual service. The provider wanted to retain customers. The researchers therefore needed to measure how many customers left after the campaign."
+          "Researchers Eva Ascarza, Raghuram Iyengar, and Martin Schleicher studied that decision at a wireless provider. Staff could call customers to recommend a different plan or continue the usual service. The provider wanted to retain customers. The researchers therefore needed to measure how many customers left after the campaign."
         ],
         "mediaKey": null
       },
@@ -556,7 +556,7 @@
         "title": "Monthly bills and plan changes",
         "paragraphs": [
           "The researchers used three months of billing records to identify customers who could have spent less under one of the recommended plans. They randomly assigned eligible customers to a recommendation group or a control group. Customers in the control group continued with their usual service.",
-          "A customer could switch to another plan with the same provider. Table 2 reports those switches for both groups. Each percentage uses the total number of customers assigned to that group."
+          "A customer could switch to another plan with the same provider. Table 2 reports those switches for both groups. The researchers divided the number who switched by the total number assigned to each group."
         ],
         "mediaKey": "value-wireless-plans"
       },
@@ -565,7 +565,7 @@
         "title": "Customers who left",
         "paragraphs": [
           "The researchers separately recorded customers who left the provider within three months. They called this outcome churn. Customers assigned to receive a recommendation changed plans more often. They also left the provider more often.",
-          "The comparison includes everyone assigned to receive a recommendation, including customers who declined the offer. Customers who accepted made that choice themselves. Comparing only those customers with the control group would lose the benefit of random assignment."
+          "The researchers counted every customer assigned to the campaign when they calculated the cancellation rate. Some of those customers declined the offer. Customers who accepted made that choice themselves. Comparing only those customers with the control group would lose the benefit of random assignment."
         ],
         "mediaKey": "value-wireless-churn"
       },
