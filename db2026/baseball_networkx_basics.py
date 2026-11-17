@@ -282,12 +282,21 @@ print(G.edges["Casey", "Dana"]["season"])
 #
 # Who was Casey's teammate in 2020?
 #
-# | Line | Syntax and effect |
-# | :--- | :--- |
-# | `for player in G.neighbors("Casey"):` | A `for` loop takes one neighbor at a time. The loop assigns that neighbor's identifier to the variable `player`. The colon starts the loop's indented block. |
-# | `edge = G.edges["Casey", player]` | One equals sign assigns the edge's attribute dictionary to `edge`. `player` has no quotes because it is a variable containing the neighbor's identifier. |
-# | `if edge["season"] == 2020:` | `edge["season"]` reads the season. Two equals signs compare that value with `2020`. The colon starts the block that runs when the comparison is true. |
-# | `print(player)` | Prints the identifier when its edge has season `2020`. |
+# 1. `for player in G.neighbors("Casey"):`
+#
+#    A `for` loop takes one neighbor at a time. The loop assigns that neighbor's identifier to the variable `player`. The colon starts the loop's indented block.
+#
+# 2. `edge = G.edges["Casey", player]`
+#
+#    One equals sign assigns the edge's attribute dictionary to `edge`. `player` has no quotes because it is a variable containing the neighbor's identifier.
+#
+# 3. `if edge["season"] == 2020:`
+#
+#    `edge["season"]` reads the season. Two equals signs compare that value with `2020`. The colon starts the block that runs when the comparison is true.
+#
+# 4. `print(player)`
+#
+#    Prints the identifier when its edge has season `2020`.
 #
 # The first indentation level puts the edge lookup and `if` statement inside the loop.
 # The second indentation level puts `print(player)` inside the `if` block.
