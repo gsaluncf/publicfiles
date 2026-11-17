@@ -22,11 +22,13 @@ const escapeText = value => String(value).replace(/[&<>"]/g, c => ({
 })[c]);
 
 let activeQuery = queries[0].id;
-const answers = ['programming','sql','recommendedFor','0','0'];
-const hints = [copy.prerequisiteHint,copy.missingHint,copy.recommendationHint,copy.ontologyHint,copy.evidenceHint];
+let connectionStart = null;
+const answers = ['programming',null,'recommendedFor','0','0'];
+const hints = [copy.prerequisiteHint,null,copy.recommendationHint,copy.ontologyHint,copy.evidenceHint];
 
 function go(step) {
   progress = {step, solved:false};
+  connectionStart = null;
   save();
   render();
   window.scrollTo(0,0);
@@ -37,6 +39,7 @@ function render() {
   const {step, solved} = progress;
   const stage = stages[step];
   const edges = graphFor(step, solved);
+  const connect = step === 1;
   $('progress').textContent = `Step ${step+1} of ${stages.length}`;
   workshop.innerHTML = `
     <div class="task">
@@ -48,21 +51,31 @@ function render() {
       <div class="layout">
         <section class="exercise">
           ${stage.record ? `<div class="catalog"><h3>${copy.catalog}</h3><p>${stage.record}</p></div>` : ''}
+          ${connect ? '' : `
           ${step === 4 ? evidenceView(edges) : ''}
           ${solved ? `<p class="success" role="status">${stage.feedback}</p>` : answerForm(step, stage)}
-          ${step === 2 || (step === 1 && solved) ? directResult(edges) : ''}
+          ${step === 2 ? directResult(edges) : ''}
           <div class="controls">
             ${solved ? '<button class="primary" id="next">Continue</button>' : ''}
             ${step > 0 ? '<button id="back">Back</button>' : ''}
-          </div>
+          </div>`}
         </section>
-        ${step === 3 && solved ? ontologyView() : graphView(edges)}
+        ${step === 3 && solved ? ontologyView() : graphView(edges, {connect,solved})}
       </div>`}
   `;
   $('next')?.addEventListener('click', () => go(step+1));
   $('back')?.addEventListener('click', () => go(step-1));
   $('restart')?.addEventListener('click', () => go(0));
   $('exercise-form')?.addEventListener('submit', checkAnswer);
+  if (connect && !solved) {
+    const board = $('graph-board');
+    board.querySelectorAll('button[data-course]').forEach(button => {
+      button.addEventListener('click', () => selectConnectionCourse(button.dataset.course));
+    });
+    board.addEventListener('keydown', event => {
+      if (event.key === 'Escape') setConnectionStart(null);
+    });
+  }
   $('query-select')?.addEventListener('change', event => {
     activeQuery = event.target.value;
     $('query-body').innerHTML = queryBody(edges);
@@ -74,21 +87,20 @@ function render() {
     relationships,
     edges
   }, null, 2)));
-  drawGraph(edges);
+  drawGraph(edges, connect && solved);
 }
 
 function answerForm(step, stage) {
   let choices;
-  if (step === 0 || step === 1) {
-    const target = step === 0 ? 'sql' : 'databases';
+  if (step === 0) {
     choices = `
       <label for="course-choice">${copy.choose}</label>
       <div class="edge-input">
         <select id="course-choice" name="answer" required>
           <option value="">Select a course</option>
-          ${courses.filter(c => c.id !== target).map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
+          ${courses.filter(c => c.id !== 'sql').map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
         </select>
-        <span aria-hidden="true">→</span><strong>${courseTitle(target)}</strong>
+        <span aria-hidden="true">→</span><strong>${courseTitle('sql')}</strong>
       </div>`;
   } else {
     const options = step === 2
@@ -114,10 +126,37 @@ function checkAnswer(event) {
     $('feedback').textContent = `Incorrect. ${hints[step]}`;
     return;
   }
+  completeStep();
+}
+
+function completeStep() {
   progress.solved = true;
   save();
   render();
   $('next').focus({preventScroll:true});
+}
+
+function selectConnectionCourse(id) {
+  if (connectionStart === id) {
+    setConnectionStart(null);
+  } else if (!connectionStart) {
+    setConnectionStart(id);
+  } else if (connectionStart === 'sql' && id === 'databases') {
+    connectionStart = null;
+    completeStep();
+  } else {
+    setConnectionStart(null, `Incorrect. ${copy.missingHint}`);
+  }
+}
+
+function setConnectionStart(id, error = '') {
+  connectionStart = id;
+  $('graph-board').querySelectorAll('button[data-course]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.course === id));
+  });
+  const status = $('connection-status');
+  status.textContent = id ? copy.connectionStart.replace('{course}', courseTitle(id)) : error;
+  status.classList.toggle('feedback', Boolean(error));
 }
 
 function directResult(edges) {
@@ -125,19 +164,29 @@ function directResult(edges) {
   return `<div class="live-result" aria-live="polite"><h3>${copy.direct}</h3><p>${result}</p></div>`;
 }
 
-function graphView(edges) {
+function graphView(edges, {connect = false, solved = false} = {}) {
   const fact = edge => `${courseTitle(edge.from)} ${relationships[edge.kind].sentence} ${courseTitle(edge.to)}.`;
   const hasRecommendation = edges.some(edge => edge.kind === 'recommendedFor');
+  const editable = connect && !solved;
   return `
     <section class="visual" aria-labelledby="graph-title">
       <div class="visual-heading">
         <h3 id="graph-title">${copy.graph}</h3>
         <div class="legend"><span><i></i> Required</span>${hasRecommendation ? '<span><i class="dashed"></i> Recommended</span>' : ''}</div>
       </div>
-      <div class="board" id="graph-board" aria-hidden="true">
-        <canvas id="arrows"></canvas>
-        ${courses.map(c => `<div class="course" data-course="${c.id}" style="grid-area:${c.row}/${c.column}"><small>${c.code}</small><strong>${c.title}</strong></div>`).join('')}
+      <div class="board" id="graph-board"${editable ? ' role="group" aria-labelledby="graph-title"' : ' aria-hidden="true"'}>
+        <canvas id="arrows" aria-hidden="true"></canvas>
+        ${courses.map(c => {
+          const attributes = `class="course" data-course="${c.id}" style="grid-area:${c.row}/${c.column}"`;
+          const label = `<small>${c.code}</small><strong>${c.title}</strong>`;
+          return editable
+            ? `<button type="button" ${attributes} aria-pressed="false">${label}</button>`
+            : `<div ${attributes}>${label}</div>`;
+        }).join('')}
       </div>
+      ${editable ? '<p id="connection-status" role="status"></p>' : ''}
+      ${connect && solved ? `<p class="success" role="status">${stages[1].feedback}</p>${directResult(edges)}` : ''}
+      ${connect ? `<div class="controls">${solved ? '<button class="primary" id="next">Continue</button>' : ''}<button id="back">Back</button></div>` : ''}
       <details class="edge-list">
         <summary>Read the arrow labels</summary>
         <ul>${edges.map(edge => `<li>${fact(edge)}</li>`).join('')}</ul>
@@ -145,7 +194,7 @@ function graphView(edges) {
     </section>`;
 }
 
-function drawGraph(edges) {
+function drawGraph(edges, showAddedArrow) {
   graphResize?.disconnect();
   const board = $('graph-board');
   if (!board) return;
@@ -172,7 +221,7 @@ function drawGraph(edges) {
       const end = {x:b.x-x*radius(b),y:b.y-y*radius(b)};
       const recommended = edge.kind === 'recommendedFor';
       ctx.strokeStyle = ctx.fillStyle = recommended ? '#e8ba77' : '#98dfb4';
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = showAddedArrow && edge.from === 'sql' && edge.to === 'databases' ? 4 : 2.5;
       ctx.setLineDash(recommended ? [5,5] : []);
       ctx.beginPath();
       ctx.moveTo(start.x,start.y);

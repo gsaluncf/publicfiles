@@ -24,10 +24,9 @@ export const stages = [
   {
     title:'Add a prerequisite',
     prompt:'Which arrow is missing?',
-    help:'Choose the course that should point to Databases.',
+    help:'On the graph, select the prerequisite first. Then select the course that requires it.',
     record:'Databases requires SQL.',
-    feedback:'SQL now points to Databases. The graph shows the path from Programming through SQL to Databases.',
-    action:'Add arrow'
+    feedback:'SQL now points to Databases. The graph shows the path from Programming through SQL to Databases.'
   },
   {
     title:'Label a recommendation',
@@ -73,7 +72,8 @@ export const copy = {
   selectQuery:'Question',
   results:'Result',
   prerequisiteHint:'Follow the solid arrow into SQL.',
-  missingHint:'Read the catalog entry for Databases. Its prerequisite is the course at the start of the missing arrow.',
+  connectionStart:'{course} selected. Choose where the arrow points.',
+  missingHint:'The catalog names the course at the start of the arrow. The arrow points to Databases.',
   recommendationHint:'The catalog lists Statistics as recommended preparation.',
   ontologyHint:'The course stays the same. The label on its arrow tells you what the relationship means.',
   evidenceHint:'Follow only the solid arrows. A direct prerequisite has one arrow to the target.',
