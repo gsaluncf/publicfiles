@@ -2,7 +2,7 @@ import {nodes,credits,rounds,copy,sources} from './game-data.js';
 import {roundGraph,connections,evaluateRoute,creditSentence} from './engine.js';
 
 const $=id=>document.getElementById(id),KEY='ncf-movie-connections-v1';
-const fmt=(s,v={})=>s.replace(/\{(\w+)\}/g,(_,k)=>v[k]??'');
+const fmt=(s,v={})=>{const text=s.replace(/\{(\w+)\}/g,(_,k)=>v[k]??'');return v.count===1?text.replace(/\bcredits\b/g,'credit'):text;};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const make=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
 let storageOK=true,audio=null,dialogReturn=null,inspected=null;
