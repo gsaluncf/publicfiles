@@ -73,7 +73,7 @@ export const copy = {
   results:'Result',
   prerequisiteHint:'Follow the solid arrow into SQL.',
   connectionStart:'{course} selected. Choose where the arrow points.',
-  missingHint:'The catalog names the course at the start of the arrow. The arrow points to Databases.',
+  missingHint:'Databases requires SQL. Select SQL first, then Databases.',
   recommendationHint:'The catalog lists Statistics as recommended preparation.',
   ontologyHint:'The course stays the same. The label on its arrow tells you what the relationship means.',
   evidenceHint:'Follow only the solid arrows. A direct prerequisite has one arrow to the target.',
