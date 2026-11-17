@@ -1,7 +1,7 @@
 # %% [markdown]
 # # NetworkX: nodes and edges
 #
-# **About 15 minutes.** A graph stores nodes and the edges that connect them.
+# **NetworkX walkthrough: about 15 minutes.** A graph stores nodes and the edges that connect them.
 # The nodes represent three fictional baseball players. An edge connects two players who were teammates.
 #
 # NetworkX creates and queries the graph in memory. Matplotlib draws the graph.
@@ -348,3 +348,235 @@ nx.draw_networkx_edge_labels(G, pos, edge_labels=teams)
 plt.margins(0.2)
 plt.axis("off")
 plt.show()
+
+# %% [markdown]
+# ## 12. SPARQL and RDF
+#
+# RDF means Resource Description Framework. An RDF graph stores facts as **triples**.
+# Each triple has three parts:
+#
+# - The **subject** identifies the resource being described, such as a player.
+# - The **predicate** identifies a relationship or property.
+# - The **object** is another resource or a **literal**, a stored value such as text.
+#
+# An **IRI** is an identifier that can be written like a web address.
+# The prefix `ex:` abbreviates the base IRI `https://example.org/baseball/`.
+# `ex:Casey` expands to `https://example.org/baseball/Casey`.
+# Player names and property names use these identifiers. Quoted text such as `"pitcher"` is a literal.
+#
+# | Subject | Predicate | Object |
+# | :--- | :--- | :--- |
+# | `ex:Casey` | `ex:teammate` | `ex:Dana` |
+# | `ex:Casey` | `ex:position` | `"pitcher"` |
+#
+# SPARQL, pronounced "sparkle," is a query language for RDF graphs.
+# A SPARQL query matches a **triple pattern**, a triple that can contain variables.
+# A variable starts with `?`. The variable `?player` can match a player identifier.
+#
+# ```sparql
+# PREFIX ex: <https://example.org/baseball/>
+# SELECT ?player
+# WHERE {
+#   ex:Casey ex:teammate ?player .
+# }
+# ```
+#
+# `PREFIX` defines the abbreviation. Angle brackets enclose the base IRI.
+# `SELECT` names the variables to return. `WHERE` contains the pattern to match.
+# The braces `{ ... }` enclose that pattern. The period ends the triple pattern.
+# This pattern fixes Casey as the subject and `ex:teammate` as the predicate.
+# Each matching object becomes a value of `?player`.
+#
+# SPARQL Update adds facts with `INSERT DATA`. The example adds a new fact: Blair coaches Dana.
+#
+# ```sparql
+# PREFIX ex: <https://example.org/baseball/>
+# INSERT DATA {
+#   ex:Blair ex:coaches ex:Dana .
+# }
+# ```
+#
+# The braces contain a stated triple. `ex:coaches` names the new relationship.
+# [SPARQL queries](https://www.w3.org/TR/sparql11-query/#WritingSimpleQueries) and [SPARQL INSERT DATA](https://www.w3.org/TR/sparql11-update/#insertData)
+# describe these two forms.
+
+# %% [markdown]
+# ## 13. RDFLib setup
+#
+# RDFLib stores an RDF graph in Python and runs SPARQL queries and updates.
+# The following cell installs the version used for these examples.
+# `sys.executable` is the path of the Python interpreter running this notebook.
+# `subprocess.check_call` runs its `pip install` command.
+#
+# [RDFLib SPARQL documentation](https://rdflib.readthedocs.io/en/stable/intro_to_sparql/)
+
+# %%
+import subprocess
+import sys
+subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "rdflib==7.6.0"])
+
+# %% [markdown]
+# `RDFGraph` is the name used for RDFLib's `Graph` class. `rdf` holds the new RDF graph.
+# `G` still holds the completed NetworkX graph with Blair, Casey, Dana, and Eli.
+# `Namespace` creates identifiers with a shared base IRI. The Python name `EX` holds that namespace.
+# `EX["Casey"]` produces Casey's full identifier. `Literal` creates an RDF value from a Python value.
+
+# %%
+from rdflib import Graph as RDFGraph, Namespace, Literal
+EX = Namespace("https://example.org/baseball/")
+rdf = RDFGraph()
+
+# %% [markdown]
+# ## 14. Copying the graph
+#
+# The RDF copy includes the four players' `position` and `bats` properties and their teammate links.
+# The original `G` retains the team and season attributes on its edges.
+#
+# The outer loop separates each node's identifier, `player`, from its attribute dictionary, `properties`.
+# `properties.items()` supplies the attribute names and values to the inner loop.
+# `EX[player]` is the subject. `EX[key]` is the predicate. `Literal(value)` is the object.
+#
+# `rdf.add((subject, predicate, object))` adds one triple.
+# The outer parentheses call `add`. The inner parentheses contain a three-item tuple.
+#
+# [Creating RDF triples](https://rdflib.readthedocs.io/en/stable/intro_to_creating_rdf/)
+
+# %%
+for player, properties in G.nodes(data=True):
+    for key, value in properties.items():
+        rdf.add((EX[player], EX[key], Literal(value)))
+
+# %% [markdown]
+# RDF triples have a direction from subject to object. The NetworkX teammate edges are undirected.
+# The conversion stores a triple in each direction for every teammate pair.
+# For Blair and Casey, the triples are `ex:Blair ex:teammate ex:Casey` and `ex:Casey ex:teammate ex:Blair`.
+# `left` and `right` hold the two identifiers from each NetworkX edge.
+
+# %%
+for left, right in G.edges:
+    rdf.add((EX[left], EX.teammate, EX[right]))
+    rdf.add((EX[right], EX.teammate, EX[left]))
+
+# %% [markdown]
+# Four players contribute eight property triples. Three teammate pairs contribute six relationship triples.
+# `len(rdf)` returns the total: `14`.
+
+# %%
+print(len(rdf))
+
+# %% [markdown]
+# ## 15. Querying teammates
+#
+# `teammates_query` stores SPARQL text in a Python string. Triple quotes allow the string to span several lines.
+# The pattern requests Casey's teammate identifiers. `ORDER BY ?player` sorts the returned identifiers.
+# The explicit `PREFIX` in the query defines `ex:` using the same base IRI as the Python namespace `EX`.
+
+# %%
+teammates_query = """
+PREFIX ex: <https://example.org/baseball/>
+SELECT ?player
+WHERE {
+  ex:Casey ex:teammate ?player .
+}
+ORDER BY ?player
+"""
+
+# %% [markdown]
+# `rdf.query(teammates_query)` executes the query against `rdf`.
+# The loop visits each result row. `row.player` contains the value matched by `?player`.
+
+# %%
+for row in rdf.query(teammates_query):
+    print(row.player)
+
+# %% [markdown]
+# The results are `https://example.org/baseball/Blair` and `https://example.org/baseball/Dana`.
+# Blair and Dana are the same neighbors returned by `G.neighbors("Casey")`.
+
+# %% [markdown]
+# ## 16. Querying a property
+#
+# A property query uses the same subject-predicate-object pattern.
+# Casey is the subject, `ex:position` is the predicate, and `?position` matches the stored value.
+
+# %%
+position_query = """
+PREFIX ex: <https://example.org/baseball/>
+SELECT ?position
+WHERE {
+  ex:Casey ex:position ?position .
+}
+"""
+
+# %% [markdown]
+# `row.position` contains the value selected by `?position`.
+
+# %%
+for row in rdf.query(position_query):
+    print(row.position)
+
+# %% [markdown]
+# The result is `pitcher`, copied from `G.nodes["Casey"]["position"]`.
+
+# %% [markdown]
+# ## 17. Adding a relationship
+#
+# The new fact states that Blair coaches Dana.
+# `add_coach` stores an `INSERT DATA` statement as a Python string.
+# `rdf.update(add_coach)` adds its stated triple to the RDF graph.
+# The SPARQL update changes `rdf`. `G` remains a separate graph object.
+
+# %%
+add_coach = """
+PREFIX ex: <https://example.org/baseball/>
+INSERT DATA {
+  ex:Blair ex:coaches ex:Dana .
+}
+"""
+rdf.update(add_coach)
+
+# %% [markdown]
+# ## 18. Querying the new relationship
+#
+# The subject is Blair and the predicate is `ex:coaches`.
+# The variable `?player` matches the player Blair coaches.
+# The same variable name can be used in separate queries. Each query matches its own pattern.
+
+# %%
+coaching_query = """
+PREFIX ex: <https://example.org/baseball/>
+SELECT ?player
+WHERE {
+  ex:Blair ex:coaches ?player .
+}
+"""
+
+# %% [markdown]
+# The result loop uses `row.player` because the query selects `?player`.
+
+# %%
+for row in rdf.query(coaching_query):
+    print(row.player)
+
+# %% [markdown]
+# The result is `https://example.org/baseball/Dana`.
+# The inserted triple points from Blair to Dana. It states that Blair coaches Dana.
+
+# %% [markdown]
+# ## 19. Exercise: a new relationship
+#
+# What new relationship can connect two of the players?
+#
+# Choose two players from Blair, Casey, Dana, and Eli. Name a relationship, such as `ex:practicesWith`.
+#
+# 1. Add one triple with `INSERT DATA` and `rdf.update`.
+# 2. Write a `SELECT` query for that relationship and run it with `rdf.query`.
+# 3. State the expected player identifier and compare it with the returned result.
+#
+# The answer includes the subject, predicate, object, update statement, and query.
+
+# %%
+# Subject, predicate, object:
+# SPARQL INSERT DATA statement and rdf.update call:
+# SPARQL SELECT query and rdf.query call:
+# Expected result and returned result:
