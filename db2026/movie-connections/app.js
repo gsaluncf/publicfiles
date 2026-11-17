@@ -1,12 +1,13 @@
-import {nodes,credits,rounds,copy,sources} from './game-data.js';
+import {nodes,credits,rounds,copy,sources,lab} from './game-data.js';
 import {roundGraph,connections,evaluateRoute,creditSentence} from './engine.js';
+import {mountWorkshop} from './workshop.js';
 
 const $=id=>document.getElementById(id),KEY='ncf-movie-connections-v1';
 const fmt=(s,v={})=>{const text=s.replace(/\{(\w+)\}/g,(_,k)=>v[k]??'');return v.count===1?text.replace(/\bcredits\b/g,'credit'):text;};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const make=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
 let storageOK=true,audio=null,dialogReturn=null,inspected=null;
-let state={index:0,path:[rounds[0].start],edges:[],done:Array(6).fill(null),solved:false,finished:false,muted:true,status:null};
+let state={index:0,path:[rounds[0].start],edges:[],done:Array(rounds.length).fill(null),solved:false,finished:false,muted:true,status:null};
 try{
   const s=JSON.parse(localStorage.getItem(KEY));
   if(s?.version===1){
@@ -72,9 +73,11 @@ function render(){
   $('sound').innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/>${state.muted?'<path d="m17 9 5 6m0-6-5 6"/>':'<path d="M17 8q4 4 0 8m2-11q7 7 0 14"/>'}</svg><span class="button-label">${esc(soundLabel)}</span>`;
   $('sound').setAttribute('aria-label',soundLabel);$('sound').title=soundLabel;$('sound').setAttribute('aria-pressed',String(!state.muted));
   $('saved').textContent=copy.saved;$('saved').hidden=!storageOK;$('sources').textContent=copy.sources;
-  $('progress').textContent=state.finished?fmt(copy.solvedProgress,{count:state.done.filter(Boolean).length,total:rounds.length}):fmt(copy.progress,{current:state.index+1,total:rounds.length});
+  $('progress').textContent=fmt(copy.progress,{current:state.index+1,total:8});
   $('play').hidden=state.finished;$('results').hidden=!state.finished;
-  if(state.finished){renderResults();return;}
+  $('workshop').hidden=!state.finished;
+  if(state.finished){$('results').hidden=true;mountWorkshop(()=>{state.done=Array(rounds.length).fill(null);loadRound(0);});return;}
+  $('help').onclick=showHelp;
   const r=rounds[state.index];
   $('round-title').textContent=r.title;$('question').textContent=r.question;$('instruction').textContent=r.instruction;$('rule').textContent=r.rule;
   $('credits-open').textContent=copy.credits;$('credits-title').textContent=copy.credits;$('credits-help').textContent=copy.creditsHelp;
@@ -144,7 +147,7 @@ function renderFeedback(){
   feedback.append(make('p','',text));
   if(s.status==='solved'){
     feedback.classList.add('success');feedback.append(make('p','',r.explanation));
-    const next=make('button','primary',state.index===rounds.length-1?copy.finish:copy.next);next.id='next';next.type='button';next.addEventListener('click',advance);feedback.append(next);
+    const next=make('button','primary',state.index===rounds.length-1?lab.start:copy.next);next.id='next';next.type='button';next.addEventListener('click',advance);feedback.append(next);
   }else{
     feedback.classList.add('warning');$('instruction').textContent=text;$('instruction').style.color='var(--bad)';
   }
@@ -162,7 +165,7 @@ function check(){
   save();renderFeedback();renderFacts();tone(state.solved);
   if(state.solved){$('feedback').scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});$('next').focus({preventScroll:true});}
 }
-function advance(){if(!state.solved)return;if(state.index<rounds.length-1)loadRound(state.index+1);else{state.finished=true;save();render();$('results').scrollIntoView({block:'start'});$('results').querySelector('h2').focus({preventScroll:true});}}
+function advance(){if(!state.solved)return;if(state.index<rounds.length-1)loadRound(state.index+1);else{state.finished=true;save();render();window.scrollTo({top:0,behavior:'instant'});}}
 function renderResults(){
   const box=$('results');box.replaceChildren();const title=make('h2','',copy.completeTitle);title.tabIndex=-1;box.append(title,make('p','intro',copy.completeText));
   rounds.forEach((r,i)=>{
@@ -178,7 +181,8 @@ function showSources(){openDialog(`<h2>${esc(copy.sourcesTitle)}</h2><p>${esc(co
 $('check').addEventListener('click',check);
 $('undo').addEventListener('click',()=>{if(state.edges.length)changeRoute(state.path.slice(0,-1),state.edges.slice(0,-1));});
 $('reset').addEventListener('click',()=>changeRoute([rounds[state.index].start],[]));
-$('help').addEventListener('click',()=>openDialog(`<h2>${esc(copy.helpTitle)}</h2><ol>${copy.helpSteps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p>${esc(copy.helpMeaning)}</p><h3>${esc(copy.ontologyTitle)}</h3><p>${esc(copy.ontologyText)}</p><p>${esc(copy.arrowText)}</p>`));
+function showHelp(){openDialog(`<h2>${esc(copy.helpTitle)}</h2><ol>${copy.helpSteps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p>${esc(copy.helpMeaning)}</p><h3>${esc(copy.ontologyTitle)}</h3><p>${esc(copy.ontologyText)}</p><p>${esc(copy.arrowText)}</p>`);}
+$('help').onclick=showHelp;
 $('sources').addEventListener('click',showSources);
 $('sound').addEventListener('click',()=>{state.muted=!state.muted;save();render();tone(true);});
 $('credits-open').addEventListener('click',()=>{openDialog(`<h2>${esc(copy.credits)}</h2><p>${esc(copy.creditsHelp)}</p><div id="mobile-credits"></div>`);for(const e of roundGraph(rounds[state.index]).credits)$('mobile-credits').append(creditRecord(e));});
