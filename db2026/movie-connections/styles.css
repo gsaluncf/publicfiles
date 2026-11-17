@@ -14,3 +14,46 @@
 @media(max-width:500px){.topbar{display:flex;align-items:center;gap:8px;margin-bottom:16px}.topbar h1{font-size:23px}.tools{margin:0;gap:6px}.tools button{width:38px;height:38px;min-height:38px;padding:7px;display:grid;place-items:center}.tools svg{display:block}.tools .button-label{display:none}.brand .progress{font-size:13px}.board{height:460px}}
 @media(max-width:350px){.topbar h1{font-size:21px}.tools{gap:5px}.tools button{width:34px;height:36px;min-height:36px}.board{height:480px}}
 .model-actions{display:grid;grid-template-columns:auto auto 1fr;gap:6px}.model-actions button{padding:8px;font-size:14px;min-width:0}.model-actions .primary{min-width:0;width:auto;margin:0}.feedback:empty{display:none}.model-layout{row-gap:16px}.ontology-view .schema-note{font-size:14px}.query-examples .selection{display:none}
+.film-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 430px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.film-work {
+  min-width: 0;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.film-work-title {margin-bottom: 6px}
+.film-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 63px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.film-row strong, .film-row small {display: block}
+.film-row small {color: var(--dim); font-size: 14px}
+.film-row select {width: 100%}
+.film-example {color: var(--blue)}
+.film-row .credit-error {color: var(--bad); margin-top: 4px}
+.film-row .credit-error:empty {display: none}
+.film-row select[aria-invalid="true"] {border-color: var(--bad)}
+.film-work form > button {margin-top: 14px}
+.film-controls {display: flex; gap: 8px; flex-wrap: wrap}
+.film-graph {min-width: 0}
+.film-graph .query-row {border-top: 0; padding-block: 0}
+.film-graph .selection {display: none}
+@media(max-width: 850px) {
+  .film-layout {grid-template-columns: minmax(0, 1fr)}
+}
+@media(max-width: 390px) {
+  .film-work {padding: 12px}
+  .film-row {gap: 8px; font-size: 15px}
+  .film-row select {padding-inline: 6px}
+}

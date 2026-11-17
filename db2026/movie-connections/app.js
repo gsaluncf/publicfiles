@@ -165,7 +165,13 @@ function check(){
   save();renderFeedback();renderFacts();tone(state.solved);
   if(state.solved){$('feedback').scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});$('next').focus({preventScroll:true});}
 }
-function advance(){if(!state.solved)return;if(state.index<rounds.length-1)loadRound(state.index+1);else{state.finished=true;save();render();window.scrollTo({top:0,behavior:'instant'});}}
+function advance(){
+  if(!state.solved)return;
+  if(state.index<rounds.length-1){loadRound(state.index+1);return;}
+  state.finished=true;save();render();
+  $('lab-question').focus({preventScroll:true});
+  window.scrollTo({top:0,behavior:'instant'});
+}
 function renderResults(){
   const box=$('results');box.replaceChildren();const title=make('h2','',copy.completeTitle);title.tabIndex=-1;box.append(title,make('p','intro',copy.completeText));
   rounds.forEach((r,i)=>{

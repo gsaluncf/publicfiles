@@ -13,15 +13,21 @@ export function initialModel(){
   ],edges:records.map(r=>({id:r.id,from:r.id==='r7'?'sam-directing':r.person==='sam'?'sam-acting':r.person,to:r.title==='Home'?'home':'orbit2018',kind:'WORKED_ON'}))};
 }
 export function splitFilm(model,id,assignments){
-  const m=clone(model),node=m.nodes.find(n=>n.id===id);
-  if(node?.type!=='Film')throw Error('Select a Film node.');
-  const edges=m.edges.filter(e=>e.to===id);
-  if(!edges.length||edges.some(e=>!['2010','2020'].includes(assignments[e.id])))throw Error('Assign every credit to a film.');
-  const ids=['2010','2020'].map(y=>'home'+y);
-  if(ids.some(x=>x!==id&&m.nodes.some(n=>n.id===x)))throw Error('These film nodes already exist.');
-  m.nodes=m.nodes.filter(n=>n.id!==id);
-  for(const y of ['2010','2020'])m.nodes.push({id:'home'+y,type:'Film',label:'Home',year:Number(y)});
-  for(const e of edges)e.to='home'+assignments[e.id];return m;
+  const m=clone(model);
+  const years=['2010','2020'];
+  const filmIds=years.map(year=>'home'+year);
+  const combined=m.nodes.some(n=>n.id===id&&n.type==='Film');
+  const releasesExist=filmIds.every(filmId=>m.nodes.some(n=>n.id===filmId&&n.type==='Film'));
+  // Progress saved by the original editor may already contain an incorrect split.
+  if(!combined&&!releasesExist)throw Error('No Home film nodes found.');
+  const edges=m.edges.filter(e=>combined?e.to===id:filmIds.includes(e.to));
+  if(!edges.length||edges.some(e=>!years.includes(assignments[e.id])))throw Error('Assign every credit to a film.');
+  if(combined){
+    m.nodes=m.nodes.filter(n=>n.id!==id);
+    for(const year of years)m.nodes.push({id:'home'+year,type:'Film',label:'Home',year:Number(year)});
+  }
+  for(const edge of edges)edge.to='home'+assignments[edge.id];
+  return m;
 }
 export function mergePeople(model,a,b,name='Sam Chen'){
   const m=clone(model),ns=[a,b].map(id=>m.nodes.find(n=>n.id===id));
