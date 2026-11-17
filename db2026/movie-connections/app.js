@@ -1,196 +1,256 @@
-import {nodes,credits,rounds,copy,sources,lab} from './game-data.js';
-import {roundGraph,connections,evaluateRoute,creditSentence} from './engine.js';
-import {mountWorkshop} from './workshop.js';
+import {copy, courses, namespace, queries, relationships, stages} from './game-data.js';
+import {courseTitle, graphFor, prerequisitePath, queryAnswers, toPython, toTurtle} from './model.js';
 
-const $=id=>document.getElementById(id),KEY='ncf-movie-connections-v1';
-const fmt=(s,v={})=>{const text=s.replace(/\{(\w+)\}/g,(_,k)=>v[k]??'');return v.count===1?text.replace(/\bcredits\b/g,'credit'):text;};
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const make=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
-let storageOK=true,audio=null,dialogReturn=null,inspected=null;
-let state={index:0,path:[rounds[0].start],edges:[],done:Array(rounds.length).fill(null),solved:false,finished:false,muted:true,status:null};
-try{
-  const s=JSON.parse(localStorage.getItem(KEY));
-  if(s?.version===1){
-    const done=rounds.map((r,i)=>{
-      const p=s.done?.[i];return p&&evaluateRoute(r,p.nodes,p.edges).status==='solved'?p:null;
-    });
-    const index=Number.isInteger(s.index)?Math.max(0,Math.min(s.index,rounds.length-1,done.filter(Boolean).length)):0;
-    const r=rounds[index],graph=roundGraph(r);
-    const valid=Array.isArray(s.path)&&Array.isArray(s.edges)&&s.path[0]===r.start&&s.edges.length===s.path.length-1&&new Set(s.path).size===s.path.length&&s.edges.every((id,i)=>connections(graph,s.path[i],s.path[i+1]).some(e=>e.id===id));
-    state={...state,index,done,muted:s.muted!==false,finished:!!s.finished&&done.every(Boolean),path:valid?s.path:[r.start],edges:valid?s.edges:[]};
-    state.solved=valid&&!!s.solved&&evaluateRoute(r,state.path,state.edges).status==='solved';
-    if(state.solved)state.status={status:'solved'};
+const storageKey = 'ncf-course-graph-v1';
+const workshop = document.getElementById('workshop');
+const $ = id => document.getElementById(id);
+let progress = {step:0, solved:false};
+try {
+  const saved = JSON.parse(localStorage.getItem(storageKey));
+  if (Number.isInteger(saved?.step) && saved.step >= 0 && saved.step < stages.length) {
+    progress = {step:saved.step, solved:saved.solved === true};
   }
-}catch{storageOK=false;}
+} catch {
+  // The workshop also works with browser storage disabled.
+}
 
-function save(){try{localStorage.setItem(KEY,JSON.stringify({version:1,index:state.index,path:state.path,edges:state.edges,done:state.done,solved:state.solved,finished:state.finished,muted:state.muted}));}catch{storageOK=false;} $('saved').hidden=!storageOK;}
-function tone(success=true){
-  if(state.muted)return;
-  try{
-    audio??=new (window.AudioContext||window.webkitAudioContext)();audio.resume();
-    const o=audio.createOscillator(),g=audio.createGain(),t=audio.currentTime;
-    o.type='sine';o.frequency.setValueAtTime(success?660:330,t);o.frequency.exponentialRampToValueAtTime(success?880:294,t+.1);
-    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.045,t+.015);g.gain.exponentialRampToValueAtTime(.001,t+.18);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+.2);
-  }catch{}
-}
-function openDialog(html,returnTo){
-  const d=$('dialog');dialogReturn=returnTo??document.activeElement;
-  $('dialog-content').innerHTML=html;$('dialog-close').textContent=copy.close;
-  if(!d.open)d.showModal();
-  (d.querySelector('button:not(#dialog-close),a')??$('dialog-close')).focus();
-}
-function closeDialog(){const back=dialogReturn;$('dialog').close();if(back?.isConnected)back.focus({preventScroll:true});}
-$('dialog-close').addEventListener('click',closeDialog);
-$('dialog').addEventListener('click',e=>{if(e.target===$('dialog')){const b=$('dialog').getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)closeDialog();}});
-$('dialog').addEventListener('cancel',()=>{if(dialogReturn?.isConnected)setTimeout(()=>dialogReturn.focus({preventScroll:true}),0);});
+const save = () => {
+  try { localStorage.setItem(storageKey, JSON.stringify(progress)); } catch {}
+};
+const escapeText = value => String(value).replace(/[&<>"]/g, c => ({
+  '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'
+})[c]);
 
-function loadRound(index){
-  state.index=index;const r=rounds[index];
-  state.path=r.initialPath?[...r.initialPath.nodes]:[r.start];
-  state.edges=r.initialPath?[...r.initialPath.edges]:[];
-  state.solved=false;state.finished=false;state.status=null;inspected=null;save();render();
-  $('question').focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});
+let activeQuery = queries[0].id;
+const answers = ['programming','sql','recommendedFor','0','0'];
+const hints = [copy.prerequisiteHint,copy.missingHint,copy.recommendationHint,copy.ontologyHint,copy.evidenceHint];
+
+function go(step) {
+  progress = {step, solved:false};
+  save();
+  render();
+  window.scrollTo(0,0);
+  $('question').focus({preventScroll:true});
 }
-function changeRoute(path,edges,focus){
-  state.path=path;state.edges=edges;state.status=null;state.solved=false;inspected=null;
-  save();render();if(focus)document.querySelector(`[data-node="${focus}"]`)?.focus({preventScroll:true});
-}
-function addStep(id,credit){changeRoute([...state.path,id],[...state.edges,credit.id],id);}
-function chooseNode(id){
-  const prior=state.path.indexOf(id);
-  if(prior>=0){changeRoute(state.path.slice(0,prior+1),state.edges.slice(0,prior),id);return;}
-  const r=rounds[state.index],g=roundGraph(r),last=state.path.at(-1),options=connections(g,last,id);
-  if(!options.length){state.status={status:'noConnection',from:nodes[last].label,to:nodes[id].label};renderFeedback();tone(false);return;}
-  if(options.length===1){addStep(id,options[0]);return;}
-  openDialog(`<h2>${esc(copy.chooseCredit)}</h2><p>${esc(copy.chooseCreditHelp)}</p><div class="choice">${options.map(e=>`<button type="button" data-choice="${e.id}">${esc(e.kind==='DIRECTED'?copy.directed:copy.acted)}</button>`).join('')}</div>`,document.querySelector(`[data-node="${id}"]`));
-  $('dialog-content').querySelectorAll('[data-choice]').forEach(b=>b.addEventListener('click',()=>{const e=options.find(e=>e.id===b.dataset.choice);closeDialog();addStep(id,e);}));
-}
-function render(){
-  $('title').textContent=copy.title;
-  $('help').innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4M12 16v1"/></svg><span class="button-label">${esc(copy.help)}</span>`;
-  $('help').setAttribute('aria-label',copy.help);$('help').title=copy.help;
-  const soundLabel=state.muted?copy.soundOff:copy.soundOn;
-  $('sound').innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/>${state.muted?'<path d="m17 9 5 6m0-6-5 6"/>':'<path d="M17 8q4 4 0 8m2-11q7 7 0 14"/>'}</svg><span class="button-label">${esc(soundLabel)}</span>`;
-  $('sound').setAttribute('aria-label',soundLabel);$('sound').title=soundLabel;$('sound').setAttribute('aria-pressed',String(!state.muted));
-  $('saved').textContent=copy.saved;$('saved').hidden=!storageOK;$('sources').textContent=copy.sources;
-  $('progress').textContent=fmt(copy.progress,{current:state.index+1,total:8});
-  $('play').hidden=state.finished;$('results').hidden=!state.finished;
-  $('workshop').hidden=!state.finished;
-  if(state.finished){$('results').hidden=true;mountWorkshop(()=>{state.done=Array(rounds.length).fill(null);loadRound(0);});return;}
-  $('help').onclick=showHelp;
-  const r=rounds[state.index];
-  $('round-title').textContent=r.title;$('question').textContent=r.question;$('instruction').textContent=r.instruction;$('rule').textContent=r.rule;
-  $('credits-open').textContent=copy.credits;$('credits-title').textContent=copy.credits;$('credits-help').textContent=copy.creditsHelp;
-  $('legend').setAttribute('aria-label',copy.legend);
-  for(const [id,k] of [['person-label','person'],['film-label','film'],['acted-label','acted'],['directed-label','directed'],['route-title','route'],['undo','undo'],['reset','reset'],['check','check']])$(id).textContent=copy[k];
-  $('undo').disabled=state.edges.length===0;$('reset').disabled=state.edges.length===0;$('check').disabled=state.edges.length===0;
-  $('claim').hidden=!r.claim;$('claim').innerHTML=r.claim?`<small>${esc(copy.exampleAnswer)}</small><p>${esc(r.claim)}</p>`:'';
-  renderBoard();renderRoute();renderCredits();renderFeedback();renderFacts();
-}
-function renderBoard(){
-  const r=rounds[state.index],g=roundGraph(r),current=state.path.at(-1),box=$('nodes');box.replaceChildren();
-  $('board').setAttribute('aria-label',copy.graphLabel);
-  for(const type of ['Person','Film']){
-    const group=g.nodes.filter(n=>n.type===type);
-    group.forEach((n,i)=>{
-      const y=group.length===1?50:group.length===2?29+i*42:12+i*(76/(group.length-1));
-      const connected=connections(g,current,n.id).length>0&&!state.path.includes(n.id);
-      const selected=state.path.includes(n.id),b=make('button',`node ${type.toLowerCase()}${connected?' connected':''}${selected?' selected':''}${n.id===r.goal?' goal':''}${n.id===current?' current':''}`);
-      b.type='button';b.dataset.node=n.id;b.style.left=type==='Person'?'22%':'78%';b.style.top=y+'%';
-      let role=n.id===r.start?copy.nodeRoleStart:'';if(n.id===r.goal)role+=copy.nodeRoleTarget;if(n.id===current)role+=copy.nodeRoleCurrent;else if(selected)role+=copy.nodeRoleSelected;
-      b.setAttribute('aria-label',fmt(copy.nodeLabel,{name:n.label,type:n.type,year:n.year?', '+n.year:'',role}));b.setAttribute('aria-pressed',String(selected));
-      b.append(make('span','type',n.type),make('span','name',n.label));if(n.year)b.append(make('span','year',String(n.year)));
-      if(n.id===r.start||n.id===r.goal)b.append(make('span','badge',n.id===r.start?copy.start:copy.target));
-      b.addEventListener('click',()=>chooseNode(n.id));box.append(b);
-    });
-  }
-  requestAnimationFrame(drawEdges);
-}
-function drawEdges(){
-  if(state.finished)return;
-  const board=$('board'),rect=board.getBoundingClientRect(),svg=$('lines'),g=roundGraph(rounds[state.index]);
-  if(!rect.width)return;svg.setAttribute('viewBox',`0 0 ${rect.width} ${rect.height}`);
-  const ns='http://www.w3.org/2000/svg';$('edges').replaceChildren();
-  for(const e of g.credits){
-    const a=document.querySelector(`[data-node="${e.person}"]`).getBoundingClientRect(),b=document.querySelector(`[data-node="${e.film}"]`).getBoundingClientRect();
-    const peers=g.credits.filter(v=>v.person===e.person&&v.film===e.film),offset=(peers.indexOf(e)-(peers.length-1)/2)*19;
-    const x1=a.right-rect.left-1,y1=a.top+a.height/2-rect.top+offset,x2=b.left-rect.left+1,y2=b.top+b.height/2-rect.top+offset,mid=(x1+x2)/2;
-    const d=`M${x1},${y1} C${mid},${y1} ${mid},${y2} ${x2},${y2}`;
-    const group=document.createElementNS(ns,'g');group.setAttribute('class',`edge${e.kind==='DIRECTED'?' directed':''}${state.edges.includes(e.id)?' active':''}${inspected===e.id?' inspected':''}${state.status?.wrong?.includes(e.id)?' rejected':''}`);group.dataset.credit=e.id;
-    const line=document.createElementNS(ns,'path');line.setAttribute('d',d);line.setAttribute('class','base');line.setAttribute('marker-end',`url(#arrow-${e.kind==='DIRECTED'?'director':'actor'})`);
-    const hit=document.createElementNS(ns,'path');hit.setAttribute('d',d);hit.setAttribute('class','hit');const title=document.createElementNS(ns,'title');title.textContent=creditSentence(e);hit.append(title);hit.addEventListener('click',()=>inspectCredit(e.id,true));group.append(line,hit);$('edges').append(group);
-  }
-}
-function renderRoute(){
-  $('route-count').textContent=fmt(copy.routeCount,{count:state.edges.length});$('route').replaceChildren();
-  state.path.forEach((id,i)=>{const li=make('li'),b=make('button',i===state.path.length-1?'current':'',nodes[id].label);b.type='button';b.dataset.routeStep=String(i);b.addEventListener('click',()=>changeRoute(state.path.slice(0,i+1),state.edges.slice(0,i),id));li.append(b);$('route').append(li);});
-}
-function creditRecord(e){
-  const b=make('button',`credit-record${e.kind==='DIRECTED'?' directed':''}${state.edges.includes(e.id)?' active':''}${inspected===e.id?' inspected':''}`);
-  b.type='button';b.dataset.record=e.id;b.setAttribute('aria-label',fmt(copy.creditLabel,{statement:creditSentence(e)}));
-  b.append(make('span','person',nodes[e.person].label),make('span','verb',e.kind==='DIRECTED'?copy.directed:copy.acted),make('span','movie',`${nodes[e.film].label} (${nodes[e.film].year})`));
-  b.addEventListener('click',()=>inspectCredit(e.id,window.innerWidth<=850));return b;
-}
-function renderCredits(){const list=$('credits-list');list.replaceChildren();for(const e of roundGraph(rounds[state.index]).credits)list.append(creditRecord(e));}
-function inspectCredit(id,modal){
-  const e=credits.find(e=>e.id===id);if(!e)return;inspected=id;drawEdges();renderCredits();
-  if(modal)openDialog(`<h2>${esc(copy.inspectTitle)}</h2><p>${esc(creditSentence(e))}</p><p>${esc(copy.inspectHint)}</p><p><a href="${sources[e.source].url}" target="_blank" rel="noopener">${esc(sources[e.source].label)}</a></p>`);
-}
-function renderFeedback(){
-  const r=rounds[state.index],s=state.status,feedback=$('feedback');feedback.replaceChildren();feedback.className='feedback';
-  $('instruction').textContent=r.instruction;$('instruction').style.color='';
-  if(!s){feedback.textContent=copy.nextHint;return;}
-  let text=s.status==='relationship'?(r.relationshipFeedback??rounds[3].relationshipFeedback):copy[s.status]??copy.invalid;
-  if(s.status==='solved')text=copy.correct;
-  if(s.status==='incomplete')text=fmt(text,{name:nodes[r.goal].label});
-  if(s.status==='noConnection')text=fmt(text,s);
-  feedback.append(make('p','',text));
-  if(s.status==='solved'){
-    feedback.classList.add('success');feedback.append(make('p','',r.explanation));
-    const next=make('button','primary',state.index===rounds.length-1?lab.start:copy.next);next.id='next';next.type='button';next.addEventListener('click',advance);feedback.append(next);
-  }else{
-    feedback.classList.add('warning');$('instruction').textContent=text;$('instruction').style.color='var(--bad)';
-  }
-  drawEdges();
-}
-function renderFacts(){
-  const box=$('facts');box.replaceChildren();box.hidden=state.edges.length===0;if(box.hidden)return;
-  box.append(make('h3','',copy.selectedFacts));const list=make('ol');
-  for(const id of state.edges){const e=credits.find(e=>e.id===id);list.append(make('li','',creditSentence(e)));}box.append(list);
-  const r=rounds[state.index];if(state.solved&&r.answer){box.append(make('h3','',copy.supportedAnswer),make('p','',r.answer),make('h3','',copy.llmTitle),make('p','',copy.llmText));}
-}
-function check(){
-  const r=rounds[state.index],result=evaluateRoute(r,state.path,state.edges);state.status=result;state.solved=result.status==='solved';
-  if(state.solved)state.done[state.index]={nodes:[...state.path],edges:[...state.edges]};
-  save();renderFeedback();renderFacts();tone(state.solved);
-  if(state.solved){$('feedback').scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});$('next').focus({preventScroll:true});}
-}
-function advance(){
-  if(!state.solved)return;
-  if(state.index<rounds.length-1){loadRound(state.index+1);return;}
-  state.finished=true;save();render();
-  $('lab-question').focus({preventScroll:true});
-  window.scrollTo({top:0,behavior:'instant'});
-}
-function renderResults(){
-  const box=$('results');box.replaceChildren();const title=make('h2','',copy.completeTitle);title.tabIndex=-1;box.append(title,make('p','intro',copy.completeText));
-  rounds.forEach((r,i)=>{
-    const p=state.done[i];if(!p)return;
-    const details=make('details','result-row'),summary=make('summary','',r.title);summary.append(make('span','',fmt(copy.resultsLinks,{count:p.edges.length})));details.append(summary);
-    const list=make('ul');for(const id of p.edges)list.append(make('li','',creditSentence(credits.find(e=>e.id===id))));details.append(list,make('p','',r.explanation));box.append(details);
+
+function render() {
+  const {step, solved} = progress;
+  const stage = stages[step];
+  const edges = graphFor(step, solved);
+  $('progress').textContent = `Step ${step+1} of ${stages.length}`;
+  workshop.innerHTML = `
+    <div class="task">
+      ${step < stages.length-1 ? `<p class="stage-name">${stage.title}</p>` : ''}
+      <h2 id="question" tabindex="-1">${stage.prompt}</h2>
+      <p>${stage.help}</p>
+    </div>
+    ${step === stages.length-1 ? queryView(edges) : `
+      <div class="layout">
+        <section class="exercise">
+          ${stage.record ? `<div class="catalog"><h3>${copy.catalog}</h3><p>${stage.record}</p></div>` : ''}
+          ${step === 4 ? evidenceView(edges) : ''}
+          ${solved ? `<p class="success" role="status">${stage.feedback}</p>` : answerForm(step, stage)}
+          ${step === 2 || (step === 1 && solved) ? directResult(edges) : ''}
+          <div class="controls">
+            ${solved ? '<button class="primary" id="next">Continue</button>' : ''}
+            ${step > 0 ? '<button id="back">Back</button>' : ''}
+          </div>
+        </section>
+        ${step === 3 && solved ? ontologyView() : graphView(edges)}
+      </div>`}
+  `;
+  $('next')?.addEventListener('click', () => go(step+1));
+  $('back')?.addEventListener('click', () => go(step-1));
+  $('restart')?.addEventListener('click', () => go(0));
+  $('exercise-form')?.addEventListener('submit', checkAnswer);
+  $('query-select')?.addEventListener('change', event => {
+    activeQuery = event.target.value;
+    $('query-body').innerHTML = queryBody(edges);
   });
-  const learning=make('section','facts');learning.append(make('h3','',copy.ontologyTitle),make('p','',copy.ontologyText),make('h3','',copy.llmTitle),make('p','',copy.llmText));box.append(learning);
-  const replay=make('button','primary',copy.replay);replay.type='button';replay.id='replay';replay.addEventListener('click',()=>{state.done=Array(6).fill(null);loadRound(0);});box.append(replay);
-  const source=make('button','',copy.sources);source.type='button';source.addEventListener('click',showSources);box.append(source);
+  $('python-download')?.addEventListener('click', () => download('course-graph.py', toPython(edges)));
+  $('rdf-download')?.addEventListener('click', () => download('course-graph.ttl', toTurtle(edges)));
+  $('json-download')?.addEventListener('click', () => download('course-graph.json', JSON.stringify({
+    courses:courses.map(({id,code,title}) => ({id,code,title})),
+    relationships,
+    edges
+  }, null, 2)));
+  drawGraph(edges);
 }
-function showSources(){openDialog(`<h2>${esc(copy.sourcesTitle)}</h2><p>${esc(copy.sourceText)}</p><ul>${Object.values(sources).map(s=>`<li><a href="${s.url}" target="_blank" rel="noopener">${esc(s.label)}</a></li>`).join('')}</ul>`);}
-$('check').addEventListener('click',check);
-$('undo').addEventListener('click',()=>{if(state.edges.length)changeRoute(state.path.slice(0,-1),state.edges.slice(0,-1));});
-$('reset').addEventListener('click',()=>changeRoute([rounds[state.index].start],[]));
-function showHelp(){openDialog(`<h2>${esc(copy.helpTitle)}</h2><ol>${copy.helpSteps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p>${esc(copy.helpMeaning)}</p><h3>${esc(copy.ontologyTitle)}</h3><p>${esc(copy.ontologyText)}</p><p>${esc(copy.arrowText)}</p>`);}
-$('help').onclick=showHelp;
-$('sources').addEventListener('click',showSources);
-$('sound').addEventListener('click',()=>{state.muted=!state.muted;save();render();tone(true);});
-$('credits-open').addEventListener('click',()=>{openDialog(`<h2>${esc(copy.credits)}</h2><p>${esc(copy.creditsHelp)}</p><div id="mobile-credits"></div>`);for(const e of roundGraph(rounds[state.index]).credits)$('mobile-credits').append(creditRecord(e));});
-new ResizeObserver(()=>requestAnimationFrame(drawEdges)).observe($('board'));
+
+function answerForm(step, stage) {
+  let choices;
+  if (step === 0 || step === 1) {
+    const target = step === 0 ? 'sql' : 'databases';
+    choices = `
+      <label for="course-choice">${copy.choose}</label>
+      <div class="edge-input">
+        <select id="course-choice" name="answer" required>
+          <option value="">Select a course</option>
+          ${courses.filter(c => c.id !== target).map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
+        </select>
+        <span aria-hidden="true">→</span><strong>${courseTitle(target)}</strong>
+      </div>`;
+  } else {
+    const options = step === 2
+      ? [['prerequisiteFor',copy.required],['recommendedFor',copy.recommendation]]
+      : stage.choices.map((choice,i) => [String(i),choice]);
+    choices = `<fieldset aria-label="${stage.prompt}">${options.map(([value,label]) => `
+      <label class="choice"><input type="radio" name="answer" value="${value}" required><span>${label}</span></label>`
+    ).join('')}</fieldset>`;
+  }
+  return `
+    <form id="exercise-form">
+      ${choices}
+      <button class="primary" type="submit">${stage.action}</button>
+      <p id="feedback" class="feedback" role="status"></p>
+    </form>`;
+}
+
+function checkAnswer(event) {
+  event.preventDefault();
+  const answer = new FormData(event.currentTarget).get('answer');
+  const {step} = progress;
+  if (answer !== answers[step]) {
+    $('feedback').textContent = `Incorrect. ${hints[step]}`;
+    return;
+  }
+  progress.solved = true;
+  save();
+  render();
+  $('next').focus({preventScroll:true});
+}
+
+function directResult(edges) {
+  const result = queryAnswers(edges).direct.join(', ') || copy.noMatches;
+  return `<div class="live-result" aria-live="polite"><h3>${copy.direct}</h3><p>${result}</p></div>`;
+}
+
+function graphView(edges) {
+  const fact = edge => `${courseTitle(edge.from)} ${relationships[edge.kind].sentence} ${courseTitle(edge.to)}.`;
+  const hasRecommendation = edges.some(edge => edge.kind === 'recommendedFor');
+  return `
+    <section class="visual" aria-labelledby="graph-title">
+      <div class="visual-heading">
+        <h3 id="graph-title">${copy.graph}</h3>
+        <div class="legend"><span><i></i> Required</span>${hasRecommendation ? '<span><i class="dashed"></i> Recommended</span>' : ''}</div>
+      </div>
+      <div class="board" id="graph-board" aria-hidden="true">
+        <canvas id="arrows"></canvas>
+        ${courses.map(c => `<div class="course" data-course="${c.id}" style="grid-area:${c.row}/${c.column}"><small>${c.code}</small><strong>${c.title}</strong></div>`).join('')}
+      </div>
+      <details class="edge-list">
+        <summary>Read the arrow labels</summary>
+        <ul>${edges.map(edge => `<li>${fact(edge)}</li>`).join('')}</ul>
+      </details>
+    </section>`;
+}
+
+function drawGraph(edges) {
+  graphResize?.disconnect();
+  const board = $('graph-board');
+  if (!board) return;
+  const painter = () => {
+    const canvas = $('arrows');
+    if (!canvas) return;
+    const area = board.getBoundingClientRect();
+    if (!area.width || !area.height) return;
+    const scale = window.devicePixelRatio || 1;
+    canvas.width = Math.round(area.width * scale);
+    canvas.height = Math.round(area.height * scale);
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale,scale);
+    const position = id => {
+      const rect = board.querySelector(`[data-course="${id}"]`).getBoundingClientRect();
+      return {x:rect.left-area.left+rect.width/2,y:rect.top-area.top+rect.height/2,w:rect.width,h:rect.height};
+    };
+    for (const edge of edges) {
+      const a = position(edge.from), b = position(edge.to);
+      const angle = Math.atan2(b.y-a.y,b.x-a.x);
+      const x = Math.cos(angle), y = Math.sin(angle);
+      const radius = node => Math.min(node.w/2/Math.abs(x),node.h/2/Math.abs(y)) + 2;
+      const start = {x:a.x+x*radius(a),y:a.y+y*radius(a)};
+      const end = {x:b.x-x*radius(b),y:b.y-y*radius(b)};
+      const recommended = edge.kind === 'recommendedFor';
+      ctx.strokeStyle = ctx.fillStyle = recommended ? '#e8ba77' : '#98dfb4';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash(recommended ? [5,5] : []);
+      ctx.beginPath();
+      ctx.moveTo(start.x,start.y);
+      ctx.lineTo(end.x,end.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(end.x,end.y);
+      ctx.lineTo(end.x-x*9-y*4,end.y-y*9+x*4);
+      ctx.lineTo(end.x-x*9+y*4,end.y-y*9-x*4);
+      ctx.fill();
+    }
+  };
+  graphResize = new ResizeObserver(painter);
+  graphResize.observe(board);
+  painter();
+}
+
+function ontologyView() {
+  return `
+    <section class="visual ontology">
+      <h3>${copy.ontology}</h3>
+      <div class="type-card">
+        <strong>Course</strong>
+        <span>${copy.codeProperty}</span>
+        <span>${copy.titleProperty}</span>
+      </div>
+      ${Object.values(relationships).map(r => `
+        <p class="type-edge"><strong>Course</strong><span>${r.label} →</span><strong>Course</strong></p>
+      `).join('')}
+    </section>`;
+}
+
+function evidenceView(edges) {
+  const path = prerequisitePath(edges, 'pipelines');
+  return `<div class="catalog">
+    <h3>${copy.evidence}</h3>
+    <ol>${path.map(e => `<li>${courseTitle(e.from)} is required before ${courseTitle(e.to)}.</li>`).join('')}</ol>
+  </div>`;
+}
+
+function queryView(edges) {
+  return `
+    <section class="queries">
+      <label for="query-select">${copy.selectQuery}</label>
+      <select id="query-select">${queries.map(query => `<option value="${query.id}"${query.id===activeQuery?' selected':''}>${query.title}</option>`).join('')}</select>
+      <div id="query-body">${queryBody(edges)}</div>
+      <details><summary>Python setup and graph data</summary><pre><code>${escapeText(toPython(edges))}</code></pre></details>
+      <div class="controls downloads">
+        <button id="python-download">Download Python</button>
+        <button id="rdf-download">Download RDF</button>
+        <button id="json-download">Download graph JSON</button>
+      </div>
+      <details><summary>Course ontology</summary>${ontologyView()}</details>
+      <details><summary>Course graph</summary>${graphView(edges)}</details>
+      <div class="controls"><button id="back">Back</button><button id="restart">Start again</button></div>
+    </section>`;
+}
+
+function queryBody(edges) {
+  const query = queries.find(q => q.id === activeQuery);
+  const result = queryAnswers(edges)[query.id].join(', ') || copy.noMatches;
+  return `
+    <p>${query.explanation}</p>
+    <div class="live-result" aria-live="polite"><h3>${copy.results}</h3><p>${result}</p></div>
+    <div class="code-grid">
+      <section><h3>SPARQL</h3><pre><code>${escapeText(`PREFIX ex: <${namespace}>\n${query.sparql}`)}</code></pre></section>
+      <section><h3>Python / NetworkX</h3><pre><code>${escapeText(query.python)}</code></pre></section>
+    </div>`;
+}
+
+function download(name, content) {
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([content], {type:'text/plain'}));
+  link.download = name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+
+let graphResize;
 render();
