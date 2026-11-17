@@ -14,19 +14,21 @@
 # %%
 import subprocess
 import sys
-subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "networkx==3.6.1"])
+subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "networkx==3.6.1", "pyvis==0.3.2"])
 
 # %% [markdown]
-# pandas displays records as tables. SQLite runs SQL in memory. Matplotlib draws
-# the NetworkX graphs. Python's `date` type supports date comparisons.
+# pandas displays records as tables. SQLite runs SQL in memory. PyVis displays
+# the NetworkX graphs as interactive networks. Python's `date` type supports date comparisons.
 
 # %%
 import sqlite3
 from datetime import date
 import networkx as nx
 import pandas as pd
-import matplotlib.pyplot as plt
-from IPython.display import display
+import json
+import re
+from pyvis.network import Network
+from IPython.display import display, HTML
 
 # %% [markdown]
 # ## 1. Relationships in relational tables
@@ -163,18 +165,133 @@ print("Nodes:", teammates.number_of_nodes())
 print("Edges:", teammates.number_of_edges())
 
 # %% [markdown]
-# The position dictionary sets each node's location in the drawing. Blair, Casey, and Dana appear in that order.
-# The labels display names. The graph retains the person identifiers.
+# ### Interactive graph viewer
+#
+# PyVis displays a copy of each NetworkX graph. The graph's nodes, edges, and
+# properties stay available for the later queries.
+#
+# Nodes support dragging. The mouse wheel controls zoom. The navigation buttons support zoom and pan.
+# A node click highlights its neighbors. A tooltip appears when the pointer rests over a node or edge. It shows the stored properties.
+#
+# [PyVis and NetworkX](https://pyvis.readthedocs.io/en/latest/tutorial.html#networkx-integration)
+
+# %%
+viewer_options = {
+    "nodes": {"borderWidth": 2, "font": {"size": 22, "face": "Arial"}},
+    "edges": {"width": 2, "smooth": False, "color": "#82998c",
+              "font": {"size": 16, "strokeWidth": 0, "background": "#f8fbf8"}},
+    "physics": {"enabled": False},
+}
+
+# %% [markdown]
+# The viewer supports node selection, zoom, and pan. Keyboard controls apply
+# only to the graph that has focus.
+
+# %%
+viewer_options["interaction"] = {
+    "hover": True,
+    "tooltipDelay": 120,
+    "navigationButtons": True,
+    "keyboard": {"enabled": True, "bindToWindow": False},
+}
+
+# %% [markdown]
+# The viewer uses blue circles for people. Node types can specify other colors
+# and shapes.
+
+# %%
+node_styles = {
+    "Person": {"shape": "circle", "color": {"background": "#d7eafa", "border": "#24669c"}},
+    "TeamSeason": {"shape": "box", "color": {"background": "#fae3aa", "border": "#af7a1e"}},
+    "Team": {"shape": "box", "color": {"background": "#d9ecde", "border": "#286345"}},
+    "Championship": {"shape": "diamond", "size": 36,
+                     "color": {"background": "#204f3a", "border": "#d4ab49"}},
+}
+
+# %% [markdown]
+# A tooltip lists an identifier, a relationship type, a season, or dates.
+# `property_tooltip` formats the values as text.
+
+# %%
+def property_tooltip(properties):
+    lines = []
+    for key, value in properties.items():
+        lines.append(f"{key}: {value}")
+    return "\n".join(lines)
+
+# %% [markdown]
+# An edge label shows the relationship type. The label can also show a season or a date.
+
+# %%
+def edge_label(properties):
+    if "label" in properties:
+        return properties["label"]
+    kind = properties.get("kind", "")
+    return f"{kind}\n{properties['season']}" if "season" in properties else kind
+
+# %% [markdown]
+# `styled_graph` copies the graph. The positions set the initial layout. Nodes can be dragged in the viewer. The original graph retains its stored properties.
+
+# %%
+def styled_graph(graph, positions, labels):
+    drawing = graph.copy()
+    for node, data in drawing.nodes(data=True):
+        x, y = positions[node]
+        tooltip = property_tooltip({"Identifier": node, **data})
+        data.update(label=labels[node], title=tooltip, **node_styles[data.get("kind", "Person")])
+        data.update(x=float(x) * 260, y=-float(y) * 190)
+    for source, target, data in drawing.edges(data=True):
+        data.update(label=edge_label(data), title=property_tooltip(data))
+    return drawing
+
+# %% [markdown]
+# The tooltip uses Arial at 16 pixels. The graph fills the
+# notebook's output area.
+
+# %%
+viewer_css = """
+body { margin: 0; padding: 0; background: #f8fbf8; }
+#mynetwork { border: 0 !important; border-radius: 10px; }
+.vis-tooltip { font: 16px/1.5 Arial, sans-serif !important; white-space: pre-line !important;
+  padding: 12px 16px !important; border-radius: 8px !important; }
+"""
+
+# %% [markdown]
+# The HTML output includes the graph library. Colab displays the graph inside its output area.
+
+# %%
+def viewer_html(viewer):
+    html = viewer.generate_html(notebook=True)
+    html = re.sub(r'<link\b[^>]*bootstrap[^>]*>', '', html)
+    html = re.sub(r'<script\b[^>]*bootstrap[^>]*>\s*</script>', '', html)
+    html = html.replace("</head>", f"<style>{viewer_css}</style></head>")
+    return HTML(html)
+
+# %% [markdown]
+# PyVis converts the drawing copy to an interactive network. Arrowheads preserve
+# the direction of directed relationships.
+
+# %%
+def interactive_graph(graph, height="560px"):
+    viewer = Network(height=height, width="100%", notebook=True,
+                     directed=graph.is_directed(), cdn_resources="in_line",
+                     bgcolor="#f8fbf8", font_color="#183c2d", neighborhood_highlight=True)
+    viewer.from_nx(graph.copy())
+    viewer.set_options(json.dumps(viewer_options))
+    return viewer_html(viewer)
+
+# %% [markdown]
+# ### Teammate network
+#
+# The position dictionary sets each node's location in the drawing.
+# Blair, Casey, and Dana appear in that order. Labels display names.
+# The graph retains the person identifiers.
 
 # %%
 teammate_positions = {"p2": (0, 0), "p3": (1, 0), "p4": (2, 0)}
 teammate_labels = {node: names[node] for node in teammates}
-plt.figure(figsize=(9, 3))
-nx.draw_networkx(teammates, teammate_positions, labels=teammate_labels,
-                 node_color=["#cde3f6", "#cde8d8", "#f1dfb2"],
-                 node_size=3200, font_size=17, width=3)
-plt.axis("off")
-plt.show()
+teammate_html = interactive_graph(styled_graph(teammates, teammate_positions, teammate_labels))
+display(teammate_html)
 
 # %% [markdown]
 # ### A directed relationship
@@ -275,19 +392,14 @@ display(pd.DataFrame(baseball.out_edges("p2", data=True),
 # %% [markdown]
 # The drawing contains one Blair node. The node's edges record Blair playing for Harbor in 2020 and Blair managing Valley in 2022.
 #
-# [NetworkX drawing](https://networkx.org/documentation/stable/reference/generated/networkx.drawing.nx_pylab.draw_networkx.html)
+# [PyVis viewer](https://pyvis.readthedocs.io/en/latest/tutorial.html)
 
 # %%
 blair_roles = baseball.subgraph(["p2", "harbor-2020", "valley-2022"])
 role_positions = {"p2": (0, 0), "harbor-2020": (1, 1), "valley-2022": (1, -1)}
 role_labels = nx.get_node_attributes(blair_roles, "name")
-plt.figure(figsize=(9, 5))
-nx.draw_networkx(blair_roles, role_positions, labels=role_labels,
-                 node_color="#d9e9dc", node_size=4200, font_size=16, arrowsize=25)
-nx.draw_networkx_edge_labels(blair_roles, role_positions,
-                             edge_labels=nx.get_edge_attributes(blair_roles, "kind"))
-plt.axis("off")
-plt.show()
+roles_html = interactive_graph(styled_graph(blair_roles, role_positions, role_labels))
+display(roles_html)
 
 # %% [markdown]
 # ### Championship records
@@ -301,6 +413,34 @@ championship = {"id": "league-title-2023", "team": "harbor", "season": 2023,
 baseball.add_node(championship["id"], kind="Championship",
                    name=championship["name"], date=championship["date"])
 baseball.add_edge("harbor-2023", championship["id"], kind="WON")
+
+# %% [markdown]
+# ### The complete baseball graph
+#
+# Four columns group the Person, TeamSeason, Team, and Championship nodes.
+# The spacing keeps nodes separate. A node click highlights its neighborhood.
+
+# %%
+type_columns = ["Person", "TeamSeason", "Team", "Championship"]
+ontology_positions = {}
+for column, kind in enumerate(type_columns):
+    nodes = [node for node, data in baseball.nodes(data=True) if data["kind"] == kind]
+    for row, node in enumerate(nodes):
+        ontology_positions[node] = (column * 1.3, ((len(nodes) - 1) / 2 - row) * 1.15)
+
+# %% [markdown]
+# The complete view uses more vertical space for the people and roster records.
+# The tooltip shows the dates stored on an edge.
+
+# %%
+ontology_labels = nx.get_node_attributes(baseball, "name")
+ontology_labels[championship["id"]] = "\n".join(championship["name"].rsplit(" ", 1))
+ontology_drawing = styled_graph(baseball, ontology_positions, ontology_labels)
+for source, target, properties in ontology_drawing.edges(data=True):
+    if properties["kind"] == "MANAGED_TEAM":
+        properties["font"] = {"vadjust": -24}
+ontology_html = interactive_graph(ontology_drawing, height="760px")
+display(ontology_html)
 
 # %% [markdown]
 # ### Date rules
@@ -417,7 +557,7 @@ display(managed_rows)
 # %%
 manager_graph = nx.DiGraph()
 for row in managed_rows.itertuples(index=False):
-    manager_graph.add_edge(row.manager, row.player, season=row.season)
+    manager_graph.add_edge(row.manager, row.player, kind="MANAGED", season=row.season)
 
 # %% [markdown]
 # The graph includes Alex managing Casey directly in 2020. It also includes
@@ -426,13 +566,8 @@ for row in managed_rows.itertuples(index=False):
 # %%
 manager_positions = {"p1": (0, 0), "p2": (1, 1), "p3": (2, 0)}
 manager_labels = {node: names[node] for node in manager_graph}
-plt.figure(figsize=(9, 5))
-nx.draw_networkx(manager_graph, manager_positions, labels=manager_labels,
-                 node_color="#d9e9dc", node_size=3200, font_size=17, arrowsize=25)
-nx.draw_networkx_edge_labels(manager_graph, manager_positions,
-                             edge_labels=nx.get_edge_attributes(manager_graph, "season"))
-plt.axis("off")
-plt.show()
+managers_html = interactive_graph(styled_graph(manager_graph, manager_positions, manager_labels))
+display(managers_html)
 
 # %% [markdown]
 # ### A later manager
@@ -525,13 +660,8 @@ championship_path.add_edge(winning_team_season, championship["id"], label=f"WON\
 path_positions = {node: (index, 0) for index, node in enumerate(championship_path)}
 path_labels = {node: baseball.nodes[node]["name"] for node in championship_path}
 path_labels[championship["id"]] = "\n".join(championship["name"].rsplit(" ", 1))
-plt.figure(figsize=(15, 4))
-nx.draw_networkx(championship_path, path_positions, labels=path_labels,
-                 node_color="#d9e9dc", node_size=4200, font_size=13, arrowsize=22)
-nx.draw_networkx_edge_labels(championship_path, path_positions,
-                             edge_labels=nx.get_edge_attributes(championship_path, "label"), font_size=10)
-plt.axis("off")
-plt.show()
+championship_html = interactive_graph(styled_graph(championship_path, path_positions, path_labels))
+display(championship_html)
 
 # %% [markdown]
 # NetworkX stores these graphs in memory. A graph database provides
