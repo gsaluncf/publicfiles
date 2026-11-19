@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0e211e">
+  <title>Ontology Mapping Lab</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="./mapping.css">
+</head>
+<body>
+  <main class="app mapping-app">
+    <header class="masthead">
+      <h1>Ontology Mapping Lab</h1>
+      <button type="button" id="show-ontology">Target ontology</button>
+    </header>
+    <div class="mapping-intro">
+      <p id="intro"></p>
+      <p class="lab-question" id="sample-question"></p>
+    </div>
+    <nav id="mapping-steps" class="mapping-steps" aria-label="Mapping steps"></nav>
+    <div id="mapping-workspace"></div>
+    <footer class="mapping-footer"><button type="button" id="reset-mapping">Reset mapping</button></footer>
+    <dialog id="target-ontology" aria-labelledby="ontology-title"></dialog>
+    <p id="mapping-announcement" class="sr-only" role="status"></p>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
